@@ -31,30 +31,23 @@ export default function AddRecipePage() {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Dinner')
   const [cuisine, setCuisine] = useState('')
-  const [prepTime, setPrepTime] = useState('10')
-  const [cookingTime, setCookingTime] = useState('20')
+  const [prepTime, setPrepTime] = useState('')
+  const [cookingTime, setCookingTime] = useState('')
   const [servings, setServings] = useState('2')
   const [difficulty, setDifficulty] = useState('Easy')
   const [image, setImage] = useState('')
   const [imageInputMode, setImageInputMode] = useState('upload') // 'upload' | 'url'
 
-  // Dynamic Ingredients: [{ id, quantity, unit, name }]
+  // Dynamic Ingredients: Starts with exactly one empty ingredient row
   const [ingredientItems, setIngredientItems] = useState([
-    { id: 'ing-1', quantity: '1', unit: 'can (400 g)', name: 'white beans, drained' },
-    { id: 'ing-2', quantity: '100 g', unit: '', name: 'spinach' },
-    { id: 'ing-3', quantity: '200 g', unit: '', name: 'chopped tomatoes' },
-    { id: 'ing-4', quantity: '1 tbsp', unit: '', name: 'olive oil' },
-    { id: 'ing-5', quantity: '1 tsp', unit: '', name: 'smoked paprika' }
+    { id: 'ing-1', quantity: '', unit: '', name: '' }
   ])
 
-  // Dynamic Preparation Steps: string[]
-  const [instructions, setInstructions] = useState([
-    'Heat oil. Add tomatoes and paprika; cook 5 min.',
-    'Stir in beans and spinach; simmer 10 min.'
-  ])
+  // Dynamic Preparation Steps: Starts with exactly one empty step
+  const [instructions, setInstructions] = useState([''])
 
   // Dietary Tags: string[]
-  const [selectedTags, setSelectedTags] = useState(['Vegetarian', 'Gluten-free'])
+  const [selectedTags, setSelectedTags] = useState([])
   const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false)
 
   // Validation & UI State
@@ -245,7 +238,7 @@ export default function AddRecipePage() {
       setIsPreviewOpen(false)
       setToast({
         type: 'success',
-        message: `✓ Recipe "${newRecipe.title}" published successfully!`
+        message: `Recipe "${newRecipe.title}" published successfully!`
       })
 
       // Short pause to show the success message before redirecting to My Recipes
@@ -555,7 +548,12 @@ export default function AddRecipePage() {
                       type="button"
                       className="btn-row-remove"
                       onClick={() => handleRemoveIngredient(index)}
-                      title="Remove ingredient"
+                      disabled={ingredientItems.length <= 1}
+                      title={
+                        ingredientItems.length <= 1
+                          ? 'At least one ingredient field is required'
+                          : 'Remove ingredient'
+                      }
                       aria-label="Remove ingredient"
                     >
                       ✕
@@ -601,7 +599,12 @@ export default function AddRecipePage() {
                       type="button"
                       className="btn-row-remove"
                       onClick={() => handleRemoveInstruction(index)}
-                      title="Remove step"
+                      disabled={instructions.length <= 1}
+                      title={
+                        instructions.length <= 1
+                          ? 'At least one step is required'
+                          : 'Remove step'
+                      }
                       aria-label="Remove step"
                     >
                       ✕

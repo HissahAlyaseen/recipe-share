@@ -125,6 +125,136 @@ const DEFAULT_RECIPES = [
     authorName: 'Alex',
     createdAt: '2026-10-28T07:45:00.000Z',
     updatedAt: '2026-10-28T07:45:00.000Z'
+  },
+  {
+    id: 6,
+    title: 'Lemon Chickpea Quinoa Bowl',
+    description: 'Protein-packed Mediterranean bowl with fluffy quinoa, tender chickpeas, diced cucumber, cherry tomatoes, and zesty lemon dressing.',
+    category: 'Dinner',
+    cuisine: 'Mediterranean',
+    ingredients: [
+      '1 cup cooked quinoa',
+      '1 can (400 g) chickpeas, drained',
+      '1/2 cucumber and 1 cup cherry tomatoes, chopped',
+      '50 g feta cheese, crumbled',
+      '1 lemon, juiced, and 1 tbsp olive oil'
+    ],
+    ingredientItems: [
+      { id: 'ing-6-1', quantity: '1', unit: 'cup', name: 'cooked quinoa' },
+      { id: 'ing-6-2', quantity: '1', unit: 'can (400 g)', name: 'chickpeas, drained' },
+      { id: 'ing-6-3', quantity: '1/2', unit: 'cucumber and 1 cup', name: 'cherry tomatoes, chopped' },
+      { id: 'ing-6-4', quantity: '50', unit: 'g', name: 'feta cheese, crumbled' },
+      { id: 'ing-6-5', quantity: '1', unit: 'lemon, juiced, and 1 tbsp', name: 'olive oil' }
+    ],
+    instructions: [
+      'Cook quinoa according to package instructions, then allow to cool.',
+      'Toss quinoa, chickpeas, cucumber, and cherry tomatoes in a large bowl.',
+      'Mix lemon juice with olive oil and drizzle over bowl.',
+      'Toss through gently, top with feta cheese, and serve.'
+    ],
+    dietaryTags: ['Vegetarian', 'Gluten-free'],
+    cookingTime: 25,
+    prepTime: 10,
+    servings: 2,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-4',
+    authorName: 'Maya Chen',
+    createdAt: '2026-10-29T14:00:00.000Z',
+    updatedAt: '2026-10-29T14:00:00.000Z'
+  },
+  {
+    id: 7,
+    title: 'Roasted Vegetable Tacos',
+    description: 'Charred corn, roasted zucchini, and spiced black beans served in warm corn tortillas with avocado crema.',
+    category: 'Dinner',
+    cuisine: 'Mexican',
+    ingredients: [
+      '6 small Corn Tortillas',
+      '1 Zucchini, diced',
+      '1 cup Sweet Corn kernels',
+      '1 can Black Beans, rinsed',
+      '1 Avocado, mashed with lime'
+    ],
+    instructions: [
+      'Roast zucchini and corn on a baking sheet at 200°C for 20 minutes.',
+      'Warm corn tortillas in a dry skillet.',
+      'Fill tortillas with roasted vegetables and seasoned black beans.',
+      'Dollop with mashed avocado and serve with lime wedges.'
+    ],
+    dietaryTags: ['Vegetarian', 'Gluten-free'],
+    cookingTime: 30,
+    prepTime: 10,
+    servings: 2,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-5',
+    authorName: 'Mateo Silva',
+    createdAt: '2026-10-30T18:00:00.000Z',
+    updatedAt: '2026-10-30T18:00:00.000Z'
+  },
+  {
+    id: 8,
+    title: 'Black Bean & Rice Bowl',
+    description: 'Seasoned black beans served over cilantro lime rice with charred peppers and fresh pico de gallo.',
+    category: 'Lunch',
+    cuisine: 'Mexican',
+    ingredients: [
+      '1 cup Cooked Brown Rice',
+      '1 can Black Beans',
+      '1 Lime, juiced',
+      'Fresh Cilantro, chopped',
+      '1/2 cup Pico de Gallo'
+    ],
+    instructions: [
+      'Toss warm brown rice with fresh lime juice and chopped cilantro.',
+      'Warm seasoned black beans in a small saucepan.',
+      'Assemble bowl with rice, beans, and top with fresh pico de gallo.'
+    ],
+    dietaryTags: ['Vegetarian', 'Gluten-free'],
+    cookingTime: 20,
+    prepTime: 5,
+    servings: 2,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-4',
+    authorName: 'Maya Chen',
+    createdAt: '2026-11-01T12:00:00.000Z',
+    updatedAt: '2026-11-01T12:00:00.000Z'
+  },
+  {
+    id: 9,
+    title: 'Tomato & Red Lentil Soup',
+    description: 'Hearty and warming red lentil soup gently simmered with crushed tomatoes, ginger, and turmeric.',
+    category: 'Dinner',
+    cuisine: 'Mediterranean',
+    ingredients: [
+      '1 cup Red Lentils, rinsed',
+      '1 can (400g) Crushed Tomatoes',
+      '4 cups Vegetable Broth',
+      '1 Onion, chopped',
+      '1 tsp Ground Turmeric'
+    ],
+    instructions: [
+      'Sauté chopped onion in a large pot until soft.',
+      'Add turmeric, red lentils, crushed tomatoes, and vegetable broth.',
+      'Simmer for 25 minutes until lentils are completely tender and soup is rich.',
+      'Garnish with fresh parsley and serve hot.'
+    ],
+    dietaryTags: ['Vegan', 'Gluten-free'],
+    cookingTime: 35,
+    prepTime: 10,
+    servings: 4,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-1',
+    authorName: 'Alex',
+    createdAt: '2026-11-02T19:00:00.000Z',
+    updatedAt: '2026-11-02T19:00:00.000Z'
   }
 ]
 

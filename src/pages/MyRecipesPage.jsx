@@ -26,7 +26,7 @@ export default function MyRecipesPage() {
     if (location.state?.newlyCreatedId) {
       return {
         type: 'success',
-        message: '✓ Recipe created and saved to My Recipes successfully!'
+        message: 'Recipe created and saved to My Recipes successfully!'
       }
     }
     return null
@@ -68,7 +68,7 @@ export default function MyRecipesPage() {
       recipeStorage.delete(recipeToDelete.id, user.id)
       setToast({
         type: 'success',
-        message: `✓ "${recipeToDelete.title}" has been deleted.`
+        message: `"${recipeToDelete.title}" has been deleted.`
       })
       setRecipeToDelete(null)
       refreshRecipes()

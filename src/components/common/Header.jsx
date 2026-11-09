@@ -8,7 +8,7 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="header-container">
-        <NavLink to="/my-recipes" className="brand-logo" title="Recipe Share - Personal Hub">
+        <NavLink to="/my-recipes" className="brand-logo" title="Recipe Share">
           <span className="brand-icon">🍽️</span>
           <span className="brand-name">Recipe Share</span>
         </NavLink>
@@ -20,31 +20,15 @@ export default function Header() {
           >
             My Recipes
           </NavLink>
-          <NavLink
-            to="/cookbook"
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-          >
-            Cookbooks
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-          >
-            Profile & Preferences
-          </NavLink>
         </nav>
 
         <div className="header-user-section">
-          <NavLink
-            to="/profile"
-            className={({ isActive }) => `profile-badge ${isActive ? 'active' : ''}`}
-            title="View Profile"
-          >
+          <div className="profile-badge" title={`Signed in as ${user?.name || 'Alex'}`}>
             <span className="profile-avatar">
-              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
             </span>
-            <span className="profile-name">{user?.name || 'Profile'}</span>
-          </NavLink>
+            <span className="profile-name">{user?.name || 'Alex'}</span>
+          </div>
         </div>
       </div>
     </header>

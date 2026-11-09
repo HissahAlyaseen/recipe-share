@@ -1,37 +1,37 @@
 import { STORAGE_KEYS } from './storageKeys.js'
 
 const DEFAULT_SAVED_MAP = {
-  'user-1': [1, 2, 4] // recipe IDs saved by user-1
+  'user-1': [6, 7, 8, 9, 1, 2] // recipe IDs saved by user-1
 }
 
 const DEFAULT_COLLECTIONS = [
   {
     id: 'col-1',
     userId: 'user-1',
-    name: 'Family Favorites',
-    description: 'Tried-and-true recipes that everyone in the house loves.',
-    icon: '⭐',
-    recipeIds: [1, 4],
+    name: 'Weeknight dinners',
+    description: 'Simple favorites for busy evenings.',
+    icon: '🍲',
+    recipeIds: [6, 7, 8, 9],
     createdAt: '2026-10-16T10:00:00.000Z',
     updatedAt: '2026-10-16T10:00:00.000Z'
   },
   {
     id: 'col-2',
     userId: 'user-1',
-    name: 'Quick 20-Min Meals',
-    description: 'Fast, minimal-prep recipes for busy school and work nights.',
-    icon: '⚡',
-    recipeIds: [2],
+    name: 'Lunch prep',
+    description: 'Make-ahead meals for busy days.',
+    icon: '🥗',
+    recipeIds: [2, 6],
     createdAt: '2026-10-19T14:30:00.000Z',
     updatedAt: '2026-10-19T14:30:00.000Z'
   },
   {
     id: 'col-3',
     userId: 'user-1',
-    name: 'Healthy & Fresh',
-    description: 'Nutritious breakfast and plant-forward clean eats.',
-    icon: '🥗',
-    recipeIds: [1, 3],
+    name: 'Recipes to try',
+    description: 'Exciting new recipes bookmarked to cook this month.',
+    icon: '✨',
+    recipeIds: [1, 3, 7],
     createdAt: '2026-10-22T08:00:00.000Z',
     updatedAt: '2026-10-22T08:00:00.000Z'
   }
@@ -39,30 +39,16 @@ const DEFAULT_COLLECTIONS = [
 
 const DEFAULT_CUSTOMIZATIONS = [
   {
-    id: 'cust_user-1_1',
+    id: 'cust_user-1_6',
     userId: 'user-1',
-    recipeId: 1,
-    originalTitle: 'Vegetable Pasta',
-    customTitle: 'Gluten-Free Spicy Vegetable Pasta',
-    personalNotes: 'Used brown rice pasta instead of regular wheat pasta. Added 1/2 tsp crushed red pepper flakes for heat and finished with nutritional yeast.',
-    modifiedIngredients: [
-      '250g Brown Rice Penne (Gluten-Free)',
-      '200g Cherry Tomatoes, halved',
-      '3 tbsp Extra Virgin Olive Oil',
-      '1 clove Garlic, sliced thin',
-      '1/2 tsp Crushed Red Pepper Flakes',
-      'Fresh Basil leaves',
-      '2 tbsp Nutritional Yeast'
-    ],
-    modifiedInstructions: [
-      'Boil brown rice penne for 8 minutes; rinse lightly with warm water.',
-      'Sauté garlic and red pepper flakes gently in olive oil.',
-      'Toss cherry tomatoes until blistered.',
-      'Mix pasta with tomatoes and top with fresh basil and nutritional yeast.'
-    ],
-    customCookTime: 20,
-    customServings: 4,
-    personalRating: 5,
+    recipeId: 6,
+    originalTitle: 'Lemon Chickpea Quinoa Bowl',
+    customTitle: 'Lemon Chickpea Quinoa Bowl · My version',
+    ingredientReplaced: '50 g feta cheese, crumbled',
+    replacementIngredient: '50 g dairy-free feta',
+    personalNotes: 'Substituted dairy feta with dairy-free feta to accommodate dairy preference.',
+    collectionId: 'col-1',
+    collectionName: 'Weeknight dinners',
     updatedAt: '2026-10-26T15:00:00.000Z'
   }
 ]

@@ -287,9 +287,17 @@
   transition: all 0.15s ease;
 }
 
-.btn-row-remove:hover {
+.btn-row-remove:hover:not(:disabled) {
   background: #fca5a5;
   color: #991b1b;
+}
+
+.btn-row-remove:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #9ca3af;
 }
 
 /* Step Rows */

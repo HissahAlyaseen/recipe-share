@@ -12,12 +12,18 @@ export default function Toast({ message, type = 'success', onClose, duration = 4
 
   if (!message) return null
 
+  // Strip any redundant leading symbols to avoid double marks
+  const cleanMessage =
+    typeof message === 'string'
+      ? message.replace(/^(\u2713|\u2714|✓|✔|ℹ️|⚠️|\s)+/, '').trim()
+      : message
+
   return (
     <div className={`toast-banner toast-${type}`} role="alert">
       <span className="toast-icon">
         {type === 'success' ? '✓' : type === 'error' ? '⚠️' : 'ℹ️'}
       </span>
-      <span className="toast-message">{message}</span>
+      <span className="toast-message">{cleanMessage}</span>
       {onClose && (
         <button
           type="button"
@@ -31,4 +37,3 @@ export default function Toast({ message, type = 'success', onClose, duration = 4
     </div>
   )
 }
-

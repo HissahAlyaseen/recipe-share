@@ -28,8 +28,8 @@ export default function RecipeDetailsPage() {
     setToast({
       type: 'success',
       message: newState
-        ? `✓ Added "${recipe.title}" to your Cookbook!`
-        : `✓ Removed "${recipe.title}" from your Cookbook.`
+        ? `Added "${recipe.title}" to your Cookbook!`
+        : `Removed "${recipe.title}" from your Cookbook.`
     })
   }
 

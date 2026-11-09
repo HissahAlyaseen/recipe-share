@@ -306,7 +306,7 @@ export default function EditRecipePage() {
       setSaveSuccess(true)
       setToast({
         type: 'success',
-        message: '✓ Changes saved successfully!'
+        message: 'Changes saved successfully!'
       })
 
       // Auto-navigate back to My Recipes after a moment, or user can click Back
