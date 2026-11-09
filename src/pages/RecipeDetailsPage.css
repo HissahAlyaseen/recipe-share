@@ -1,0 +1,311 @@
+.recipe-details-wrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  color: #111827;
+}
+
+.details-main {
+  flex: 1;
+  padding: 24px 16px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.details-container {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.top-nav-link-row {
+  margin-bottom: 14px;
+}
+
+.back-btn-text {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.back-btn-text:hover {
+  color: #111827;
+}
+
+.details-page-header {
+  margin-bottom: 16px;
+}
+
+.details-heading {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #111827;
+}
+
+/* Image Banner matching Figma */
+.details-image-banner {
+  width: 100%;
+  height: 240px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.details-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.details-placeholder-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.placeholder-icon {
+  font-size: 32px;
+}
+
+/* Details Meta Block */
+.details-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recipe-headline {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.25;
+}
+
+.recipe-author-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.author-badge {
+  background: #111827;
+  color: #ffffff;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.meta-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.meta-pill {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.dietary-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.recipe-tag-chip {
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #1f2937;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-weight: 500;
+}
+
+.allergy-disclaimer {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+.details-hr {
+  border: none;
+  border-top: 1px solid #f3f4f6;
+  margin: 20px 0;
+}
+
+/* Section styling */
+.details-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section-header {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.ingredients-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ingredient-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.45;
+}
+
+.ing-bullet {
+  color: #9ca3af;
+  font-weight: bold;
+}
+
+.instructions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.instruction-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.55;
+}
+
+.step-number {
+  font-weight: 700;
+  color: #111827;
+  min-width: 20px;
+}
+
+.no-items-text {
+  font-size: 13px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Action Bar */
+.details-action-bar {
+  margin-top: 28px;
+}
+
+.author-actions-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-edit-recipe-details {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #111827;
+  color: #111827;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-edit-recipe-details:hover {
+  background: #f3f4f6;
+}
+
+.btn-save-cookbook {
+  flex: 2;
+  background: #111827;
+  border: 1px solid #111827;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-save-cookbook:hover {
+  background: #27272a;
+}
+
+.btn-save-cookbook.saved {
+  background: #166534;
+  border-color: #166534;
+}
+
+/* Not Found / Loading */
+.loading-state {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+}
+
+.not-found-card {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.btn-back-home {
+  display: inline-block;
+  margin-top: 16px;
+  background: #111827;
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
