@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import AddRecipePage from './pages/AddRecipePage'
 import EditRecipePage from './pages/EditRecipePage'
@@ -29,8 +29,8 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Default landing for Member 2 */}
-          <Route path="/" element={<Navigate to="/my-recipes" replace />} />
+          {/* Home Route */}
+          <Route path="/" element={<Placeholder title="Home" />} />
 
           {/* Member 2 Routes (Recipe & Personal Management) */}
           <Route path="/my-recipes" element={<MyRecipesPage />} />

@@ -8,7 +8,7 @@ export default function Header() {
   return (
     <header className="app-header">
       <div className="header-container">
-        <NavLink to="/my-recipes" className="brand-logo" title="Recipe Share">
+        <NavLink to="/" className="brand-logo" title="Recipe Share">
           <span className="brand-icon">🍽️</span>
           <span className="brand-name">Recipe Share</span>
         </NavLink>
