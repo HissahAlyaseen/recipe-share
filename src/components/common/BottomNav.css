@@ -1,0 +1,68 @@
+/* Hide bottom navigation on desktop and large screens by default */
+.figma-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 8px 24px calc(8px + env(safe-area-inset-bottom, 0px));
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Only display bottom nav on mobile or small screens */
+@media (max-width: 768px) {
+  .figma-bottom-nav {
+    display: flex;
+  }
+}
+
+.figma-nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #4b5563;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 72px;
+  transition: all 0.15s ease;
+  background: transparent;
+}
+
+.tab-indicator {
+  display: none;
+  width: 16px;
+  height: 3px;
+  background: #111827;
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+
+.tab-label {
+  line-height: 1.1;
+  letter-spacing: -0.1px;
+}
+
+.figma-nav-tab:hover {
+  color: #111827;
+}
+
+/* Active tab matching Figma pill with black dash */
+.figma-nav-tab.active {
+  background: #e5e7eb;
+  color: #111827;
+  font-weight: 700;
+  padding: 6px 14px;
+}
+
+.figma-nav-tab.active .tab-indicator {
+  display: block;
+}

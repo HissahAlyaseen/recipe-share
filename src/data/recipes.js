@@ -1,4 +1,3 @@
-
 export const recipes = [
   {
     id: 1,
@@ -6,7 +5,24 @@ export const recipes = [
     ingredients: ["Pasta", "Tomato", "Olive Oil"],
     dietaryTags: ["Vegetarian"],
     cookingTime: 25,
-    image: "",
+    prepTime: 10,
+    servings: 4,
+    difficulty: "Easy",
+    category: "Dinner",
+    cuisine: "Italian",
+    image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&auto=format&fit=crop&q=80",
+    description: "A vibrant Mediterranean pasta tossed with sweet cherry tomatoes, extra virgin olive oil, garlic, and fresh basil.",
+    instructions: [
+      "Boil penne pasta in salted water until al dente.",
+      "Heat olive oil in a wide skillet, sauté minced garlic for 1 minute.",
+      "Add cherry tomatoes and cook until juicy and blistering.",
+      "Toss drained pasta directly into the sauce with fresh basil."
+    ],
+    status: "Published",
+    authorId: "user-1",
+    authorName: "Alex",
+    createdAt: "2026-10-15T10:00:00.000Z",
+    updatedAt: "2026-10-15T10:00:00.000Z"
   },
   {
     id: 2,
@@ -14,7 +30,24 @@ export const recipes = [
     ingredients: ["Chicken", "Lettuce", "Cucumber"],
     dietaryTags: ["Gluten-Free"],
     cookingTime: 20,
-    image: "",
+    prepTime: 10,
+    servings: 2,
+    difficulty: "Easy",
+    category: "Lunch",
+    cuisine: "American",
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80",
+    description: "Crisp romaine lettuce topped with seasoned grilled chicken breast, English cucumber slices, and zesty lemon dressing.",
+    instructions: [
+      "Season chicken breasts and grill for 6-7 minutes per side until fully cooked.",
+      "Chop romaine lettuce and slice cucumber into thin rounds.",
+      "Whisk lemon juice and olive oil with a pinch of sea salt.",
+      "Toss all ingredients together with the dressing and serve fresh."
+    ],
+    status: "Published",
+    authorId: "user-1",
+    authorName: "Alex",
+    createdAt: "2026-10-18T12:00:00.000Z",
+    updatedAt: "2026-10-18T12:00:00.000Z"
   },
   {
     id: 3,
@@ -22,6 +55,73 @@ export const recipes = [
     ingredients: ["Banana", "Strawberry", "Milk"],
     dietaryTags: ["Vegetarian"],
     cookingTime: 5,
-    image: "",
+    prepTime: 5,
+    servings: 1,
+    difficulty: "Easy",
+    category: "Breakfast",
+    cuisine: "Healthy",
+    image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800&auto=format&fit=crop&q=80",
+    description: "A refreshing energy smoothie blended with ripe banana, sweet strawberries, and chilled creamy milk.",
+    instructions: [
+      "Place peeled banana and strawberries into a high-speed blender.",
+      "Pour in chilled milk and optional honey.",
+      "Blend on high speed for 60 seconds until completely smooth.",
+      "Pour into a chilled glass and serve immediately."
+    ],
+    status: "Published",
+    authorId: "user-1",
+    authorName: "Alex",
+    createdAt: "2026-10-20T08:00:00.000Z",
+    updatedAt: "2026-10-20T08:00:00.000Z"
   },
+  {
+    id: 4,
+    title: "Spinach & White Bean Skillet",
+    ingredients: ["Cannellini Beans", "Fresh Baby Spinach", "Olive Oil", "Garlic", "Lemon"],
+    dietaryTags: ["Vegetarian", "Gluten-free"],
+    cookingTime: 20,
+    prepTime: 5,
+    servings: 2,
+    difficulty: "Easy",
+    category: "Dinner",
+    cuisine: "Mediterranean",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80",
+    description: "A comforting weeknight skillet with tender white beans, wilted baby spinach, sliced garlic, and fresh lemon juice.",
+    instructions: [
+      "Heat olive oil in a wide skillet over medium heat. Sauté sliced garlic for 1 minute until fragrant.",
+      "Add rinsed cannellini beans and a pinch of salt. Cook gently for 3-4 minutes.",
+      "Add fresh baby spinach in handfuls, tossing until wilted.",
+      "Finish with fresh lemon juice and black pepper, and serve warm."
+    ],
+    status: "Published",
+    authorId: "user-1",
+    authorName: "Alex",
+    createdAt: "2026-11-01T10:00:00.000Z",
+    updatedAt: "2026-11-01T10:00:00.000Z"
+  },
+  {
+    id: 5,
+    title: "Lemon Chickpea Quinoa Bowl",
+    ingredients: ["Quinoa", "Chickpeas", "Cucumber", "Cherry Tomatoes", "Feta Cheese"],
+    dietaryTags: ["Vegetarian", "Gluten-free"],
+    cookingTime: 25,
+    prepTime: 10,
+    servings: 2,
+    difficulty: "Easy",
+    category: "Dinner",
+    cuisine: "Mediterranean",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80",
+    description: "Protein-packed Mediterranean bowl with fluffy quinoa, tender chickpeas, diced cucumber, cherry tomatoes, and zesty lemon dressing.",
+    instructions: [
+      "Cook quinoa according to package instructions and let cool.",
+      "Toss quinoa, chickpeas, cucumber, and cherry tomatoes in a large bowl.",
+      "Whisk lemon juice with olive oil and drizzle over the bowl.",
+      "Top with crumbled feta cheese and serve fresh."
+    ],
+    status: "Published",
+    authorId: "user-1",
+    authorName: "Alex",
+    createdAt: "2026-10-29T14:00:00.000Z",
+    updatedAt: "2026-10-29T14:00:00.000Z"
+  }
 ];

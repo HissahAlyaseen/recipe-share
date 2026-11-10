@@ -1,0 +1,258 @@
+import { useState } from 'react'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { recipeStorage } from '../services/recipeStorage'
+import { cookbookStorage } from '../services/cookbookStorage'
+import { useAuth } from '../hooks/useAuth'
+import Header from '../components/common/Header'
+import BottomNav from '../components/common/BottomNav'
+import Toast from '../components/common/Toast'
+import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
+import './RecipeDetailsPage.css'
+
+export default function RecipeDetailsPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const userId = user?.id || 'user-1'
+
+  // Initialize recipe directly from storage synchronously
+  const [recipe] = useState(() => recipeStorage.getById(id))
+  const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
+  const [isSaved, setIsSaved] = useState(() => {
+    const found = recipeStorage.getById(id)
+    return found ? cookbookStorage.isRecipeSaved(userId, found.id) : false
+  })
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  const handleSaveClick = () => {
+    if (!recipe) return
+    if (isSaved) {
+      handleUnsave()
+    } else {
+      setIsSaveModalOpen(true)
+    }
+  }
+
+  const handleConfirmSave = (recipeId, colId) => {
+    try {
+      if (colId) {
+        cookbookStorage.addRecipeToCollection(userId, colId, recipeId)
+      } else {
+        cookbookStorage.saveRecipe(userId, recipeId)
+      }
+      setIsSaved(true)
+      const targetCol = collections.find((c) => String(c.id) === String(colId))
+      setToast({
+        type: 'success',
+        message: targetCol
+          ? `Saved to "${targetCol.name}" in your Cookbook!`
+          : `Saved "${recipe.title}" to your Cookbook!`
+      })
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Failed to save recipe.' })
+    }
+  }
+
+  const handleCreateCollection = ({ name, description }) => {
+    try {
+      const created = cookbookStorage.createCollection(userId, { name, description })
+      setCollections(cookbookStorage.getUserCollections(userId))
+      return created
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Failed to create collection.' })
+      return null
+    }
+  }
+
+  const handleUnsave = () => {
+    if (!recipe) return
+    cookbookStorage.unsaveRecipe(userId, recipe.id)
+    setIsSaved(false)
+    setToast({
+      type: 'success',
+      message: `Removed "${recipe.title}" from your Cookbook.`
+    })
+  }
+
+  if (!recipe) {
+    return (
+      <div className="recipe-details-wrapper">
+        <Header />
+        <div className="details-container">
+          <div className="not-found-card">
+            <h2>Recipe Not Found</h2>
+            <p>The recipe you are looking for does not exist or has been removed.</p>
+            <Link to="/my-recipes" className="btn-back-home">
+              Go to My Recipes
+            </Link>
+          </div>
+        </div>
+        <BottomNav />
+      </div>
+    )
+  }
+
+  const isAuthor = user?.id && String(recipe.authorId) === String(user.id)
+
+  return (
+    <div className="recipe-details-wrapper">
+      <Header />
+
+      <main className="details-main">
+        <div className="details-container">
+          {/* Back link */}
+          <div className="top-nav-link-row">
+            <button
+              type="button"
+              className="back-btn-text"
+              onClick={() => navigate(-1)}
+            >
+              ‹ Back
+            </button>
+          </div>
+
+          <header className="details-page-header">
+            <h1 className="details-heading">Recipe details</h1>
+          </header>
+
+          {/* Photo banner */}
+          <div className="details-image-banner">
+            {recipe.image ? (
+              <img src={recipe.image} alt={recipe.title} className="details-cover-img" />
+            ) : (
+              <div className="details-placeholder-box">
+                <span className="placeholder-icon">🍲</span>
+                <span>{recipe.title} · photo</span>
+              </div>
+            )}
+          </div>
+
+          {/* Title & Metadata */}
+          <div className="details-meta-block">
+            <h2 className="recipe-headline">{recipe.title}</h2>
+            <p className="recipe-author-subtitle">
+              Shared by {recipe.authorName || 'Home Cook'}
+              {isAuthor && <span className="author-badge">You</span>}
+            </p>
+
+            <div className="meta-info-row">
+              <span className="meta-pill">⏱️ {recipe.cookingTime || 15} min</span>
+              <span className="meta-pill">👥 {recipe.servings || 2} servings</span>
+              {recipe.difficulty && (
+                <span className="meta-pill">📊 {recipe.difficulty}</span>
+              )}
+              {recipe.category && (
+                <span className="meta-pill">🏷️ {recipe.category}</span>
+              )}
+            </div>
+
+            {/* Dietary Tags */}
+            {recipe.dietaryTags && recipe.dietaryTags.length > 0 && (
+              <div className="dietary-tags-list">
+                {recipe.dietaryTags.map((tag) => (
+                  <span key={tag} className="recipe-tag-chip">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Allergy Note */}
+            <p className="allergy-disclaimer">
+              User-provided recipe information. Always check ingredient labels and cross-contact
+              risks before cooking.
+            </p>
+          </div>
+
+          <hr className="details-hr" />
+
+          {/* Ingredients */}
+          <section className="details-section">
+            <h3 className="section-header">
+              Ingredients · {recipe.servings || 2} servings
+            </h3>
+            <ul className="ingredients-checklist">
+              {recipe.ingredients && recipe.ingredients.length > 0 ? (
+                recipe.ingredients.map((item, idx) => (
+                  <li key={idx} className="ingredient-list-item">
+                    <span className="ing-bullet">•</span>
+                    <span className="ing-text">{item}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="no-items-text">No ingredients specified.</li>
+              )}
+            </ul>
+          </section>
+
+          <hr className="details-hr" />
+
+          {/* Instructions */}
+          <section className="details-section">
+            <h3 className="section-header">Preparation</h3>
+            <ol className="instructions-list">
+              {recipe.instructions && recipe.instructions.length > 0 ? (
+                recipe.instructions.map((step, idx) => (
+                  <li key={idx} className="instruction-step">
+                    <span className="step-number">{idx + 1}.</span>
+                    <span className="step-content">{step}</span>
+                  </li>
+                ))
+              ) : (
+                <li className="no-items-text">No preparation instructions provided.</li>
+              )}
+            </ol>
+          </section>
+
+          {/* Bottom Action buttons */}
+          <div className="details-action-bar">
+            {isAuthor ? (
+              <div className="author-actions-group">
+                <Link to={`/recipes/${recipe.id}/edit`} className="btn-edit-recipe-details">
+                  Edit Recipe
+                </Link>
+                <button
+                  type="button"
+                  className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
+                  onClick={handleSaveClick}
+                >
+                  {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
+                onClick={handleSaveClick}
+              >
+                {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
+              </button>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {/* Save to Cookbook Modal matching Figma */}
+      <SaveToCookbookModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        recipe={recipe}
+        collections={collections}
+        onSave={handleConfirmSave}
+        onCreateCollection={handleCreateCollection}
+      />
+
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <BottomNav />
+    </div>
+  )
+}
