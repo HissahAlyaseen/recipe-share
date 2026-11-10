@@ -6,6 +6,7 @@ import MyRecipesPage from './pages/MyRecipesPage'
 import RecipeDetailsPage from './pages/RecipeDetailsPage'
 import CookbookPage from './pages/CookbookPage'
 import CustomizeRecipePage from './pages/CustomizeRecipePage'
+import ProfilePage from './pages/ProfilePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
 import { recipeStorage } from './services/recipeStorage'
@@ -13,7 +14,7 @@ import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
 
 // Versioned sync to auto-reset stale or orphaned localStorage keys from previous runs
-const STORAGE_SYNC_VERSION = 'v5_figma_seed_sync'
+const STORAGE_SYNC_VERSION = 'v7_5_recipes_sync'
 
 if (typeof window !== 'undefined') {
   try {
@@ -76,7 +77,7 @@ function App() {
           <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
           <Route path="/recipes/:id/customize" element={<CustomizeRecipePage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
-          <Route path="/profile" element={<Placeholder title="Profile" />} />
+          <Route path="/profile" element={<ProfilePage />} />
 
           {/* Existing Team Routes preserved */}
           <Route path="/login" element={<Placeholder title="Login" />} />

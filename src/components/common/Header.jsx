@@ -37,7 +37,7 @@ export default function Header() {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v5_figma_seed_sync')
+      localStorage.setItem('recipe_share_storage_version', 'v7_5_recipes_sync')
       window.location.reload()
     } catch (err) {
       console.error('Failed to reset storage:', err)

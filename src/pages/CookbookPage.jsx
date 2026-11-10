@@ -28,10 +28,10 @@ export default function CookbookPage() {
     if (typeof window !== 'undefined') {
       try {
         const currentVer = localStorage.getItem('recipe_share_storage_version')
-        if (currentVer !== 'v5_figma_seed_sync') {
+        if (currentVer !== 'v7_5_recipes_sync') {
           cookbookStorage.resetDefaults()
           recipeStorage.resetDefaults()
-          localStorage.setItem('recipe_share_storage_version', 'v5_figma_seed_sync')
+          localStorage.setItem('recipe_share_storage_version', 'v7_5_recipes_sync')
         }
       } catch (err) {
         console.error('Storage sync error:', err)

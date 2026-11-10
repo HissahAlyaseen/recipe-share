@@ -2,7 +2,7 @@ import { STORAGE_KEYS } from './storageKeys.js'
 import { recipeStorage } from './recipeStorage.js'
 
 export const DEFAULT_SAVED_MAP = {
-  'user-1': [6, 7, 8, 9, 4, 5] // Maya Chen & Mateo Silva recipes saved by Alex
+  'user-1': [1, 2, 5]
 }
 
 export const DEFAULT_COLLECTIONS = [
@@ -12,7 +12,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Weeknight dinners',
     description: 'Simple favorites for busy evenings.',
     icon: '🍲',
-    recipeIds: [6, 7, 8, 9],
+    recipeIds: [1, 5],
     createdAt: '2026-10-16T10:00:00.000Z',
     updatedAt: '2026-10-16T10:00:00.000Z'
   },
@@ -22,7 +22,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Lunch prep',
     description: 'Make-ahead meals for busy days.',
     icon: '🥗',
-    recipeIds: [4, 5, 6],
+    recipeIds: [2],
     createdAt: '2026-10-19T14:30:00.000Z',
     updatedAt: '2026-10-19T14:30:00.000Z'
   },
@@ -32,7 +32,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Recipes to try',
     description: 'Exciting new recipes bookmarked to cook this month.',
     icon: '✨',
-    recipeIds: [6, 7, 8],
+    recipeIds: [1, 2, 5],
     createdAt: '2026-10-22T08:00:00.000Z',
     updatedAt: '2026-10-22T08:00:00.000Z'
   }
@@ -40,9 +40,9 @@ export const DEFAULT_COLLECTIONS = [
 
 export const DEFAULT_CUSTOMIZATIONS = [
   {
-    id: 'cust_user-1_6',
+    id: 'cust_user-1_5',
     userId: 'user-1',
-    recipeId: 6,
+    recipeId: 5,
     originalTitle: 'Lemon Chickpea Quinoa Bowl',
     customTitle: 'Lemon Chickpea Quinoa Bowl · My version',
     ingredientReplaced: '50 g feta cheese, crumbled',
