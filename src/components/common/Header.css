@@ -107,8 +107,8 @@
 }
 
 @media (max-width: 768px) {
-  .desktop-nav {
-    display: none;
+  .app-header {
+    display: none !important;
   }
 }
 

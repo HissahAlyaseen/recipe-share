@@ -15,6 +15,13 @@ export default function Header() {
 
         <nav className="desktop-nav">
           <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Home
+          </NavLink>
+          <NavLink
             to="/my-recipes"
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
           >

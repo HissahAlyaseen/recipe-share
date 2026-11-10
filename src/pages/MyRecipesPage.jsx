@@ -126,13 +126,24 @@ export default function MyRecipesPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <button
-                type="button"
-                className="btn-search"
-                onClick={() => {}}
-              >
-                Search
-              </button>
+              {searchTerm ? (
+                <button
+                  type="button"
+                  className="btn-search"
+                  onClick={() => setSearchTerm('')}
+                  title="Clear search"
+                >
+                  Clear
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-search"
+                  onClick={() => {}}
+                >
+                  Search
+                </button>
+              )}
             </div>
           </div>
 
@@ -175,7 +186,7 @@ export default function MyRecipesPage() {
                       />
                     ) : (
                       <div className="thumb-placeholder">
-                        <span className="thumb-icon">🍲</span>
+                        <span className="thumb-icon-rect" />
                         <span className="thumb-text">Recipe photo</span>
                       </div>
                     )}
@@ -190,6 +201,17 @@ export default function MyRecipesPage() {
                       <span className="meta-sep">·</span>
                       <span>{recipe.servings || 2} servings</span>
                     </div>
+
+                    {recipe.dietaryTags && recipe.dietaryTags.length > 0 && (
+                      <div className="card-dietary-chips">
+                        {recipe.dietaryTags.map((tag) => (
+                          <span key={tag} className="card-chip">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="recipe-card-author">
                       Created by {recipe.authorName || user?.name || 'Alex'}
                     </div>

@@ -3,13 +3,22 @@ import './BottomNav.css'
 
 export default function BottomNav() {
   return (
-    <nav className="bottom-nav-bar" aria-label="Personal Navigation">
+    <nav className="figma-bottom-nav" aria-label="Mobile Navigation">
+      <NavLink
+        to="/"
+        end
+        className={({ isActive }) => `figma-nav-tab ${isActive ? 'active' : ''}`}
+      >
+        <span className="tab-indicator" />
+        <span className="tab-label">Home</span>
+      </NavLink>
+
       <NavLink
         to="/my-recipes"
-        className={({ isActive }) => `bottom-nav-item ${isActive ? 'active' : ''}`}
+        className={({ isActive }) => `figma-nav-tab ${isActive ? 'active' : ''}`}
       >
-        <span className="bottom-nav-icon">🍳</span>
-        <span className="bottom-nav-label">My recipes</span>
+        <span className="tab-indicator" />
+        <span className="tab-label">My Recipes</span>
       </NavLink>
     </nav>
   )
