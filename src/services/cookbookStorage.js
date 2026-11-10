@@ -324,6 +324,8 @@ export const cookbookStorage = {
       recipeId: Number(recipeId),
       originalTitle: customizationData.originalTitle || 'Recipe',
       customTitle: customizationData.customTitle?.trim() || customizationData.originalTitle,
+      ingredientReplaced: customizationData.ingredientReplaced || '',
+      replacementIngredient: customizationData.replacementIngredient || '',
       personalNotes: customizationData.personalNotes?.trim() || '',
       modifiedIngredients: Array.isArray(customizationData.modifiedIngredients)
         ? customizationData.modifiedIngredients
@@ -331,6 +333,9 @@ export const cookbookStorage = {
       modifiedInstructions: Array.isArray(customizationData.modifiedInstructions)
         ? customizationData.modifiedInstructions
         : [],
+      collectionId: customizationData.collectionId || null,
+      collectionName: customizationData.collectionName || '',
+      allergenNotes: customizationData.allergenNotes || '',
       customCookTime: customizationData.customCookTime ? Number(customizationData.customCookTime) : undefined,
       customServings: customizationData.customServings ? Number(customizationData.customServings) : undefined,
       personalRating: Number(customizationData.personalRating) || 5,
@@ -347,6 +352,15 @@ export const cookbookStorage = {
 
     // Automatically ensure the base recipe is saved to cookbook
     this.saveRecipe(userId, recipeId)
+
+    // Also add to the specified collection if selected
+    if (customizationData.collectionId) {
+      try {
+        this.addRecipeToCollection(userId, customizationData.collectionId, recipeId)
+      } catch (e) {
+        console.warn('Could not add to collection:', e)
+      }
+    }
     return updatedEntry
   },
 

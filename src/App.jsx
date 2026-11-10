@@ -5,6 +5,7 @@ import EditRecipePage from './pages/EditRecipePage'
 import MyRecipesPage from './pages/MyRecipesPage'
 import RecipeDetailsPage from './pages/RecipeDetailsPage'
 import CookbookPage from './pages/CookbookPage'
+import CustomizeRecipePage from './pages/CustomizeRecipePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
 
@@ -39,6 +40,7 @@ function App() {
           <Route path="/add-recipe" element={<AddRecipePage />} />
           <Route path="/recipes/:id/edit" element={<EditRecipePage />} />
           <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
+          <Route path="/recipes/:id/customize" element={<CustomizeRecipePage />} />
           <Route path="/cookbook" element={<CookbookPage />} />
           <Route path="/profile" element={<Placeholder title="Profile" />} />
 

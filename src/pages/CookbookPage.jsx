@@ -10,6 +10,7 @@ import CreateCookbookModal from '../components/cookbook/CreateCookbookModal'
 import RenameCookbookModal from '../components/cookbook/RenameCookbookModal'
 import DeleteCookbookModal from '../components/cookbook/DeleteCookbookModal'
 import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
+import AddRecipesToCollectionModal from '../components/cookbook/AddRecipesToCollectionModal'
 import './CookbookPage.css'
 
 export default function CookbookPage() {
@@ -34,6 +35,7 @@ export default function CookbookPage() {
   const [collectionToRename, setCollectionToRename] = useState(null)
   const [collectionToDelete, setCollectionToDelete] = useState(null)
   const [recipeToOrganize, setRecipeToOrganize] = useState(null)
+  const [isAddRecipesModalOpen, setIsAddRecipesModalOpen] = useState(false)
 
   // Refresh data from storage
   const refreshCookbook = () => {
@@ -196,6 +198,24 @@ export default function CookbookPage() {
     }
   }
 
+  const handleAddRecipesToCollection = (colId, recipeIdsToAdd) => {
+    const col = collections.find((c) => String(c.id) === String(colId))
+    try {
+      recipeIdsToAdd.forEach((rId) => {
+        cookbookStorage.addRecipeToCollection(userId, colId, rId)
+      })
+      refreshCookbook()
+      setToast({
+        type: 'success',
+        message: `Added ${recipeIdsToAdd.length} ${
+          recipeIdsToAdd.length === 1 ? 'recipe' : 'recipes'
+        } to "${col?.name || 'collection'}".`
+      })
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Failed to add recipes to collection.' })
+    }
+  }
+
   // --- Views Navigation ---
   const handleOpenCollection = (colId) => {
     setSearchParams({ collection: colId })
@@ -275,6 +295,17 @@ export default function CookbookPage() {
                   </p>
                 )}
               </header>
+
+              {/* Action Toolbar to add saved recipes to this collection */}
+              <div className="collection-actions-toolbar">
+                <button
+                  type="button"
+                  className="btn-add-to-col-action"
+                  onClick={() => setIsAddRecipesModalOpen(true)}
+                >
+                  + Add saved recipes to this collection
+                </button>
+              </div>
 
               {/* Saved recipes header row */}
               <div className="results-header-row">
@@ -678,6 +709,10 @@ export default function CookbookPage() {
                                 View
                               </Link>
                               <span className="action-sep">·</span>
+                              <Link to={`/recipes/${recipe.id}/customize`} className="action-link">
+                                Customize
+                              </Link>
+                              <span className="action-sep">·</span>
                               <button
                                 type="button"
                                 className="action-link-btn"
@@ -759,6 +794,14 @@ export default function CookbookPage() {
         collections={collections}
         onSave={handleAssignToCollection}
         onCreateCollection={handleCreateCollection}
+      />
+
+      <AddRecipesToCollectionModal
+        isOpen={isAddRecipesModalOpen}
+        onClose={() => setIsAddRecipesModalOpen(false)}
+        collection={currentCollection}
+        allSavedRecipes={allSavedRecipes}
+        onAddRecipes={handleAddRecipesToCollection}
       />
 
       {/* Toast Notification */}

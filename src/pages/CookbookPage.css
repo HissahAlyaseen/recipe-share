@@ -597,3 +597,27 @@
   background: #27272a;
 }
 
+
+/* Add to Collection Action Button in Collection View */
+.collection-actions-toolbar {
+  margin-bottom: 20px;
+}
+
+.btn-add-to-col-action {
+  width: 100%;
+  background: #ffffff;
+  border: 1px dashed #4b5563;
+  color: #111827;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.btn-add-to-col-action:hover {
+  background: #f9fafb;
+  border-color: #111827;
+}
