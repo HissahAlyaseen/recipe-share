@@ -352,3 +352,65 @@
   font-size: 14px;
 }
 
+/* Responsive Layout: Mobile, Tablet, Laptop, Large Screens */
+@media (max-width: 600px) {
+  .details-main {
+    padding: 20px 14px 96px;
+  }
+
+  .details-heading {
+    font-size: 24px;
+  }
+
+  .recipe-headline {
+    font-size: 21px;
+  }
+
+  .details-image-banner {
+    height: 200px;
+  }
+}
+
+@media (max-width: 440px) {
+  .details-action-bar {
+    gap: 10px;
+  }
+
+  .details-action-bar .btn-edit-recipe-details,
+  .details-action-bar .bookmark-btn.variant-button,
+  .details-action-bar .btn-organize-collection {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+
+@media (min-width: 601px) {
+  .details-container {
+    max-width: 680px;
+  }
+
+  .details-image-banner {
+    height: 280px;
+  }
+}
+
+@media (min-width: 960px) {
+  .details-container {
+    max-width: 780px;
+  }
+
+  .details-image-banner {
+    height: 320px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .details-container {
+    max-width: 860px;
+  }
+
+  .details-image-banner {
+    height: 360px;
+  }
+}
+
