@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
 import Toast from '../components/common/Toast'
+import BookmarkButton from '../components/common/BookmarkButton'
 import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
 import './RecipeDetailsPage.css'
 
@@ -19,21 +20,8 @@ export default function RecipeDetailsPage() {
   // Initialize recipe directly from storage synchronously
   const [recipe] = useState(() => recipeStorage.getById(id))
   const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
-  const [isSaved, setIsSaved] = useState(() => {
-    const found = recipeStorage.getById(id)
-    return found ? cookbookStorage.isRecipeSaved(userId, found.id) : false
-  })
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
   const [toast, setToast] = useState(null)
-
-  const handleSaveClick = () => {
-    if (!recipe) return
-    if (isSaved) {
-      handleUnsave()
-    } else {
-      setIsSaveModalOpen(true)
-    }
-  }
 
   const handleConfirmSave = (recipeId, colId) => {
     try {
@@ -42,7 +30,6 @@ export default function RecipeDetailsPage() {
       } else {
         cookbookStorage.saveRecipe(userId, recipeId)
       }
-      setIsSaved(true)
       const targetCol = collections.find((c) => String(c.id) === String(colId))
       setToast({
         type: 'success',
@@ -64,16 +51,6 @@ export default function RecipeDetailsPage() {
       setToast({ type: 'error', message: err.message || 'Failed to create collection.' })
       return null
     }
-  }
-
-  const handleUnsave = () => {
-    if (!recipe) return
-    cookbookStorage.unsaveRecipe(userId, recipe.id)
-    setIsSaved(false)
-    setToast({
-      type: 'success',
-      message: `Removed "${recipe.title}" from your Cookbook.`
-    })
   }
 
   if (!recipe) {
@@ -117,8 +94,17 @@ export default function RecipeDetailsPage() {
             <h1 className="details-heading">Recipe details</h1>
           </header>
 
-          {/* Photo banner */}
+          {/* Photo banner with integrated BookmarkButton */}
           <div className="details-image-banner">
+            <div className="banner-bookmark-btn">
+              <BookmarkButton
+                recipeId={recipe.id}
+                recipe={recipe}
+                variant="icon"
+                size="md"
+                showToast={true}
+              />
+            </div>
             {recipe.image ? (
               <img src={recipe.image} alt={recipe.title} className="details-cover-img" />
             ) : (
@@ -208,28 +194,29 @@ export default function RecipeDetailsPage() {
 
           {/* Bottom Action buttons */}
           <div className="details-action-bar">
-            {isAuthor ? (
-              <div className="author-actions-group">
-                <Link to={`/recipes/${recipe.id}/edit`} className="btn-edit-recipe-details">
-                  Edit Recipe
-                </Link>
-                <button
-                  type="button"
-                  className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
-                  onClick={handleSaveClick}
-                >
-                  {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
-                onClick={handleSaveClick}
-              >
-                {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
-              </button>
+            {isAuthor && (
+              <Link to={`/recipes/${recipe.id}/edit`} className="btn-edit-recipe-details">
+                Edit Recipe
+              </Link>
             )}
+
+            <BookmarkButton
+              recipeId={recipe.id}
+              recipe={recipe}
+              showLabel={true}
+              variant="button"
+              size="md"
+              showToast={true}
+            />
+
+            <button
+              type="button"
+              className="btn-organize-collection"
+              onClick={() => setIsSaveModalOpen(true)}
+              title="Assign recipe to a specific cookbook collection"
+            >
+              Organize in Collection
+            </button>
           </div>
         </div>
       </main>

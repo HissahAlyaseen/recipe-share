@@ -5,6 +5,7 @@
 export const STORAGE_KEYS = {
   RECIPES: 'recipe_share_recipes',
   SAVED_RECIPES: 'recipe_share_saved_recipes',
+  BOOKMARKS: 'recipe_share_bookmarks',
   COLLECTIONS: 'recipe_share_collections',
   CUSTOMIZATIONS: 'recipe_share_customizations',
   USER_PROFILES: 'recipe_share_user_profiles',

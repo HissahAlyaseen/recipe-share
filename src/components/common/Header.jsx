@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { recipeStorage } from '../../services/recipeStorage'
 import { cookbookStorage } from '../../services/cookbookStorage'
 import { profileStorage } from '../../services/profileStorage'
+import { bookmarkStorage } from '../../services/bookmarkStorage'
 import './Header.css'
 
 export default function Header() {
@@ -37,7 +38,8 @@ export default function Header() {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v9_user1_alex_sync')
+      bookmarkStorage.resetDefaults()
+      localStorage.setItem('recipe_share_storage_version', 'v10_bookmarks_sync')
       window.location.reload()
     } catch (err) {
       console.error('Failed to reset storage:', err)

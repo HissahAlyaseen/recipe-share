@@ -11,6 +11,7 @@ import RenameCookbookModal from '../components/cookbook/RenameCookbookModal'
 import DeleteCookbookModal from '../components/cookbook/DeleteCookbookModal'
 import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
 import AddRecipesToCollectionModal from '../components/cookbook/AddRecipesToCollectionModal'
+import BookmarkButton from '../components/common/BookmarkButton'
 import './CookbookPage.css'
 
 export default function CookbookPage() {
@@ -28,10 +29,10 @@ export default function CookbookPage() {
     if (typeof window !== 'undefined') {
       try {
         const currentVer = localStorage.getItem('recipe_share_storage_version')
-        if (currentVer !== 'v9_user1_alex_sync') {
+        if (currentVer !== 'v10_bookmarks_sync') {
           cookbookStorage.resetDefaults()
           recipeStorage.resetDefaults()
-          localStorage.setItem('recipe_share_storage_version', 'v9_user1_alex_sync')
+          localStorage.setItem('recipe_share_storage_version', 'v10_bookmarks_sync')
         }
       } catch (err) {
         console.error('Storage sync error:', err)
@@ -347,6 +348,16 @@ export default function CookbookPage() {
                   displayedRecipes.map((recipe) => (
                     <article key={recipe.id} className="recipe-list-card">
                       <div className="recipe-card-thumb">
+                        <div className="card-thumb-bookmark-btn">
+                          <BookmarkButton
+                            recipeId={recipe.id}
+                            recipe={recipe}
+                            variant="icon"
+                            size="sm"
+                            onToggle={refreshCookbook}
+                            showToast={true}
+                          />
+                        </div>
                         {recipe.image ? (
                           <img
                             src={recipe.image}
@@ -504,6 +515,16 @@ export default function CookbookPage() {
                     return (
                       <article key={recipe.id} className="recipe-list-card">
                         <div className="recipe-card-thumb">
+                          <div className="card-thumb-bookmark-btn">
+                            <BookmarkButton
+                              recipeId={recipe.id}
+                              recipe={recipe}
+                              variant="icon"
+                              size="sm"
+                              onToggle={refreshCookbook}
+                              showToast={true}
+                            />
+                          </div>
                           {recipe.image ? (
                             <img
                               src={recipe.image}
@@ -693,6 +714,16 @@ export default function CookbookPage() {
                       return (
                         <article key={recipe.id} className="recipe-list-card">
                           <div className="recipe-card-thumb">
+                            <div className="card-thumb-bookmark-btn">
+                              <BookmarkButton
+                                recipeId={recipe.id}
+                                recipe={recipe}
+                                variant="icon"
+                                size="sm"
+                                onToggle={refreshCookbook}
+                                showToast={true}
+                              />
+                            </div>
                             {recipe.image ? (
                               <img
                                 src={recipe.image}

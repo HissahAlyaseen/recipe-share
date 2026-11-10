@@ -1,5 +1,6 @@
 import { STORAGE_KEYS } from './storageKeys.js'
 import { recipeStorage } from './recipeStorage.js'
+import { bookmarkStorage } from './bookmarkStorage.js'
 
 export const DEFAULT_SAVED_MAP = {
   'user-1': [1, 2, 4, 5]
@@ -132,6 +133,8 @@ export const cookbookStorage = {
 
   getSavedRecipeIds(userId) {
     if (!userId) return []
+    const bmIds = bookmarkStorage.getUserBookmarkedRecipeIds(userId)
+    if (bmIds && bmIds.length > 0) return bmIds
     const map = getSavedMap()
     const ids = (map[String(userId)] || []).map((id) => Number(id)).filter((id) => !isNaN(id))
     // Clean up IDs that don't exist in recipes
@@ -140,14 +143,16 @@ export const cookbookStorage = {
 
   isRecipeSaved(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
-    const list = this.getSavedRecipeIds(userId)
-    return list.includes(Number(recipeId))
+    return bookmarkStorage.isBookmarked(userId, recipeId) || this.getSavedRecipeIds(userId).includes(Number(recipeId))
   },
 
   saveRecipe(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
     const numId = Number(recipeId)
     if (isNaN(numId)) return false
+
+    // Synchronize bookmark data model
+    bookmarkStorage.addBookmark(userId, numId)
 
     const map = getSavedMap()
     const uKey = String(userId)
@@ -161,6 +166,10 @@ export const cookbookStorage = {
   unsaveRecipe(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
     const numId = Number(recipeId)
+
+    // Synchronize bookmark removal
+    bookmarkStorage.removeBookmark(userId, numId)
+
     const map = getSavedMap()
     const uKey = String(userId)
     const list = (map[uKey] || []).filter((id) => Number(id) !== numId)
@@ -401,5 +410,6 @@ export const cookbookStorage = {
     persistSavedMap(DEFAULT_SAVED_MAP)
     persistCollectionsList(DEFAULT_COLLECTIONS)
     persistCustomizationsList(DEFAULT_CUSTOMIZATIONS)
+    bookmarkStorage.resetDefaults()
   }
 }
