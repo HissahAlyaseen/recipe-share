@@ -100,13 +100,13 @@ export default function BookmarkButton({
 
       // Notify parent callback if provided
       if (typeof onToggle === 'function') {
-        onToggle(result.isBookmarked, result.bookmark)
+        onToggle(result.isBookmarked, result.bookmark, result.message)
       }
 
-      // Display notification message
+      // Display notification message (success on save, info on remove)
       if (showToast) {
         setToast({
-          type: 'success',
+          type: result.isBookmarked ? 'success' : 'info',
           message: result.message
         })
       }

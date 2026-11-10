@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './Toast.css'
 
 export default function Toast({ message, type = 'success', onClose, duration = 4000 }) {
@@ -18,7 +19,7 @@ export default function Toast({ message, type = 'success', onClose, duration = 4
       ? message.replace(/^(\u2713|\u2714|✓|✔|ℹ️|⚠️|\s)+/, '').trim()
       : message
 
-  return (
+  const toastNode = (
     <div className={`toast-banner toast-${type}`} role="alert">
       <span className="toast-icon">
         {type === 'success' ? '✓' : type === 'error' ? '⚠️' : 'ℹ️'}
@@ -36,4 +37,10 @@ export default function Toast({ message, type = 'success', onClose, duration = 4
       )}
     </div>
   )
+
+  if (typeof document !== 'undefined' && document.body) {
+    return createPortal(toastNode, document.body)
+  }
+
+  return toastNode
 }

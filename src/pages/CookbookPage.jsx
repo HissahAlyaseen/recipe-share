@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { cookbookStorage } from '../services/cookbookStorage'
 import { recipeStorage } from '../services/recipeStorage'
@@ -15,7 +15,6 @@ import BookmarkButton from '../components/common/BookmarkButton'
 import './CookbookPage.css'
 
 export default function CookbookPage() {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const userId = user?.id || 'user-1'
@@ -42,6 +41,17 @@ export default function CookbookPage() {
   const refreshCookbook = () => {
     setCollections(cookbookStorage.getUserCollections(userId))
     setSavedRecipeIds(cookbookStorage.getSavedRecipeIds(userId))
+  }
+
+  // Keep toast visible even when unbookmarking removes the card from view
+  const handleBookmarkToggle = (isSaved, _bookmark, message) => {
+    refreshCookbook()
+    if (message) {
+      setToast({
+        type: isSaved ? 'success' : 'info',
+        message
+      })
+    }
   }
 
   // Active collection object if in collection view
@@ -340,8 +350,8 @@ export default function CookbookPage() {
                             recipe={recipe}
                             variant="icon"
                             size="sm"
-                            onToggle={refreshCookbook}
-                            showToast={true}
+                            onToggle={handleBookmarkToggle}
+                            showToast={false}
                           />
                         </div>
                         {recipe.image ? (
@@ -424,14 +434,10 @@ export default function CookbookPage() {
                 )}
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
 
@@ -507,8 +513,8 @@ export default function CookbookPage() {
                               recipe={recipe}
                               variant="icon"
                               size="sm"
-                              onToggle={refreshCookbook}
-                              showToast={true}
+                              onToggle={handleBookmarkToggle}
+                              showToast={false}
                             />
                           </div>
                           {recipe.image ? (
@@ -590,25 +596,17 @@ export default function CookbookPage() {
                         ? `No saved recipes match "${searchTerm}".`
                         : "You haven't saved any recipes to your cookbook yet."}
                     </p>
-                    <button
-                      type="button"
-                      className="btn-empty-action"
-                      onClick={() => navigate('/')}
-                    >
+                    <Link to="/recipes" className="btn-empty-action">
                       Browse community recipes
-                    </button>
+                    </Link>
                   </div>
                 )}
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
 
@@ -706,8 +704,8 @@ export default function CookbookPage() {
                                 recipe={recipe}
                                 variant="icon"
                                 size="sm"
-                                onToggle={refreshCookbook}
-                                showToast={true}
+                                onToggle={handleBookmarkToggle}
+                                showToast={false}
                               />
                             </div>
                             {recipe.image ? (
@@ -782,14 +780,10 @@ export default function CookbookPage() {
                 </p>
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
         </div>

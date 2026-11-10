@@ -544,7 +544,9 @@
 
 /* Find More Recipes Button (White with dark border) */
 .btn-find-more-white {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #111827;
   color: #111827;
@@ -555,6 +557,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
+  text-decoration: none;
 }
 
 .btn-find-more-white:hover {
@@ -590,6 +593,8 @@
 }
 
 .btn-empty-action {
+  display: inline-block;
+  box-sizing: border-box;
   background: #111827;
   color: #ffffff;
   border: none;
@@ -599,6 +604,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
+  text-decoration: none;
 }
 
 .btn-empty-action:hover {

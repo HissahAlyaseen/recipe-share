@@ -1,0 +1,130 @@
+.browse-recipes-wrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  color: #111827;
+}
+
+.browse-recipes-main {
+  flex: 1;
+  padding: 24px 16px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.browse-recipes-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.browse-recipes-wrapper .top-nav-link-row {
+  margin-bottom: 14px;
+}
+
+.browse-recipes-wrapper .back-link {
+  color: #4b5563;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.browse-recipes-wrapper .back-link:hover {
+  color: #111827;
+}
+
+.browse-header-block {
+  margin-bottom: 28px;
+}
+
+.browse-title {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #111827;
+}
+
+.browse-subtitle {
+  margin: 0;
+  font-size: 14.5px;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+.browse-section {
+  margin-bottom: 36px;
+}
+
+.browse-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.browse-section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.browse-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.browse-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.empty-browse-card {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 10px;
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-browse-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.empty-browse-desc {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.btn-browse-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #111827;
+  color: #ffffff;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-browse-cta:hover {
+  background: #27272a;
+}
+

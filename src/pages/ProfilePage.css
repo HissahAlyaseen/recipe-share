@@ -179,7 +179,9 @@
 }
 
 .btn-secondary-action {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #111827;
   color: #111827;
@@ -190,6 +192,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
+  text-decoration: none;
 }
 
 .btn-secondary-action:hover {

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { profileStorage } from '../services/profileStorage'
 import { recipeStorage } from '../services/recipeStorage'
@@ -27,7 +27,6 @@ const ALLERGEN_OPTIONS = [
 ]
 
 export default function ProfilePage() {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { user, updateUser } = useAuth()
   const userId = user?.id || 'user-1'
@@ -376,13 +375,9 @@ export default function ProfilePage() {
                   Back to profile
                 </button>
 
-                <button
-                  type="button"
-                  className="btn-secondary-action"
-                  onClick={() => navigate('/')}
-                >
+                <Link to="/recipes" className="btn-secondary-action">
                   Discover recipes
-                </button>
+                </Link>
               </div>
             </div>
           )}

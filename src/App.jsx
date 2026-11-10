@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import AddRecipePage from './pages/AddRecipePage'
+import BrowseRecipesPage from './pages/BrowseRecipesPage'
 import EditRecipePage from './pages/EditRecipePage'
 import MyRecipesPage from './pages/MyRecipesPage'
 import RecipeDetailsPage from './pages/RecipeDetailsPage'
@@ -71,6 +72,7 @@ function App() {
           <Route path="/" element={<Placeholder title="Home" />} />
 
           {/* Member 2 Routes (Recipe & Personal Management) */}
+          <Route path="/recipes" element={<BrowseRecipesPage />} />
           <Route path="/my-recipes" element={<MyRecipesPage />} />
           <Route path="/recipes/new" element={<AddRecipePage />} />
           <Route path="/add-recipe" element={<AddRecipePage />} />
