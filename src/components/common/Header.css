@@ -65,6 +65,7 @@
 }
 
 .header-user-section {
+  position: relative;
   display: flex;
   align-items: center;
 }
@@ -80,10 +81,15 @@
   border: 1px solid #e5e7eb;
   transition: all 0.15s ease;
   color: #111827;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: normal;
 }
 
-.profile-badge:hover,
-.profile-badge.active {
+.header-user-section:hover .profile-badge,
+.header-user-section.open .profile-badge,
+.profile-badge:hover {
   border-color: #111827;
   background: #e5e7eb;
 }
@@ -99,11 +105,168 @@
   justify-content: center;
   font-size: 13px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .profile-name {
   font-size: 13px;
   font-weight: 500;
+  color: #111827;
+}
+
+.profile-caret {
+  font-size: 11px;
+  color: #6b7280;
+  margin-left: -2px;
+  transition: transform 0.15s ease;
+}
+
+.header-user-section:hover .profile-caret,
+.header-user-section.open .profile-caret {
+  transform: rotate(180deg);
+}
+
+/* Invisible bridge to prevent mouseout when moving between badge and dropdown */
+.header-user-section::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  height: 10px;
+  display: none;
+}
+
+.header-user-section:hover::after,
+.header-user-section.open::after {
+  display: block;
+}
+
+/* Profile Dropdown Wrapper */
+.profile-dropdown-wrapper {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  padding: 12px;
+  z-index: 200;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  pointer-events: none;
+}
+
+.header-user-section:hover .profile-dropdown-wrapper,
+.header-user-section.open .profile-dropdown-wrapper {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* User Info Section */
+.dropdown-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px 10px;
+}
+
+.dropdown-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dropdown-user-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dropdown-user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.dropdown-user-email {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 6px 0;
+}
+
+/* Reset Action Button */
+.dropdown-actions {
+  padding-top: 2px;
+}
+
+.dropdown-reset-btn {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px dashed #d1d5db;
+  background: #f9fafb;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.dropdown-reset-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.reset-btn-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.reset-btn-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.reset-btn-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.reset-btn-subtitle {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 3px;
+  line-height: 1.3;
 }
 
 @media (max-width: 768px) {

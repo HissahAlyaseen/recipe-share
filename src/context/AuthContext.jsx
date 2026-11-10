@@ -4,7 +4,7 @@ import { STORAGE_KEYS } from '../services/storageKeys'
 
 /**
  * Isolated Auth Provider with fallback user for development.
- * Aligns with Figma wireframes ('Alex', 'alex@university.edu', id: 'user-1').
+ * Aligns with Figma wireframes ('Alex', 'user@kfupm.edu.sa', id: 'user-1').
  * When Member 1 provides the production authentication system,
  * this provider can be replaced with zero changes to Member 2's components.
  */
@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
       return {
         id: savedUserId || 'user-1',
         name: 'Alex',
-        email: 'alex@university.edu',
+        email: 'user@kfupm.edu.sa',
         username: 'alex_cooks',
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'
       }
@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
       return {
         id: 'user-1',
         name: 'Alex',
-        email: 'alex@university.edu',
+        email: 'user@kfupm.edu.sa',
         username: 'alex_cooks',
         avatar: ''
       }

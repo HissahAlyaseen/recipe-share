@@ -4,7 +4,7 @@ const DEFAULT_PROFILES = {
   'user-1': {
     id: 'user-1',
     name: 'Alex',
-    email: 'alex@university.edu',
+    email: 'user@kfupm.edu.sa',
     dietPreferences: ['Vegetarian', 'Gluten-free'],
     allergensToAvoid: ['Peanuts'],
     updatedAt: '2026-10-25T10:00:00.000Z'
@@ -41,7 +41,7 @@ export const profileStorage = {
       map[String(userId)] || {
         id: String(userId),
         name: 'Alex',
-        email: 'alex@university.edu',
+        email: 'user@kfupm.edu.sa',
         dietPreferences: [],
         allergensToAvoid: [],
         updatedAt: new Date().toISOString()
@@ -62,5 +62,10 @@ export const profileStorage = {
     map[String(userId)] = updated
     persistProfilesMap(map)
     return updated
+  },
+
+  resetDefaults() {
+    persistProfilesMap(DEFAULT_PROFILES)
+    return DEFAULT_PROFILES
   }
 }

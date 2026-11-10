@@ -57,21 +57,6 @@ export default function CookbookPage() {
     setSavedRecipeIds(cookbookStorage.getSavedRecipeIds(userId))
   }
 
-  const handleForceResetStorage = () => {
-    try {
-      cookbookStorage.resetDefaults()
-      recipeStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v5_figma_seed_sync')
-      refreshCookbook()
-      setToast({
-        type: 'success',
-        message: 'Storage reset successfully! Default Figma recipes and collections restored.'
-      })
-    } catch {
-      setToast({ type: 'error', message: 'Failed to reset storage.' })
-    }
-  }
-
   // Active collection object if in collection view
   const currentCollection = useMemo(() => {
     if (!activeColId) return null
@@ -431,22 +416,13 @@ export default function CookbookPage() {
                     <p className="empty-desc">
                       Add recipes from your other collections or save community recipes here.
                     </p>
-                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                      <button
-                        type="button"
-                        className="btn-empty-action"
-                        onClick={() => setIsAddRecipesModalOpen(true)}
-                      >
-                        + Add saved recipes
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-reset-storage-link"
-                        onClick={handleForceResetStorage}
-                      >
-                        🔄 Reset to Sample Data
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      className="btn-empty-action"
+                      onClick={() => setIsAddRecipesModalOpen(true)}
+                    >
+                      + Add saved recipes
+                    </button>
                   </div>
                 )}
               </div>
@@ -787,17 +763,6 @@ export default function CookbookPage() {
                 <p className="callout-text">
                   Deleting a collection never deletes its recipes. They remain in All saved recipes.
                 </p>
-              </div>
-
-              {/* Storage sync helper */}
-              <div className="storage-reset-helper-row">
-                <button
-                  type="button"
-                  className="btn-reset-storage-link"
-                  onClick={handleForceResetStorage}
-                >
-                  🔄 Reset Local Storage to Sample Data
-                </button>
               </div>
 
               {/* Bottom Action button */}
