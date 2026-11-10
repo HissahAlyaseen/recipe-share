@@ -23,19 +23,22 @@ export default function RecipeDetailsPage() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
   const [toast, setToast] = useState(null)
 
-  const handleConfirmSave = (recipeId, colId) => {
+  const handleConfirmSave = (recipeId, targetColIds) => {
+    const idList = Array.isArray(targetColIds)
+      ? targetColIds
+      : targetColIds
+        ? [targetColIds]
+        : []
     try {
-      if (colId) {
-        cookbookStorage.addRecipeToCollection(userId, colId, recipeId)
-      } else {
-        cookbookStorage.saveRecipe(userId, recipeId)
-      }
-      const targetCol = collections.find((c) => String(c.id) === String(colId))
+      const updatedCols = cookbookStorage.setRecipeCollections(userId, recipeId, idList)
+      setCollections(updatedCols)
+      const selectedCols = updatedCols.filter((c) => idList.includes(String(c.id)))
       setToast({
         type: 'success',
-        message: targetCol
-          ? `Saved to "${targetCol.name}" in your Cookbook!`
-          : `Saved "${recipe.title}" to your Cookbook!`
+        message:
+          selectedCols.length > 0
+            ? `Saved to "${selectedCols.map((c) => c.name).join(', ')}" in your Cookbook!`
+            : `Saved "${recipe.title}" to your Cookbook!`
       })
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to save recipe.' })
@@ -212,7 +215,10 @@ export default function RecipeDetailsPage() {
             <button
               type="button"
               className="btn-organize-collection"
-              onClick={() => setIsSaveModalOpen(true)}
+              onClick={() => {
+                setCollections(cookbookStorage.getUserCollections(userId))
+                setIsSaveModalOpen(true)
+              }}
               title="Assign recipe to a specific cookbook collection"
             >
               Organize in Collection

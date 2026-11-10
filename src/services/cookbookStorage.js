@@ -88,7 +88,7 @@ function getCollectionsList() {
       return DEFAULT_COLLECTIONS
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_COLLECTIONS
+    return Array.isArray(parsed) ? parsed : DEFAULT_COLLECTIONS
   } catch (err) {
     console.error('Failed to read collections from localStorage:', err)
     return DEFAULT_COLLECTIONS
@@ -334,6 +334,48 @@ export const cookbookStorage = {
     persistCollectionsList(list)
     syncBookmarkCollections(userId, numId, list)
     return col
+  },
+
+  setRecipeCollections(userId, recipeId, targetCollectionIds = []) {
+    if (!userId) throw new Error('User ID is required.')
+    const numId = Number(recipeId)
+    if (isNaN(numId)) throw new Error('Invalid recipe ID.')
+
+    const targetSet = new Set(
+      (Array.isArray(targetCollectionIds) ? targetCollectionIds : [targetCollectionIds])
+        .filter(Boolean)
+        .map(String)
+    )
+
+    const list = getCollectionsList()
+    const now = new Date().toISOString()
+    let modified = false
+
+    list.forEach((col) => {
+      if (String(col.userId) !== String(userId)) return
+      const currentIds = Array.isArray(col.recipeIds) ? col.recipeIds.map(Number) : []
+      const hasRecipe = currentIds.includes(numId)
+      const shouldHave = targetSet.has(String(col.id))
+
+      if (shouldHave && !hasRecipe) {
+        col.recipeIds = [...currentIds, numId]
+        col.updatedAt = now
+        modified = true
+      } else if (!shouldHave && hasRecipe) {
+        col.recipeIds = currentIds.filter((id) => id !== numId)
+        col.updatedAt = now
+        modified = true
+      }
+    })
+
+    if (modified) {
+      persistCollectionsList(list)
+    }
+
+    // Ensure the recipe stays saved in bookmarks & Personal Cookbook
+    this.saveRecipe(userId, numId)
+    syncBookmarkCollections(userId, numId, list)
+    return this.getUserCollections(userId)
   },
 
   isRecipeInCollection(userId, collectionId, recipeId) {

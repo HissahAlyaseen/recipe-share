@@ -10,15 +10,45 @@ export default function SaveToCookbookModal({
   onSave,
   onCreateCollection
 }) {
-  const [selectedColId, setSelectedColId] = useState(() => {
-    return collections.length > 0 ? collections[0].id : null
-  })
+  const getInitialColIds = () => {
+    if (!collections.length) return []
+    if (recipe) {
+      const matchingIds = collections
+        .filter((c) => c.recipeIds?.some((id) => Number(id) === Number(recipe.id)))
+        .map((c) => String(c.id))
+      if (matchingIds.length > 0) return matchingIds
+    }
+    return [String(collections[0].id)]
+  }
+
+  const [selectedColIds, setSelectedColIds] = useState(getInitialColIds)
+  const [prevModalKey, setPrevModalKey] = useState(`${Boolean(isOpen)}_${recipe?.id ?? 'none'}`)
   const [isCreatingNew, setIsCreatingNew] = useState(false)
   const [newColName, setNewColName] = useState('')
   const [newColDesc, setNewColDesc] = useState('')
   const [createError, setCreateError] = useState('')
 
+  // Reset selected cookbooks to match the recipe's current collections whenever modal opens or recipe changes
+  const currentModalKey = `${Boolean(isOpen)}_${recipe?.id ?? 'none'}`
+  if (prevModalKey !== currentModalKey) {
+    setPrevModalKey(currentModalKey)
+    if (isOpen && recipe) {
+      setSelectedColIds(getInitialColIds())
+      setIsCreatingNew(false)
+      setNewColName('')
+      setNewColDesc('')
+      setCreateError('')
+    }
+  }
+
   if (!recipe) return null
+
+  const handleToggleCol = (colId) => {
+    const idStr = String(colId)
+    setSelectedColIds((prev) =>
+      prev.includes(idStr) ? prev.filter((id) => id !== idStr) : [...prev, idStr]
+    )
+  }
 
   const handleClose = () => {
     setIsCreatingNew(false)
@@ -47,7 +77,9 @@ export default function SaveToCookbookModal({
 
     const created = onCreateCollection({ name: trimmed, description: newColDesc.trim() })
     if (created) {
-      setSelectedColId(created.id)
+      setSelectedColIds((prev) =>
+        prev.includes(String(created.id)) ? prev : [...prev, String(created.id)]
+      )
       setIsCreatingNew(false)
       setNewColName('')
       setNewColDesc('')
@@ -56,11 +88,11 @@ export default function SaveToCookbookModal({
   }
 
   const handleConfirmSave = () => {
-    onSave(recipe.id, selectedColId)
+    onSave(recipe.id, selectedColIds)
     handleClose()
   }
 
-  const selectedCol = collections.find((c) => String(c.id) === String(selectedColId))
+  const selectedCols = collections.filter((c) => selectedColIds.includes(String(c.id)))
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} maxWidth="480px" showCloseButton={false}>
@@ -96,12 +128,12 @@ export default function SaveToCookbookModal({
 
         {/* Choose a cookbook section */}
         <div className="choose-cookbook-section">
-          <h3 className="choose-cookbook-heading">Choose a cookbook</h3>
-          <p className="choose-cookbook-sub">Select one collection for this recipe.</p>
+          <h3 className="choose-cookbook-heading">Choose cookbooks</h3>
+          <p className="choose-cookbook-sub">Select one or more collections for this recipe.</p>
 
           <div className="collections-radio-list">
             {collections.map((col) => {
-              const isSelected = String(col.id) === String(selectedColId)
+              const isSelected = selectedColIds.includes(String(col.id))
               const count = col.recipeIds?.length || 0
               return (
                 <label
@@ -109,11 +141,11 @@ export default function SaveToCookbookModal({
                   className={`collection-radio-option ${isSelected ? 'selected' : ''}`}
                 >
                   <input
-                    type="radio"
+                    type="checkbox"
                     name="cookbook-collection"
                     value={col.id}
                     checked={isSelected}
-                    onChange={() => setSelectedColId(col.id)}
+                    onChange={() => handleToggleCol(col.id)}
                     className="radio-circle-input"
                   />
                   <div className="radio-option-info">
@@ -173,14 +205,16 @@ export default function SaveToCookbookModal({
             </form>
           )}
 
-          {selectedCol && (
-            <div className="selected-col-callout">
-              <p className="callout-strong">Selected: {selectedCol.name}</p>
-              <p className="callout-muted">
-                The recipe will be added to this cookbook. Your cookbooks are only visible to you.
-              </p>
-            </div>
-          )}
+          <div className="selected-col-callout">
+            <p className="callout-strong">
+              Selected: {selectedCols.length > 0 ? selectedCols.map((c) => c.name).join(', ') : 'None'}
+            </p>
+            <p className="callout-muted">
+              {selectedCols.length > 0
+                ? 'The recipe will be saved to your selected cookbook(s). Your cookbooks are only visible to you.'
+                : 'No collection selected. The recipe stays in All saved recipes.'}
+            </p>
+          </div>
         </div>
 
         <div className="cookbook-modal-actions">
@@ -189,7 +223,11 @@ export default function SaveToCookbookModal({
             className="btn-modal-primary"
             onClick={handleConfirmSave}
           >
-            {selectedCol ? `Save to ${selectedCol.name}` : 'Save to Cookbook'}
+            {selectedCols.length === 1
+              ? `Save to ${selectedCols[0].name}`
+              : selectedCols.length > 1
+                ? `Save to ${selectedCols.length} cookbooks`
+                : 'Save to Cookbook'}
           </button>
         </div>
       </div>

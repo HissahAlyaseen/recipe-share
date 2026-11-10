@@ -200,21 +200,23 @@ export default function CookbookPage() {
     }
   }
 
-  const handleAssignToCollection = (recipeId, targetColId) => {
+  const handleAssignToCollection = (recipeId, targetColIds) => {
     const recipe = recipeStorage.getById(recipeId)
-    const targetCol = collections.find((c) => String(c.id) === String(targetColId))
+    const idList = Array.isArray(targetColIds)
+      ? targetColIds
+      : targetColIds
+        ? [targetColIds]
+        : []
     try {
-      if (targetColId) {
-        cookbookStorage.addRecipeToCollection(userId, targetColId, recipeId)
-      } else {
-        cookbookStorage.saveRecipe(userId, recipeId)
-      }
+      const updatedCols = cookbookStorage.setRecipeCollections(userId, recipeId, idList)
+      const selectedCols = updatedCols.filter((c) => idList.includes(String(c.id)))
       refreshCookbook()
       setToast({
         type: 'success',
-        message: targetCol
-          ? `Added "${recipe?.title}" to ${targetCol.name}.`
-          : `Saved "${recipe?.title}" to your Cookbook.`
+        message:
+          selectedCols.length > 0
+            ? `Saved "${recipe?.title}" to ${selectedCols.map((c) => c.name).join(', ')}.`
+            : `Updated collections for "${recipe?.title}" (saved in All saved recipes).`
       })
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to save recipe.' })
@@ -706,7 +708,7 @@ export default function CookbookPage() {
                   {displayedRecipes.length > 0 ? (
                     displayedRecipes.map((recipe) => {
                       const colNames = getRecipeCollectionNames(recipe.id)
-                      const colLabel = colNames.length > 0 ? colNames[0] : 'Saved'
+                      const colLabel = colNames.length > 0 ? colNames.join(', ') : 'Saved'
                       return (
                         <article key={recipe.id} className="recipe-list-card">
                           <div className="recipe-card-thumb">
