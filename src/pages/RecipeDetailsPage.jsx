@@ -17,8 +17,8 @@ export default function RecipeDetailsPage() {
 
   const userId = user?.id || 'user-1'
 
-  // Initialize recipe directly from storage synchronously
-  const [recipe] = useState(() => recipeStorage.getById(id))
+  // Read recipe dynamically from storage whenever :id route param changes
+  const recipe = recipeStorage.getById(id)
   const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
   const [toast, setToast] = useState(null)

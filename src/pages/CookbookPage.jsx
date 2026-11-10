@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { cookbookStorage } from '../services/cookbookStorage'
+import { bookmarkStorage } from '../services/bookmarkStorage'
 import { recipeStorage } from '../services/recipeStorage'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
@@ -26,6 +27,7 @@ export default function CookbookPage() {
   // Local state initialized from storage
   const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
   const [savedRecipeIds, setSavedRecipeIds] = useState(() => cookbookStorage.getSavedRecipeIds(userId))
+  const [bookmarks, setBookmarks] = useState(() => bookmarkStorage.getUserBookmarks(userId))
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'title' | 'time'
   const [searchTerm, setSearchTerm] = useState('')
   const [toast, setToast] = useState(null)
@@ -41,6 +43,7 @@ export default function CookbookPage() {
   const refreshCookbook = () => {
     setCollections(cookbookStorage.getUserCollections(userId))
     setSavedRecipeIds(cookbookStorage.getSavedRecipeIds(userId))
+    setBookmarks(bookmarkStorage.getUserBookmarks(userId))
   }
 
   // Keep toast visible even when unbookmarking removes the card from view
@@ -69,17 +72,19 @@ export default function CookbookPage() {
 
   // Recipes currently shown (Overview, Collection, or All Saved)
   const displayedRecipes = useMemo(() => {
+    const savedAtById = new Map()
+    bookmarks.forEach((bm) => {
+      savedAtById.set(Number(bm.recipeId), Date.parse(bm.createdAt || '') || 0)
+    })
+
     let list
     if (currentCollection) {
       // Show recipes in current collection
       list = (currentCollection.recipeIds || [])
         .map((id) => recipeStorage.getById(id))
         .filter(Boolean)
-    } else if (viewMode === 'all') {
-      list = allSavedRecipes
     } else {
-      // Overview: recently saved recipes (up to 4)
-      list = allSavedRecipes.slice(0, 4)
+      list = [...allSavedRecipes]
     }
 
     // Apply search filter if present
@@ -93,17 +98,24 @@ export default function CookbookPage() {
       )
     }
 
-    // Apply sorting
-    return list.sort((a, b) => {
+    // Apply sorting before overview slice so newly saved recipes appear first
+    const sorted = [...list].sort((a, b) => {
       if (sortBy === 'title') {
         return a.title.localeCompare(b.title)
       }
       if (sortBy === 'time') {
         return (Number(a.cookingTime) || 0) - (Number(b.cookingTime) || 0)
       }
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      const aTime = savedAtById.get(Number(a.id)) ?? (Date.parse(a.createdAt || '') || 0)
+      const bTime = savedAtById.get(Number(b.id)) ?? (Date.parse(b.createdAt || '') || 0)
+      return bTime - aTime
     })
-  }, [currentCollection, viewMode, allSavedRecipes, searchTerm, sortBy])
+
+    if (!currentCollection && viewMode !== 'all') {
+      return sorted.slice(0, 4)
+    }
+    return sorted
+  }, [currentCollection, viewMode, allSavedRecipes, bookmarks, searchTerm, sortBy])
 
   // Map helper to find which collection(s) a recipe belongs to
   const getRecipeCollectionNames = (recipeId) => {
