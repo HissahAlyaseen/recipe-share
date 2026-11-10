@@ -99,7 +99,11 @@ export default function MyRecipesPage() {
           <header className="page-heading-block">
             <h1 className="page-title">My recipes</h1>
             <p className="page-subtitle">
-              Recipes you created. Saved recipes by other cooks are in My Cookbooks.
+              Recipes you created. Saved recipes by other cooks are in{' '}
+              <Link to="/cookbook" style={{ color: '#111827', textDecoration: 'underline', fontWeight: 600 }}>
+                My Cookbooks
+              </Link>
+              .
             </p>
           </header>
 

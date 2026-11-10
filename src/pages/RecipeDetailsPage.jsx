@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
 import Toast from '../components/common/Toast'
+import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
 import './RecipeDetailsPage.css'
 
 export default function RecipeDetailsPage() {
@@ -13,23 +14,65 @@ export default function RecipeDetailsPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
 
+  const userId = user?.id || 'user-1'
+
   // Initialize recipe directly from storage synchronously
   const [recipe] = useState(() => recipeStorage.getById(id))
+  const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
   const [isSaved, setIsSaved] = useState(() => {
     const found = recipeStorage.getById(id)
-    return found && user?.id ? cookbookStorage.isRecipeSaved(user.id, found.id) : false
+    return found ? cookbookStorage.isRecipeSaved(userId, found.id) : false
   })
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false)
   const [toast, setToast] = useState(null)
 
-  const handleToggleSave = () => {
-    if (!recipe || !user?.id) return
-    const newState = cookbookStorage.toggleSave(user.id, recipe.id)
-    setIsSaved(newState)
+  const handleSaveClick = () => {
+    if (!recipe) return
+    if (isSaved) {
+      handleUnsave()
+    } else {
+      setIsSaveModalOpen(true)
+    }
+  }
+
+  const handleConfirmSave = (recipeId, colId) => {
+    try {
+      if (colId) {
+        cookbookStorage.addRecipeToCollection(userId, colId, recipeId)
+      } else {
+        cookbookStorage.saveRecipe(userId, recipeId)
+      }
+      setIsSaved(true)
+      const targetCol = collections.find((c) => String(c.id) === String(colId))
+      setToast({
+        type: 'success',
+        message: targetCol
+          ? `Saved to "${targetCol.name}" in your Cookbook!`
+          : `Saved "${recipe.title}" to your Cookbook!`
+      })
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Failed to save recipe.' })
+    }
+  }
+
+  const handleCreateCollection = ({ name, description }) => {
+    try {
+      const created = cookbookStorage.createCollection(userId, { name, description })
+      setCollections(cookbookStorage.getUserCollections(userId))
+      return created
+    } catch (err) {
+      setToast({ type: 'error', message: err.message || 'Failed to create collection.' })
+      return null
+    }
+  }
+
+  const handleUnsave = () => {
+    if (!recipe) return
+    cookbookStorage.unsaveRecipe(userId, recipe.id)
+    setIsSaved(false)
     setToast({
       type: 'success',
-      message: newState
-        ? `Added "${recipe.title}" to your Cookbook!`
-        : `Removed "${recipe.title}" from your Cookbook.`
+      message: `Removed "${recipe.title}" from your Cookbook.`
     })
   }
 
@@ -173,7 +216,7 @@ export default function RecipeDetailsPage() {
                 <button
                   type="button"
                   className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
-                  onClick={handleToggleSave}
+                  onClick={handleSaveClick}
                 >
                   {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
                 </button>
@@ -182,7 +225,7 @@ export default function RecipeDetailsPage() {
               <button
                 type="button"
                 className={`btn-save-cookbook ${isSaved ? 'saved' : ''}`}
-                onClick={handleToggleSave}
+                onClick={handleSaveClick}
               >
                 {isSaved ? '✓ Saved in Cookbook' : 'Save to Cookbook'}
               </button>
@@ -190,6 +233,16 @@ export default function RecipeDetailsPage() {
           </div>
         </div>
       </main>
+
+      {/* Save to Cookbook Modal matching Figma */}
+      <SaveToCookbookModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        recipe={recipe}
+        collections={collections}
+        onSave={handleConfirmSave}
+        onCreateCollection={handleCreateCollection}
+      />
 
       {toast && (
         <Toast

@@ -1,0 +1,599 @@
+/* Personal Cookbook Page Styling matching Figma Personal Cookbook.jpg */
+
+.cookbook-page-wrapper {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  color: #111827;
+}
+
+.cookbook-main {
+  flex: 1;
+  padding: 24px 16px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.cookbook-container {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Back Link */
+.top-nav-link-row {
+  margin-bottom: 16px;
+}
+
+.back-link-btn {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.back-link-btn:hover {
+  color: #111827;
+}
+
+/* Page Header Block */
+.page-heading-block {
+  margin-bottom: 20px;
+}
+
+.page-title {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.6px;
+  line-height: 1.15;
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
+.page-meta-line {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: #6b7280;
+}
+
+.collection-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.collection-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.btn-edit-col-text {
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.btn-edit-col-text:hover {
+  color: #000000;
+}
+
+.btn-edit-col-text.delete {
+  color: #dc2626;
+}
+
+.btn-edit-col-text.delete:hover {
+  color: #b91c1c;
+}
+
+.collection-description-text {
+  margin: 12px 0 0;
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.45;
+}
+
+/* Primary Create Cookbook Button */
+.btn-create-cookbook-primary {
+  width: 100%;
+  background: #111827;
+  border: 1px solid #111827;
+  color: #ffffff;
+  padding: 13px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.btn-create-cookbook-primary:hover {
+  background: #27272a;
+}
+
+/* Sections */
+.collections-section {
+  margin-bottom: 28px;
+}
+
+.section-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.collections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Collection Summary Card */
+.collection-summary-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.collection-summary-card:hover {
+  border-color: #d1d5db;
+}
+
+.col-card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.col-card-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.btn-open-col {
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.btn-open-col:hover {
+  text-decoration: underline;
+}
+
+.col-card-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.col-card-count {
+  color: #6b7280;
+}
+
+.col-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.col-action-btn {
+  background: transparent;
+  border: none;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.col-action-btn:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.col-action-btn.delete {
+  color: #4b5563;
+}
+
+.col-action-btn.delete:hover {
+  color: #dc2626;
+}
+
+/* Recently Saved Header */
+.recently-saved-section {
+  margin-bottom: 24px;
+}
+
+.recently-saved-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.btn-view-all-saved {
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.btn-view-all-saved:hover {
+  text-decoration: underline;
+}
+
+/* Results header & sort */
+.results-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.results-count {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sort-label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sort-select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+  cursor: pointer;
+  padding: 4px 6px;
+  outline: none;
+}
+
+/* Search Box */
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.search-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+  height: 44px;
+  padding: 0 4px 0 12px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #111827;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.btn-search {
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* Recipes List Grid */
+.recipes-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Recipe Card matching Figma My Recipes / Cookbook */
+.recipe-list-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: border-color 0.15s ease;
+}
+
+.recipe-list-card:hover {
+  border-color: #d1d5db;
+}
+
+.recipe-card-thumb {
+  width: 88px;
+  height: 88px;
+  border-radius: 6px;
+  background: #f3f4f6;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f9fafb;
+}
+
+.thumb-icon-rect {
+  width: 28px;
+  height: 20px;
+  border: 1.5px solid #9ca3af;
+  border-radius: 3px;
+}
+
+.thumb-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.recipe-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recipe-card-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.recipe-card-meta {
+  font-size: 12.5px;
+  color: #6b7280;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-sep {
+  color: #9ca3af;
+}
+
+.card-dietary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.card-chip {
+  font-size: 11px;
+  font-weight: 500;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.collection-chip {
+  background: #f3f4f6;
+  color: #111827;
+  font-weight: 500;
+}
+
+.recipe-card-author {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 1px;
+}
+
+.recipe-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.action-link {
+  color: #111827;
+  text-decoration: underline;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.action-link-btn {
+  background: transparent;
+  border: none;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.action-link-btn.delete-action {
+  color: #4b5563;
+}
+
+.action-link-btn.delete-action:hover {
+  color: #dc2626;
+}
+
+.action-sep {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+/* Info Callout Box matching Figma */
+.cookbook-info-callout {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 16px 0 20px;
+}
+
+.callout-text {
+  margin: 0;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.45;
+}
+
+/* Find More Recipes Button (White with dark border) */
+.btn-find-more-white {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #111827;
+  color: #111827;
+  padding: 13px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.btn-find-more-white:hover {
+  background: #f9fafb;
+}
+
+/* Empty State Card */
+.empty-cookbook-card {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 32px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.empty-desc {
+  margin: 0 0 8px;
+  font-size: 13.5px;
+  color: #6b7280;
+  max-width: 360px;
+  line-height: 1.4;
+}
+
+.btn-empty-action {
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-empty-action:hover {
+  background: #27272a;
+}
+
