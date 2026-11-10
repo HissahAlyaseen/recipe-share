@@ -27,6 +27,12 @@ export default function Header() {
           >
             My Recipes
           </NavLink>
+          <NavLink
+            to="/cookbook"
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Cookbooks
+          </NavLink>
         </nav>
 
         <div className="header-user-section">
