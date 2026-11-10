@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from '../../services/storageKeys'
 import { recipeStorage } from '../../services/recipeStorage'
 import { cookbookStorage } from '../../services/cookbookStorage'
 import { profileStorage } from '../../services/profileStorage'
@@ -39,7 +40,7 @@ export default function Header() {
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
       bookmarkStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v10_bookmarks_sync')
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
       window.location.reload()
     } catch (err) {
       console.error('Failed to reset storage:', err)

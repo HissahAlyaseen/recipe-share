@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from '../services/storageKeys'
 import { cookbookStorage } from '../services/cookbookStorage'
 import { recipeStorage } from '../services/recipeStorage'
 import Header from '../components/common/Header'
@@ -28,11 +29,11 @@ export default function CookbookPage() {
   const [collections, setCollections] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
-        const currentVer = localStorage.getItem('recipe_share_storage_version')
-        if (currentVer !== 'v10_bookmarks_sync') {
+        const currentVer = localStorage.getItem(STORAGE_KEYS.STORAGE_VERSION)
+        if (currentVer !== STORAGE_SYNC_VERSION) {
           cookbookStorage.resetDefaults()
           recipeStorage.resetDefaults()
-          localStorage.setItem('recipe_share_storage_version', 'v10_bookmarks_sync')
+          localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
         }
       } catch (err) {
         console.error('Storage sync error:', err)

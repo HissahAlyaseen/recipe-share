@@ -58,9 +58,14 @@ function getStoredBookmarks() {
   }
 }
 
+export const BOOKMARKS_UPDATED_EVENT = 'recipe-share:bookmarks-updated'
+
 function persistBookmarks(list) {
   try {
     localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(list))
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent(BOOKMARKS_UPDATED_EVENT))
+    }
   } catch (err) {
     console.error('Failed to persist bookmarks to localStorage:', err)
   }

@@ -9,23 +9,21 @@ import CustomizeRecipePage from './pages/CustomizeRecipePage'
 import ProfilePage from './pages/ProfilePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
+import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from './services/storageKeys'
 import { recipeStorage } from './services/recipeStorage'
 import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
 import { bookmarkStorage } from './services/bookmarkStorage'
 
-// Versioned sync to auto-reset stale or orphaned localStorage keys from previous runs
-const STORAGE_SYNC_VERSION = 'v10_bookmarks_sync'
-
 if (typeof window !== 'undefined') {
   try {
-    const currentVer = localStorage.getItem('recipe_share_storage_version')
+    const currentVer = localStorage.getItem(STORAGE_KEYS.STORAGE_VERSION)
     if (currentVer !== STORAGE_SYNC_VERSION) {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
       bookmarkStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
     }
   } catch (err) {
     console.error('Storage version sync failed:', err)
@@ -39,7 +37,7 @@ if (typeof window !== 'undefined') {
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
       bookmarkStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
       window.location.reload()
     } catch (err) {
       console.error('Manual reset failed:', err)

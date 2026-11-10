@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../hooks/useAuth'
-import { bookmarkStorage } from '../../services/bookmarkStorage'
+import { bookmarkStorage, BOOKMARKS_UPDATED_EVENT } from '../../services/bookmarkStorage'
+import { cookbookStorage } from '../../services/cookbookStorage'
 import { recipeStorage } from '../../services/recipeStorage'
 import Toast from './Toast'
 import './BookmarkButton.css'
@@ -39,29 +40,62 @@ export default function BookmarkButton({
   showToast = true,
   className = ''
 }) {
-  const { user } = useAuth()
-  const userId = user?.id || 'user-1'
+  const { user, isAuthenticated } = useAuth()
+  const activeUserId = isAuthenticated === false ? null : user?.id || null
   const numericId = Number(recipeId)
 
   // Initialize bookmark status synchronously from localStorage
   const [isSaved, setIsSaved] = useState(() => {
-    return bookmarkStorage.isBookmarked(userId, numericId)
+    return activeUserId ? bookmarkStorage.isBookmarked(activeUserId, numericId) : false
   })
-  const [prevKey, setPrevKey] = useState(`${userId}_${numericId}`)
+  const [prevKey, setPrevKey] = useState(`${activeUserId || 'guest'}_${numericId}`)
   const [toast, setToast] = useState(null)
 
   // Synchronize state when recipeId or user changes without cascading effect renders
-  if (prevKey !== `${userId}_${numericId}`) {
-    setPrevKey(`${userId}_${numericId}`)
-    setIsSaved(bookmarkStorage.isBookmarked(userId, numericId))
+  const currentKey = `${activeUserId || 'guest'}_${numericId}`
+  if (prevKey !== currentKey) {
+    setPrevKey(currentKey)
+    setIsSaved(activeUserId ? bookmarkStorage.isBookmarked(activeUserId, numericId) : false)
   }
+
+  // Subscribe to external bookmark updates so multiple BookmarkButtons stay in sync
+  useEffect(() => {
+    const syncBookmarkState = () => {
+      setIsSaved(activeUserId ? bookmarkStorage.isBookmarked(activeUserId, numericId) : false)
+    }
+
+    window.addEventListener(BOOKMARKS_UPDATED_EVENT, syncBookmarkState)
+    window.addEventListener('storage', syncBookmarkState)
+    return () => {
+      window.removeEventListener(BOOKMARKS_UPDATED_EVENT, syncBookmarkState)
+      window.removeEventListener('storage', syncBookmarkState)
+    }
+  }, [activeUserId, numericId])
 
   const handleToggle = (e) => {
     e.preventDefault()
     e.stopPropagation() // Prevent triggering card links
 
+    if (!activeUserId) {
+      if (showToast) {
+        setToast({
+          type: 'error',
+          message: 'Please sign in to save recipes to your Personal Cookbook.'
+        })
+      }
+      return
+    }
+
     try {
-      const result = bookmarkStorage.toggleBookmark(userId, numericId)
+      const result = bookmarkStorage.toggleBookmark(activeUserId, numericId)
+
+      // Keep Personal Cookbook collections and saved list aligned with bookmark state
+      if (result.isBookmarked) {
+        cookbookStorage.saveRecipe(activeUserId, numericId)
+      } else {
+        cookbookStorage.unsaveRecipe(activeUserId, numericId)
+      }
+
       setIsSaved(result.isBookmarked)
 
       // Notify parent callback if provided
