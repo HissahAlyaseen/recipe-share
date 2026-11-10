@@ -284,7 +284,7 @@ export default function AddRecipePage() {
           <header className="page-heading-block">
             <h1 className="page-title">Add recipe</h1>
             <p className="page-subtitle">
-              Shared by {user?.name || 'Alex'} · <span className="req-star">*</span> Required fields
+              Shared by {user?.name || ''} · <span className="req-star">*</span> Required fields
             </p>
           </header>
 

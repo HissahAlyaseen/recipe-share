@@ -2,7 +2,7 @@
  * LocalStorage keys used throughout the application.
  * Centralized here to avoid key collision and make backend transition straightforward.
  */
-export const STORAGE_SYNC_VERSION = 'v11_bookmarks_sync'
+export const STORAGE_SYNC_VERSION = 'v12_other_users_recipes'
 
 export const STORAGE_KEYS = {
   RECIPES: 'recipe_share_recipes',

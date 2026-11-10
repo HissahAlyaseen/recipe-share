@@ -92,7 +92,7 @@ export default function Header() {
             <span className="profile-avatar">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
             </span>
-            <span className="profile-name">{user?.name || 'Alex'}</span>
+            <span className="profile-name">{user?.name || 'User'}</span>
             <span className="profile-caret">▾</span>
           </button>
 
@@ -108,8 +108,8 @@ export default function Header() {
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
               </div>
               <div className="dropdown-user-text">
-                <span className="dropdown-user-name">{user?.name || 'Alex'}</span>
-                <span className="dropdown-user-email">{user?.email || 'alex@university.edu'}</span>
+                <span className="dropdown-user-name">{user?.name || 'User'}</span>
+                <span className="dropdown-user-email">{user?.email || 'user@university.edu'}</span>
               </div>
             </Link>
 

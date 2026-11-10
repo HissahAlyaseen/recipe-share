@@ -217,7 +217,7 @@ export default function MyRecipesPage() {
                     )}
 
                     <div className="recipe-card-author">
-                      Created by {recipe.authorName || user?.name || 'Alex'}
+                      Created by {recipe.authorName || user?.name || ''}
                     </div>
 
                     <div className="recipe-card-actions">

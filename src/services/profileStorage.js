@@ -3,8 +3,8 @@ import { STORAGE_KEYS } from './storageKeys.js'
 const DEFAULT_PROFILES = {
   'user-1': {
     id: 'user-1',
-    name: 'Alex',
-    email: 'user@kfupm.edu.sa',
+    name: 'Amal',
+    email: 'amal@kfupm.edu.sa',
     dietPreferences: ['Vegetarian', 'Gluten-free'],
     allergensToAvoid: ['Peanuts'],
     updatedAt: '2026-10-25T10:00:00.000Z'
@@ -40,8 +40,8 @@ export const profileStorage = {
     return (
       map[String(userId)] || {
         id: String(userId),
-        name: 'Alex',
-        email: 'user@kfupm.edu.sa',
+        name: 'Amal',
+        email: 'amal@kfupm.edu.sa',
         dietPreferences: [],
         allergensToAvoid: [],
         updatedAt: new Date().toISOString()

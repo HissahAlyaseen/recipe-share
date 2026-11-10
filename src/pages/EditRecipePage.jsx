@@ -339,7 +339,7 @@ export default function EditRecipePage() {
           <header className="page-heading-block">
             <h1 className="page-title">Edit Recipe</h1>
             <p className="page-subtitle">
-              Shared by {user?.name || 'Alex'} · <span className="req-star">*</span> Required fields
+              Shared by {user?.name || ''} · <span className="req-star">*</span> Required fields
             </p>
           </header>
 

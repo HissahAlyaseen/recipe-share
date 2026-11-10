@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from '../services/storageKeys'
 import { cookbookStorage } from '../services/cookbookStorage'
 import { recipeStorage } from '../services/recipeStorage'
 import Header from '../components/common/Header'
@@ -25,22 +24,8 @@ export default function CookbookPage() {
   const activeColId = searchParams.get('collection')
   const viewMode = searchParams.get('view') // 'all' or null
 
-  // Local state initialized with auto-sync check to prevent stale data
-  const [collections, setCollections] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const currentVer = localStorage.getItem(STORAGE_KEYS.STORAGE_VERSION)
-        if (currentVer !== STORAGE_SYNC_VERSION) {
-          cookbookStorage.resetDefaults()
-          recipeStorage.resetDefaults()
-          localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
-        }
-      } catch (err) {
-        console.error('Storage sync error:', err)
-      }
-    }
-    return cookbookStorage.getUserCollections(userId)
-  })
+  // Local state initialized from storage
+  const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
   const [savedRecipeIds, setSavedRecipeIds] = useState(() => cookbookStorage.getSavedRecipeIds(userId))
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'title' | 'time'
   const [searchTerm, setSearchTerm] = useState('')

@@ -37,8 +37,8 @@ export default function ProfilePage() {
 
   // Profile data from storage
   const [profile, setProfile] = useState(() => profileStorage.getProfile(userId))
-  const [name, setName] = useState(profile?.name || user?.name || 'Alex')
-  const [email, setEmail] = useState(profile?.email || user?.email || 'alex@university.edu')
+  const [name, setName] = useState(profile?.name || user?.name || '')
+  const [email, setEmail] = useState(profile?.email || user?.email || '')
 
   // Preferences form state
   const [selectedDiets, setSelectedDiets] = useState(profile?.dietPreferences || ['Vegetarian', 'Gluten-free'])
@@ -135,7 +135,7 @@ export default function ProfilePage() {
             <div className="profile-view-card">
               <header className="profile-header-block">
                 <h1 className="profile-top-title">My profile</h1>
-                <h2 className="profile-greeting">Hi, {profile.name || 'Alex'}</h2>
+                <h2 className="profile-greeting">Hi, {profile.name || ''}</h2>
                 <p className="profile-subtitle">Manage your account and recipe preferences.</p>
               </header>
 
@@ -153,7 +153,7 @@ export default function ProfilePage() {
                       className="form-input"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Alex"
+                      placeholder="Your name"
                       required
                     />
                   </div>
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                       className="form-input"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="alex@university.edu"
+                      placeholder="email@university.edu"
                       required
                     />
                   </div>
