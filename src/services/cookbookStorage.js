@@ -2,7 +2,7 @@ import { STORAGE_KEYS } from './storageKeys.js'
 import { recipeStorage } from './recipeStorage.js'
 
 export const DEFAULT_SAVED_MAP = {
-  'user-1': [1, 2, 5]
+  'user-1': [1, 2, 4, 5]
 }
 
 export const DEFAULT_COLLECTIONS = [
@@ -12,7 +12,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Weeknight dinners',
     description: 'Simple favorites for busy evenings.',
     icon: '🍲',
-    recipeIds: [1, 5],
+    recipeIds: [1, 4, 5],
     createdAt: '2026-10-16T10:00:00.000Z',
     updatedAt: '2026-10-16T10:00:00.000Z'
   },
@@ -32,7 +32,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Recipes to try',
     description: 'Exciting new recipes bookmarked to cook this month.',
     icon: '✨',
-    recipeIds: [1, 2, 5],
+    recipeIds: [1, 2, 3],
     createdAt: '2026-10-22T08:00:00.000Z',
     updatedAt: '2026-10-22T08:00:00.000Z'
   }

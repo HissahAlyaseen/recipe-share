@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { recipeStorage } from '../../services/recipeStorage'
 import { cookbookStorage } from '../../services/cookbookStorage'
@@ -37,7 +37,7 @@ export default function Header() {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v7_5_recipes_sync')
+      localStorage.setItem('recipe_share_storage_version', 'v9_user1_alex_sync')
       window.location.reload()
     } catch (err) {
       console.error('Failed to reset storage:', err)
@@ -95,15 +95,20 @@ export default function Header() {
 
           {/* Profile Dropdown Wrapper */}
           <div className="profile-dropdown-wrapper" role="menu">
-            <div className="dropdown-user-info">
+            <Link
+              to="/profile"
+              className="dropdown-user-info"
+              onClick={() => setIsOpen(false)}
+              title="View profile and dietary preferences"
+            >
               <div className="dropdown-user-avatar">
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
               </div>
               <div className="dropdown-user-text">
                 <span className="dropdown-user-name">{user?.name || 'Alex'}</span>
-                <span className="dropdown-user-email">{user?.email || 'user@kfupm.edu.sa'}</span>
+                <span className="dropdown-user-email">{user?.email || 'alex@university.edu'}</span>
               </div>
-            </div>
+            </Link>
 
             <div className="dropdown-divider" />
 

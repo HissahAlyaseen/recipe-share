@@ -19,8 +19,8 @@ export const recipes = [
       "Toss drained pasta directly into the sauce with fresh basil."
     ],
     status: "Published",
-    authorId: "user-2",
-    authorName: "Chef Omar",
+    authorId: "user-1",
+    authorName: "Alex",
     createdAt: "2026-10-15T10:00:00.000Z",
     updatedAt: "2026-10-15T10:00:00.000Z"
   },
@@ -44,8 +44,8 @@ export const recipes = [
       "Toss all ingredients together with the dressing and serve fresh."
     ],
     status: "Published",
-    authorId: "user-3",
-    authorName: "Sarah Jenkins",
+    authorId: "user-1",
+    authorName: "Alex",
     createdAt: "2026-10-18T12:00:00.000Z",
     updatedAt: "2026-10-18T12:00:00.000Z"
   },
@@ -119,8 +119,8 @@ export const recipes = [
       "Top with crumbled feta cheese and serve fresh."
     ],
     status: "Published",
-    authorId: "user-4",
-    authorName: "Maya Chen",
+    authorId: "user-1",
+    authorName: "Alex",
     createdAt: "2026-10-29T14:00:00.000Z",
     updatedAt: "2026-10-29T14:00:00.000Z"
   }

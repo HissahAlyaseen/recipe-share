@@ -14,7 +14,7 @@ import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
 
 // Versioned sync to auto-reset stale or orphaned localStorage keys from previous runs
-const STORAGE_SYNC_VERSION = 'v7_5_recipes_sync'
+const STORAGE_SYNC_VERSION = 'v9_user1_alex_sync'
 
 if (typeof window !== 'undefined') {
   try {
