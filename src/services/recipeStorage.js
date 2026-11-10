@@ -1,22 +1,124 @@
 import { STORAGE_KEYS } from './storageKeys.js'
 
 /**
- * Enhanced seed data combining the original starter recipes
- * with author metadata, instructions, and additional mock recipes.
+ * Seed data matching the Figma wireframes (Alex's recipes, Maya Chen's saved recipes, etc.)
  */
-const DEFAULT_RECIPES = [
+export const DEFAULT_RECIPES = [
   {
     id: 1,
-    title: 'Vegetable Pasta',
-    description: 'A vibrant and healthy Mediterranean pasta tossed with cherry tomatoes, basil, and extra virgin olive oil.',
+    title: 'Spinach & White Bean Skillet',
+    description: 'A comforting weeknight skillet with tender white beans, wilted baby spinach, garlic, and a squeeze of fresh lemon.',
     category: 'Dinner',
-    ingredients: ['250g Whole Wheat Pasta', '200g Cherry Tomatoes', '3 tbsp Extra Virgin Olive Oil', '2 cloves Garlic, minced', 'Fresh Basil leaves', 'Salt and Black Pepper to taste'],
+    cuisine: 'Mediterranean',
+    ingredients: [
+      '1 can (400g) Cannellini Beans, rinsed',
+      '150g Fresh Baby Spinach',
+      '2 tbsp Extra Virgin Olive Oil',
+      '3 cloves Garlic, sliced',
+      '1/2 Lemon, juiced',
+      'Sea salt and cracked black pepper'
+    ],
     instructions: [
-      'Boil pasta in salted water until al dente according to package instructions.',
-      'Heat olive oil in a skillet over medium heat. Sauté minced garlic until fragrant.',
-      'Add halved cherry tomatoes and cook until soft and juicy.',
-      'Drain the pasta and toss with the tomato mixture.',
-      'Garnish with fresh basil leaves, cracked black pepper, and serve warm.'
+      'Heat olive oil in a wide skillet over medium heat. Sauté sliced garlic for 1 minute until fragrant.',
+      'Add rinsed cannellini beans and a pinch of salt. Cook gently for 3-4 minutes.',
+      'Add fresh baby spinach in handfuls, tossing until wilted.',
+      'Finish with fresh lemon juice, black pepper, and serve warm with crusty bread.'
+    ],
+    dietaryTags: ['Vegetarian', 'Gluten-free'],
+    cookingTime: 20,
+    prepTime: 5,
+    servings: 2,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-1',
+    authorName: 'Alex',
+    createdAt: '2026-11-01T10:00:00.000Z',
+    updatedAt: '2026-11-01T10:00:00.000Z'
+  },
+  {
+    id: 2,
+    title: 'Crispy Potato & Herb Salad',
+    description: 'Golden roasted baby potatoes tossed with fresh dill, parsley, capers, and a whole-grain mustard vinaigrette.',
+    category: 'Lunch',
+    cuisine: 'Modern',
+    ingredients: [
+      '500g Baby Potatoes, halved',
+      '2 tbsp Olive Oil',
+      '1/4 cup Fresh Dill and Parsley, chopped',
+      '1 tbsp Capers, drained',
+      '1 tbsp Whole Grain Dijon Mustard',
+      '1 tbsp Apple Cider Vinegar'
+    ],
+    instructions: [
+      'Preheat oven to 200°C. Toss halved baby potatoes with olive oil, salt, and pepper.',
+      'Roast for 25-30 minutes until golden and crispy at the edges.',
+      'Whisk mustard, vinegar, and 1 tbsp olive oil in a salad bowl.',
+      'Toss warm potatoes with dressing, fresh herbs, and capers.'
+    ],
+    dietaryTags: ['Vegetarian', 'Gluten-free'],
+    cookingTime: 35,
+    prepTime: 10,
+    servings: 2,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
+    authorId: 'user-1',
+    authorName: 'Alex',
+    createdAt: '2026-11-02T12:00:00.000Z',
+    updatedAt: '2026-11-02T12:00:00.000Z'
+  },
+  {
+    id: 3,
+    title: 'Apple Cinnamon Oats',
+    description: 'Warm, slow-simmered rolled oats with diced crisp apples, ground Ceylon cinnamon, and a drizzle of pure maple syrup.',
+    category: 'Breakfast',
+    cuisine: 'Healthy',
+    ingredients: [
+      '1 cup Rolled Oats',
+      '2 cups Almond Milk',
+      '1 Honeycrisp Apple, diced',
+      '1/2 tsp Ground Cinnamon',
+      '1 tbsp Maple Syrup',
+      '2 tbsp Toasted Pecans'
+    ],
+    instructions: [
+      'Combine oats, almond milk, and cinnamon in a small saucepan over medium heat.',
+      'Simmer for 5 minutes, stirring occasionally until creamy.',
+      'Stir in half of the diced apples.',
+      'Top with remaining apples, pecans, and maple syrup.'
+    ],
+    dietaryTags: ['Vegetarian', 'Vegan', 'Dairy-Free'],
+    cookingTime: 15,
+    prepTime: 5,
+    servings: 1,
+    difficulty: 'Easy',
+    image: 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&auto=format&fit=crop&q=80',
+    status: 'Draft',
+    authorId: 'user-1',
+    authorName: 'Alex',
+    createdAt: '2026-11-10T08:00:00.000Z',
+    updatedAt: '2026-11-10T08:00:00.000Z'
+  },
+  {
+    id: 4,
+    title: 'Vegetable Pasta',
+    description: 'A vibrant Mediterranean pasta tossed with sweet cherry tomatoes, fresh basil, and extra virgin olive oil.',
+    category: 'Dinner',
+    cuisine: 'Italian',
+    ingredients: [
+      '250g Whole Wheat Penne',
+      '200g Cherry Tomatoes, halved',
+      '3 tbsp Extra Virgin Olive Oil',
+      '2 cloves Garlic, minced',
+      'Fresh Basil leaves',
+      'Salt and cracked black pepper'
+    ],
+    instructions: [
+      'Boil pasta in salted water until al dente.',
+      'Heat olive oil in a skillet, sauté garlic for 1 minute.',
+      'Add cherry tomatoes and cook until juicy and blistering.',
+      'Toss drained pasta with tomatoes and fresh basil.'
     ],
     dietaryTags: ['Vegetarian'],
     cookingTime: 25,
@@ -24,23 +126,30 @@ const DEFAULT_RECIPES = [
     servings: 4,
     difficulty: 'Easy',
     image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
     authorId: 'user-2',
     authorName: 'Chef Omar',
     createdAt: '2026-10-15T10:00:00.000Z',
     updatedAt: '2026-10-15T10:00:00.000Z'
   },
   {
-    id: 2,
+    id: 5,
     title: 'Chicken Salad',
-    description: 'Crisp romaine lettuce topped with seasoned grilled chicken breast, fresh cucumbers, and a zesty lemon vinaigrette.',
+    description: 'Crisp romaine lettuce topped with seasoned grilled chicken breast, fresh cucumbers, and zesty lemon dressing.',
     category: 'Lunch',
-    ingredients: ['2 Grilled Chicken Breasts, sliced', '1 head Romaine Lettuce, chopped', '1 English Cucumber, sliced', '2 tbsp Lemon Juice', '3 tbsp Olive Oil', '1 tsp Dijon Mustard'],
+    cuisine: 'American',
+    ingredients: [
+      '2 Grilled Chicken Breasts, sliced',
+      '1 head Romaine Lettuce, chopped',
+      '1 English Cucumber, sliced',
+      '2 tbsp Lemon Juice',
+      '3 tbsp Olive Oil'
+    ],
     instructions: [
-      'Season chicken breast with salt, pepper, and garlic powder, then grill for 6-7 minutes per side.',
-      'Wash and chop romaine lettuce and slice cucumbers.',
-      'Whisk lemon juice, olive oil, and Dijon mustard in a small bowl to make dressing.',
-      'Combine lettuce, cucumber, and sliced warm chicken in a large bowl.',
-      'Drizzle with lemon dressing and toss gently before serving.'
+      'Grill chicken breast for 6-7 minutes per side until done.',
+      'Chop romaine lettuce and slice cucumber.',
+      'Whisk lemon juice and olive oil with salt and pepper.',
+      'Toss all ingredients together in a large salad bowl.'
     ],
     dietaryTags: ['Gluten-Free', 'High-Protein'],
     cookingTime: 20,
@@ -48,83 +157,11 @@ const DEFAULT_RECIPES = [
     servings: 2,
     difficulty: 'Easy',
     image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80',
+    status: 'Published',
     authorId: 'user-3',
     authorName: 'Sarah Jenkins',
     createdAt: '2026-10-18T12:00:00.000Z',
     updatedAt: '2026-10-18T12:00:00.000Z'
-  },
-  {
-    id: 3,
-    title: 'Fruit Smoothie',
-    description: 'Creamy and refreshing energizing fruit smoothie packed with ripe bananas, fresh strawberries, and almond milk.',
-    category: 'Breakfast',
-    ingredients: ['1 ripe Banana', '1 cup Fresh Strawberries', '1 cup Unsweetened Almond Milk', '1 tbsp Honey or Maple Syrup', '1/2 cup Greek Yogurt'],
-    instructions: [
-      'Peel the banana and wash strawberries.',
-      'Add all ingredients into a high-speed blender.',
-      'Blend on high speed for 60-90 seconds until completely smooth and creamy.',
-      'Pour into a chilled glass and enjoy immediately.'
-    ],
-    dietaryTags: ['Vegetarian', 'Gluten-Free'],
-    cookingTime: 5,
-    prepTime: 5,
-    servings: 1,
-    difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=800&auto=format&fit=crop&q=80',
-    authorId: 'user-2',
-    authorName: 'Chef Omar',
-    createdAt: '2026-10-20T08:30:00.000Z',
-    updatedAt: '2026-10-20T08:30:00.000Z'
-  },
-  {
-    id: 4,
-    title: 'Shakshuka with Feta & Herbs',
-    description: 'Gently poached eggs in a savory, spiced bell pepper and tomato sauce, topped with crumbled feta cheese and fresh cilantro.',
-    category: 'Breakfast',
-    ingredients: ['4 large Eggs', '1 can (400g) Diced Tomatoes', '1 Red Bell Pepper, diced', '1 Yellow Onion, chopped', '2 cloves Garlic, minced', '1 tsp Ground Cumin', '1 tsp Smoked Paprika', '50g Crumbled Feta Cheese', 'Fresh Cilantro for garnish'],
-    instructions: [
-      'Heat 2 tablespoons of olive oil in a deep skillet over medium heat.',
-      'Add diced onion and bell pepper; sauté for 5 minutes until tender.',
-      'Stir in minced garlic, ground cumin, and smoked paprika. Cook for 1 minute until fragrant.',
-      'Pour in diced tomatoes, season with salt and pepper, and simmer for 10 minutes until sauce thickens.',
-      'Create 4 small wells in the sauce with a spoon and crack an egg into each well.',
-      'Cover the pan and cook on low heat for 5-8 minutes until egg whites are set and yolks remain runny.',
-      'Remove from heat, sprinkle with crumbled feta and cilantro, and serve with warm bread.'
-    ],
-    dietaryTags: ['Vegetarian', 'Gluten-Free'],
-    cookingTime: 25,
-    prepTime: 10,
-    servings: 2,
-    difficulty: 'Medium',
-    image: 'https://images.unsplash.com/photo-1590412200988-a436970781fa?w=800&auto=format&fit=crop&q=80',
-    authorId: 'user-1',
-    authorName: 'Alex',
-    createdAt: '2026-10-25T09:15:00.000Z',
-    updatedAt: '2026-10-25T09:15:00.000Z'
-  },
-  {
-    id: 5,
-    title: 'Warm Berry Cinnamon Oatmeal Bowl',
-    description: 'Hearty rolled oats simmered in oat milk with aromatic cinnamon, topped with fresh blueberries, sliced bananas, and crushed walnuts.',
-    category: 'Breakfast',
-    ingredients: ['1 cup Rolled Oats', '2 cups Oat Milk', '1/2 tsp Ground Cinnamon', '1/2 cup Fresh Blueberries', '1/2 Banana, sliced', '2 tbsp Chopped Walnuts', '1 tbsp Pure Maple Syrup'],
-    instructions: [
-      'Combine rolled oats, oat milk, and ground cinnamon in a small saucepan over medium heat.',
-      'Bring to a gentle boil, then reduce heat to low and simmer for 5-7 minutes, stirring occasionally until thick.',
-      'Transfer oatmeal to a serving bowl.',
-      'Top with fresh blueberries, sliced banana, and crushed walnuts.',
-      'Drizzle with pure maple syrup and serve warm.'
-    ],
-    dietaryTags: ['Vegetarian', 'Vegan', 'Dairy-Free'],
-    cookingTime: 10,
-    prepTime: 5,
-    servings: 1,
-    difficulty: 'Easy',
-    image: 'https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=800&auto=format&fit=crop&q=80',
-    authorId: 'user-1',
-    authorName: 'Alex',
-    createdAt: '2026-10-28T07:45:00.000Z',
-    updatedAt: '2026-10-28T07:45:00.000Z'
   },
   {
     id: 6,
@@ -138,13 +175,6 @@ const DEFAULT_RECIPES = [
       '1/2 cucumber and 1 cup cherry tomatoes, chopped',
       '50 g feta cheese, crumbled',
       '1 lemon, juiced, and 1 tbsp olive oil'
-    ],
-    ingredientItems: [
-      { id: 'ing-6-1', quantity: '1', unit: 'cup', name: 'cooked quinoa' },
-      { id: 'ing-6-2', quantity: '1', unit: 'can (400 g)', name: 'chickpeas, drained' },
-      { id: 'ing-6-3', quantity: '1/2', unit: 'cucumber and 1 cup', name: 'cherry tomatoes, chopped' },
-      { id: 'ing-6-4', quantity: '50', unit: 'g', name: 'feta cheese, crumbled' },
-      { id: 'ing-6-5', quantity: '1', unit: 'lemon, juiced, and 1 tbsp', name: 'olive oil' }
     ],
     instructions: [
       'Cook quinoa according to package instructions, then allow to cool.',
@@ -203,7 +233,7 @@ const DEFAULT_RECIPES = [
     cuisine: 'Mexican',
     ingredients: [
       '1 cup Cooked Brown Rice',
-      '1 can Black Beans',
+      '1 can Black Beans, rinsed',
       '1 Lime, juiced',
       'Fresh Cilantro, chopped',
       '1/2 cup Pico de Gallo'
@@ -241,7 +271,7 @@ const DEFAULT_RECIPES = [
     instructions: [
       'Sauté chopped onion in a large pot until soft.',
       'Add turmeric, red lentils, crushed tomatoes, and vegetable broth.',
-      'Simmer for 25 minutes until lentils are completely tender and soup is rich.',
+      'Simmer for 25 minutes until lentils are tender and soup is rich.',
       'Garnish with fresh parsley and serve hot.'
     ],
     dietaryTags: ['Vegan', 'Gluten-free'],
@@ -294,34 +324,23 @@ function saveRecipesToStorage(recipes) {
 }
 
 export const recipeStorage = {
-  /**
-   * Get all recipes in the system.
-   */
   getAll() {
     return initRecipesStorage()
   },
 
-  /**
-   * Get a recipe by its ID.
-   */
   getById(id) {
+    if (id === undefined || id === null) return null
     const recipes = initRecipesStorage()
     const numericId = Number(id)
     return recipes.find((r) => r.id === numericId || String(r.id) === String(id)) || null
   },
 
-  /**
-   * Get all recipes authored by a specific user.
-   */
   getByAuthor(authorId) {
     if (!authorId) return []
     const recipes = initRecipesStorage()
     return recipes.filter((r) => String(r.authorId) === String(authorId))
   },
 
-  /**
-   * Create a new recipe authored by the user.
-   */
   create(authorId, authorName, recipeData) {
     const recipes = initRecipesStorage()
     const newId = recipes.length > 0 ? Math.max(...recipes.map((r) => Number(r.id) || 0)) + 1 : 1
@@ -353,9 +372,6 @@ export const recipeStorage = {
     return newRecipe
   },
 
-  /**
-   * Update an existing recipe.
-   */
   update(id, authorId, updates) {
     const recipes = initRecipesStorage()
     const index = recipes.findIndex((r) => String(r.id) === String(id))
@@ -364,39 +380,32 @@ export const recipeStorage = {
     }
 
     const existing = recipes[index]
-    // Verify ownership in dev/production
     if (authorId && String(existing.authorId) !== String(authorId)) {
       throw new Error('Unauthorized: You can only edit your own recipes.')
     }
 
-    const updatedRecipe = {
+    const updated = {
       ...existing,
       ...updates,
-      id: existing.id, // prevent ID overwrite
+      id: existing.id,
       authorId: existing.authorId,
       authorName: existing.authorName,
-      createdAt: existing.createdAt,
-      cookingTime: updates.cookingTime !== undefined ? Math.max(1, Number(updates.cookingTime)) : existing.cookingTime,
-      prepTime: updates.prepTime !== undefined ? Math.max(0, Number(updates.prepTime)) : existing.prepTime,
-      servings: updates.servings !== undefined ? Math.max(1, Number(updates.servings)) : existing.servings,
       updatedAt: new Date().toISOString()
     }
 
-    recipes[index] = updatedRecipe
+    recipes[index] = updated
     saveRecipesToStorage(recipes)
-    return updatedRecipe
+    return updated
   },
 
-  /**
-   * Delete a recipe authored by the user.
-   */
   delete(id, authorId) {
     const recipes = initRecipesStorage()
-    const existing = recipes.find((r) => String(r.id) === String(id))
-    if (!existing) {
+    const index = recipes.findIndex((r) => String(r.id) === String(id))
+    if (index === -1) {
       throw new Error(`Recipe with id "${id}" not found.`)
     }
 
+    const existing = recipes[index]
     if (authorId && String(existing.authorId) !== String(authorId)) {
       throw new Error('Unauthorized: You can only delete your own recipes.')
     }
@@ -406,10 +415,7 @@ export const recipeStorage = {
     return true
   },
 
-  /**
-   * Reset recipes to seed defaults (useful for testing and reset demo).
-   */
-  resetToDefaults() {
+  resetDefaults() {
     saveRecipesToStorage(DEFAULT_RECIPES)
     return DEFAULT_RECIPES
   }

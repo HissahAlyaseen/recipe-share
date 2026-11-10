@@ -8,6 +8,37 @@ import CookbookPage from './pages/CookbookPage'
 import CustomizeRecipePage from './pages/CustomizeRecipePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
+import { recipeStorage } from './services/recipeStorage'
+import { cookbookStorage } from './services/cookbookStorage'
+
+// Versioned sync to auto-reset stale or orphaned localStorage keys from previous runs
+const STORAGE_SYNC_VERSION = 'v5_figma_seed_sync'
+
+if (typeof window !== 'undefined') {
+  try {
+    const currentVer = localStorage.getItem('recipe_share_storage_version')
+    if (currentVer !== STORAGE_SYNC_VERSION) {
+      recipeStorage.resetDefaults()
+      cookbookStorage.resetDefaults()
+      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+    }
+  } catch (err) {
+    console.error('Storage version sync failed:', err)
+  }
+
+  // Global helper available in browser console: window.resetRecipeShareStorage()
+  window.resetRecipeShareStorage = () => {
+    try {
+      localStorage.clear()
+      recipeStorage.resetDefaults()
+      cookbookStorage.resetDefaults()
+      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+      window.location.reload()
+    } catch (err) {
+      console.error('Manual reset failed:', err)
+    }
+  }
+}
 
 function Placeholder({ title }) {
   return (

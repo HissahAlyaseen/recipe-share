@@ -621,3 +621,30 @@
   background: #f9fafb;
   border-color: #111827;
 }
+
+/* Storage Reset Helper */
+.storage-reset-helper-row {
+  margin: 20px 0 16px;
+  text-align: center;
+}
+
+.btn-reset-storage-link {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  color: #4b5563;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-reset-storage-link:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111827;
+}

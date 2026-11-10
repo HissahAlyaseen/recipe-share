@@ -1,10 +1,11 @@
 import { STORAGE_KEYS } from './storageKeys.js'
+import { recipeStorage } from './recipeStorage.js'
 
-const DEFAULT_SAVED_MAP = {
-  'user-1': [6, 7, 8, 9, 1, 2] // recipe IDs saved by user-1
+export const DEFAULT_SAVED_MAP = {
+  'user-1': [6, 7, 8, 9, 4, 5] // Maya Chen & Mateo Silva recipes saved by Alex
 }
 
-const DEFAULT_COLLECTIONS = [
+export const DEFAULT_COLLECTIONS = [
   {
     id: 'col-1',
     userId: 'user-1',
@@ -21,7 +22,7 @@ const DEFAULT_COLLECTIONS = [
     name: 'Lunch prep',
     description: 'Make-ahead meals for busy days.',
     icon: '🥗',
-    recipeIds: [2, 6],
+    recipeIds: [4, 5, 6],
     createdAt: '2026-10-19T14:30:00.000Z',
     updatedAt: '2026-10-19T14:30:00.000Z'
   },
@@ -31,13 +32,13 @@ const DEFAULT_COLLECTIONS = [
     name: 'Recipes to try',
     description: 'Exciting new recipes bookmarked to cook this month.',
     icon: '✨',
-    recipeIds: [1, 3, 7],
+    recipeIds: [6, 7, 8],
     createdAt: '2026-10-22T08:00:00.000Z',
     updatedAt: '2026-10-22T08:00:00.000Z'
   }
 ]
 
-const DEFAULT_CUSTOMIZATIONS = [
+export const DEFAULT_CUSTOMIZATIONS = [
   {
     id: 'cust_user-1_6',
     userId: 'user-1',
@@ -62,7 +63,8 @@ function getSavedMap() {
       localStorage.setItem(STORAGE_KEYS.SAVED_RECIPES, JSON.stringify(DEFAULT_SAVED_MAP))
       return DEFAULT_SAVED_MAP
     }
-    return JSON.parse(raw)
+    const parsed = JSON.parse(raw)
+    return parsed && typeof parsed === 'object' ? parsed : DEFAULT_SAVED_MAP
   } catch (err) {
     console.error('Failed to read saved recipes from localStorage:', err)
     return DEFAULT_SAVED_MAP
@@ -85,7 +87,7 @@ function getCollectionsList() {
       return DEFAULT_COLLECTIONS
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : DEFAULT_COLLECTIONS
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_COLLECTIONS
   } catch (err) {
     console.error('Failed to read collections from localStorage:', err)
     return DEFAULT_COLLECTIONS
@@ -131,31 +133,37 @@ export const cookbookStorage = {
   getSavedRecipeIds(userId) {
     if (!userId) return []
     const map = getSavedMap()
-    return (map[String(userId)] || []).map((id) => Number(id))
+    const ids = (map[String(userId)] || []).map((id) => Number(id)).filter((id) => !isNaN(id))
+    // Clean up IDs that don't exist in recipes
+    return ids.filter((id) => recipeStorage.getById(id) !== null)
   },
 
   isRecipeSaved(userId, recipeId) {
-    if (!userId || recipeId === undefined) return false
+    if (!userId || recipeId === undefined || recipeId === null) return false
     const list = this.getSavedRecipeIds(userId)
     return list.includes(Number(recipeId))
   },
 
   saveRecipe(userId, recipeId) {
-    if (!userId || recipeId === undefined) return false
+    if (!userId || recipeId === undefined || recipeId === null) return false
+    const numId = Number(recipeId)
+    if (isNaN(numId)) return false
+
     const map = getSavedMap()
     const uKey = String(userId)
     const list = new Set(map[uKey] || [])
-    list.add(Number(recipeId))
+    list.add(numId)
     map[uKey] = Array.from(list)
     persistSavedMap(map)
     return true
   },
 
   unsaveRecipe(userId, recipeId) {
-    if (!userId || recipeId === undefined) return false
+    if (!userId || recipeId === undefined || recipeId === null) return false
+    const numId = Number(recipeId)
     const map = getSavedMap()
     const uKey = String(userId)
-    const list = (map[uKey] || []).filter((id) => Number(id) !== Number(recipeId))
+    const list = (map[uKey] || []).filter((id) => Number(id) !== numId)
     map[uKey] = list
     persistSavedMap(map)
 
@@ -163,8 +171,8 @@ export const cookbookStorage = {
     const collections = getCollectionsList()
     let changedCol = false
     collections.forEach((col) => {
-      if (String(col.userId) === uKey && col.recipeIds.includes(Number(recipeId))) {
-        col.recipeIds = col.recipeIds.filter((id) => Number(id) !== Number(recipeId))
+      if (String(col.userId) === uKey && col.recipeIds?.includes(numId)) {
+        col.recipeIds = col.recipeIds.filter((id) => Number(id) !== numId)
         changedCol = true
       }
     })
@@ -191,7 +199,15 @@ export const cookbookStorage = {
   getUserCollections(userId) {
     if (!userId) return []
     const list = getCollectionsList()
-    return list.filter((col) => String(col.userId) === String(userId))
+    const userCols = list.filter((col) => String(col.userId) === String(userId))
+
+    // Filter out invalid/orphaned recipe IDs so count and displayed list always match!
+    return userCols.map((col) => ({
+      ...col,
+      recipeIds: (col.recipeIds || [])
+        .map((id) => Number(id))
+        .filter((id) => !isNaN(id) && recipeStorage.getById(id) !== null)
+    }))
   },
 
   getCollectionById(userId, collectionId) {
@@ -264,6 +280,12 @@ export const cookbookStorage = {
     if (!col) throw new Error('Collection not found.')
 
     const numId = Number(recipeId)
+    if (isNaN(numId)) throw new Error('Invalid recipe ID.')
+
+    if (!Array.isArray(col.recipeIds)) {
+      col.recipeIds = []
+    }
+
     if (!col.recipeIds.includes(numId)) {
       col.recipeIds.push(numId)
       col.updatedAt = new Date().toISOString()
@@ -282,7 +304,8 @@ export const cookbookStorage = {
     )
     if (!col) throw new Error('Collection not found.')
 
-    col.recipeIds = col.recipeIds.filter((id) => Number(id) !== Number(recipeId))
+    const numId = Number(recipeId)
+    col.recipeIds = (col.recipeIds || []).filter((id) => Number(id) !== numId)
     col.updatedAt = new Date().toISOString()
     persistCollectionsList(list)
     return col
@@ -361,6 +384,7 @@ export const cookbookStorage = {
         console.warn('Could not add to collection:', e)
       }
     }
+
     return updatedEntry
   },
 
@@ -371,5 +395,11 @@ export const cookbookStorage = {
     )
     persistCustomizationsList(filtered)
     return true
+  },
+
+  resetDefaults() {
+    persistSavedMap(DEFAULT_SAVED_MAP)
+    persistCollectionsList(DEFAULT_COLLECTIONS)
+    persistCustomizationsList(DEFAULT_CUSTOMIZATIONS)
   }
 }

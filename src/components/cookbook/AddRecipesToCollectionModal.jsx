@@ -86,9 +86,15 @@ export default function AddRecipesToCollectionModal({
           </div>
         ) : (
           <div className="add-recipes-empty-box">
-            <p className="empty-title">All your saved recipes are already in this collection!</p>
+            <p className="empty-title">
+              {allSavedRecipes.length === 0
+                ? 'No saved recipes in your cookbook yet'
+                : 'All your saved recipes are already in this collection!'}
+            </p>
             <p className="empty-desc">
-              Browse community recipes to discover and save more dishes to your cookbook.
+              {allSavedRecipes.length === 0
+                ? 'Browse recipes from the Home page or community and save them to your cookbook.'
+                : 'Browse community recipes to discover and save more dishes to your cookbook.'}
             </p>
           </div>
         )}
