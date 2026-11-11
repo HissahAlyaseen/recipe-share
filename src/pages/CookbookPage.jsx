@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { cookbookStorage } from '../services/cookbookStorage'
-import { bookmarkStorage } from '../services/bookmarkStorage'
-import { recipeStorage } from '../services/recipeStorage'
+import { useStorageSync } from '../hooks/useStorageSync'
+import { cookbookStorage, COOKBOOK_UPDATED_EVENT } from '../services/cookbookStorage'
+import { bookmarkStorage, BOOKMARKS_UPDATED_EVENT } from '../services/bookmarkStorage'
+import { recipeStorage, RECIPES_UPDATED_EVENT } from '../services/recipeStorage'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
 import Toast from '../components/common/Toast'
@@ -17,17 +18,28 @@ import './CookbookPage.css'
 
 export default function CookbookPage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { user } = useAuth()
-  const userId = user?.id || 'user-1'
+  const { user, isAuthenticated } = useAuth()
+  const activeUserId = isAuthenticated === false ? null : user?.id || null
+  const userId = activeUserId
 
   // URL state: collection ID or view mode
   const activeColId = searchParams.get('collection')
   const viewMode = searchParams.get('view') // 'all' or null
 
   // Local state initialized from storage
-  const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
-  const [savedRecipeIds, setSavedRecipeIds] = useState(() => cookbookStorage.getSavedRecipeIds(userId))
-  const [bookmarks, setBookmarks] = useState(() => bookmarkStorage.getUserBookmarks(userId))
+  const [collections, setCollections] = useState(() =>
+    userId ? cookbookStorage.getUserCollections(userId) : []
+  )
+  const [savedRecipeIds, setSavedRecipeIds] = useState(() =>
+    userId ? cookbookStorage.getSavedRecipeIds(userId) : []
+  )
+  const [bookmarks, setBookmarks] = useState(() =>
+    userId ? bookmarkStorage.getUserBookmarks(userId) : []
+  )
+  const [customizations, setCustomizations] = useState(() =>
+    userId ? cookbookStorage.getUserCustomizations(userId) : []
+  )
+  const [prevUserId, setPrevUserId] = useState(userId)
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'title' | 'time'
   const [searchTerm, setSearchTerm] = useState('')
   const [toast, setToast] = useState(null)
@@ -39,11 +51,29 @@ export default function CookbookPage() {
   const [recipeToOrganize, setRecipeToOrganize] = useState(null)
   const [isAddRecipesModalOpen, setIsAddRecipesModalOpen] = useState(false)
 
+  if (prevUserId !== userId) {
+    setPrevUserId(userId)
+    setCollections(userId ? cookbookStorage.getUserCollections(userId) : [])
+    setSavedRecipeIds(userId ? cookbookStorage.getSavedRecipeIds(userId) : [])
+    setBookmarks(userId ? bookmarkStorage.getUserBookmarks(userId) : [])
+    setCustomizations(userId ? cookbookStorage.getUserCustomizations(userId) : [])
+  }
+
   // Refresh data from storage
   const refreshCookbook = () => {
-    setCollections(cookbookStorage.getUserCollections(userId))
-    setSavedRecipeIds(cookbookStorage.getSavedRecipeIds(userId))
-    setBookmarks(bookmarkStorage.getUserBookmarks(userId))
+    setCollections(userId ? cookbookStorage.getUserCollections(userId) : [])
+    setSavedRecipeIds(userId ? cookbookStorage.getSavedRecipeIds(userId) : [])
+    setBookmarks(userId ? bookmarkStorage.getUserBookmarks(userId) : [])
+    setCustomizations(userId ? cookbookStorage.getUserCustomizations(userId) : [])
+  }
+
+  const storageRevision = useStorageSync(
+    [RECIPES_UPDATED_EVENT, BOOKMARKS_UPDATED_EVENT, COOKBOOK_UPDATED_EVENT],
+    refreshCookbook
+  )
+
+  const getRecipeCustomization = (recipeId) => {
+    return customizations.find((c) => Number(c.recipeId) === Number(recipeId)) || null
   }
 
   // Keep toast visible even when unbookmarking removes the card from view
@@ -65,10 +95,11 @@ export default function CookbookPage() {
 
   // Get full recipe objects for all saved IDs
   const allSavedRecipes = useMemo(() => {
+    void storageRevision
     return savedRecipeIds
       .map((id) => recipeStorage.getById(id))
       .filter(Boolean)
-  }, [savedRecipeIds])
+  }, [savedRecipeIds, storageRevision])
 
   // Recipes currently shown (Overview, Collection, or All Saved)
   const displayedRecipes = useMemo(() => {
@@ -149,8 +180,10 @@ export default function CookbookPage() {
         type: 'success',
         message: `Cookbook renamed to "${updated.name}".`
       })
+      return updated
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to rename cookbook.' })
+      return null
     }
   }
 
@@ -258,6 +291,26 @@ export default function CookbookPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  if (!activeUserId) {
+    return (
+      <div className="cookbook-page-wrapper">
+        <Header />
+        <main className="cookbook-main">
+          <div className="cookbook-container">
+            <h1 className="cookbook-title">Sign in required</h1>
+            <p className="cookbook-subtitle">
+              Please sign in to view and manage your Personal Cookbook collections.
+            </p>
+            <Link to="/recipes" className="btn-find-more-white" style={{ marginTop: '16px' }}>
+              Discover recipes
+            </Link>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    )
+  }
+
   return (
     <div className="cookbook-page-wrapper">
       <Header />
@@ -355,7 +408,9 @@ export default function CookbookPage() {
               {/* Recipe Cards List */}
               <div className="recipes-list-grid">
                 {displayedRecipes.length > 0 ? (
-                  displayedRecipes.map((recipe) => (
+                  displayedRecipes.map((recipe) => {
+                    const cust = getRecipeCustomization(recipe.id)
+                    return (
                     <article key={recipe.id} className="recipe-list-card">
                       <div className="recipe-card-thumb">
                         <div className="card-thumb-bookmark-btn">
@@ -389,6 +444,12 @@ export default function CookbookPage() {
                         <h3 className="recipe-card-title">{recipe.title}</h3>
                         <div className="recipe-card-meta">
                           <span>{recipe.cookingTime || 20} min</span>
+                          {cust?.customServings && (
+                            <>
+                              <span className="meta-sep">·</span>
+                              <span>{cust.customServings} servings</span>
+                            </>
+                          )}
                           {recipe.category && (
                             <>
                               <span className="meta-sep">·</span>
@@ -403,13 +464,31 @@ export default function CookbookPage() {
                           )}
                         </div>
 
+                        {cust && (
+                          <div className="card-dietary-chips">
+                            <span className="card-chip customized-chip">Customized</span>
+                            {cust.personalTags?.map((tag) => (
+                              <span key={tag} className="card-chip personal-chip">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
                         <div className="recipe-card-author">
                           Created by {recipe.authorName || 'Home Cook'}
                         </div>
 
                         <div className="recipe-card-actions">
-                          <Link to={`/recipes/${recipe.id}`} className="action-link">
+                          <Link
+                            to={cust ? `/recipes/${recipe.id}?customized=true` : `/recipes/${recipe.id}`}
+                            className="action-link"
+                          >
                             View recipe
+                          </Link>
+                          <span className="action-sep">·</span>
+                          <Link to={`/recipes/${recipe.id}/customize`} className="action-link">
+                            Customize
                           </Link>
                           <span className="action-sep">·</span>
                           <button
@@ -430,7 +509,8 @@ export default function CookbookPage() {
                         </div>
                       </div>
                     </article>
-                  ))
+                    )
+                  })
                 ) : (
                   <div className="empty-cookbook-card">
                     <p className="empty-title">This collection is empty.</p>
@@ -518,6 +598,7 @@ export default function CookbookPage() {
                 {displayedRecipes.length > 0 ? (
                   displayedRecipes.map((recipe) => {
                     const colNames = getRecipeCollectionNames(recipe.id)
+                    const cust = getRecipeCustomization(recipe.id)
                     return (
                       <article key={recipe.id} className="recipe-list-card">
                         <div className="recipe-card-thumb">
@@ -553,7 +634,7 @@ export default function CookbookPage() {
                           <div className="recipe-card-meta">
                             <span>{recipe.cookingTime || 20} min</span>
                             <span className="meta-sep">·</span>
-                            <span>{recipe.servings || 2} servings</span>
+                            <span>{cust?.customServings || recipe.servings || 2} servings</span>
                             {recipe.difficulty && (
                               <>
                                 <span className="meta-sep">·</span>
@@ -562,9 +643,15 @@ export default function CookbookPage() {
                             )}
                           </div>
 
-                          {/* Collection tags if assigned */}
-                          {colNames.length > 0 && (
+                          {/* Collection & Personal Customization tags */}
+                          {(colNames.length > 0 || cust) && (
                             <div className="card-dietary-chips">
+                              {cust && <span className="card-chip customized-chip">Customized</span>}
+                              {cust?.personalTags?.map((tag) => (
+                                <span key={tag} className="card-chip personal-chip">
+                                  #{tag}
+                                </span>
+                              ))}
                               {colNames.map((name) => (
                                 <span key={name} className="card-chip collection-chip">
                                   📁 {name}
@@ -578,8 +665,15 @@ export default function CookbookPage() {
                           </div>
 
                           <div className="recipe-card-actions">
-                            <Link to={`/recipes/${recipe.id}`} className="action-link">
+                            <Link
+                              to={cust ? `/recipes/${recipe.id}?customized=true` : `/recipes/${recipe.id}`}
+                              className="action-link"
+                            >
                               View recipe
+                            </Link>
+                            <span className="action-sep">·</span>
+                            <Link to={`/recipes/${recipe.id}/customize`} className="action-link">
+                              Customize
                             </Link>
                             <span className="action-sep">·</span>
                             <button
@@ -709,6 +803,7 @@ export default function CookbookPage() {
                     displayedRecipes.map((recipe) => {
                       const colNames = getRecipeCollectionNames(recipe.id)
                       const colLabel = colNames.length > 0 ? colNames.join(', ') : 'Saved'
+                      const cust = getRecipeCustomization(recipe.id)
                       return (
                         <article key={recipe.id} className="recipe-list-card">
                           <div className="recipe-card-thumb">
@@ -745,10 +840,30 @@ export default function CookbookPage() {
                               <span>By {recipe.authorName || 'Chef'}</span>
                               <span className="meta-sep">·</span>
                               <span>{colLabel}</span>
+                              {cust?.customServings && (
+                                <>
+                                  <span className="meta-sep">·</span>
+                                  <span>{cust.customServings} servings</span>
+                                </>
+                              )}
                             </div>
 
+                            {cust && (
+                              <div className="card-dietary-chips">
+                                <span className="card-chip customized-chip">Customized</span>
+                                {cust.personalTags?.map((tag) => (
+                                  <span key={tag} className="card-chip personal-chip">
+                                    #{tag}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
                             <div className="recipe-card-actions">
-                              <Link to={`/recipes/${recipe.id}`} className="action-link">
+                              <Link
+                                to={cust ? `/recipes/${recipe.id}?customized=true` : `/recipes/${recipe.id}`}
+                                className="action-link"
+                              >
                                 View
                               </Link>
                               <span className="action-sep">·</span>

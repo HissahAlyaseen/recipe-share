@@ -46,9 +46,27 @@ export const DEFAULT_CUSTOMIZATIONS = [
     recipeId: 5,
     originalTitle: 'Lemon Chickpea Quinoa Bowl',
     customTitle: 'Lemon Chickpea Quinoa Bowl · My version',
-    ingredientReplaced: '50 g feta cheese, crumbled',
+    customServings: 2,
+    ingredientReplaced: 'Feta Cheese',
     replacementIngredient: '50 g dairy-free feta',
+    substitutions: [
+      { original: 'Feta Cheese', replacement: '50 g dairy-free feta' }
+    ],
+    modifiedIngredients: [
+      '1 cup Quinoa',
+      '1 can Chickpeas, rinsed',
+      '1 Cucumber, diced',
+      '1 cup Cherry Tomatoes, halved',
+      '50 g dairy-free feta'
+    ],
+    modifiedInstructions: [
+      'Cook quinoa according to package instructions and let cool.',
+      'Toss quinoa, chickpeas, cucumber, and cherry tomatoes in a large bowl.',
+      'Whisk extra lemon juice with olive oil and drizzle over the bowl.',
+      'Top with crumbled dairy-free feta cheese and serve chilled.'
+    ],
     personalNotes: 'Substituted dairy feta with dairy-free feta to accommodate dairy preference.',
+    personalTags: ['Dairy-free', 'Meal prep'],
     collectionId: 'col-1',
     collectionName: 'Weeknight dinners',
     updatedAt: '2026-10-26T15:00:00.000Z'
@@ -57,24 +75,109 @@ export const DEFAULT_CUSTOMIZATIONS = [
 
 // --- Helper Functions ---
 
+export const COOKBOOK_UPDATED_EVENT = 'recipe-share:cookbook-updated'
+
+function dispatchCookbookUpdated() {
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.dispatchEvent === 'function' &&
+    typeof CustomEvent !== 'undefined'
+  ) {
+    window.dispatchEvent(new CustomEvent(COOKBOOK_UPDATED_EVENT))
+  }
+}
+
+function cloneSavedMap(map) {
+  const copy = {}
+  Object.keys(map || {}).forEach((k) => {
+    copy[k] = Array.isArray(map[k]) ? [...map[k]] : []
+  })
+  return copy
+}
+
+function cloneCollections(list) {
+  return (list || []).map((col) => ({
+    ...col,
+    recipeIds: Array.isArray(col.recipeIds) ? [...col.recipeIds] : []
+  }))
+}
+
+function cloneCustomizations(list) {
+  return (list || []).map((cust) => ({
+    ...cust,
+    substitutions: Array.isArray(cust.substitutions)
+      ? cust.substitutions.map((s) => ({ ...s }))
+      : [],
+    modifiedIngredients: Array.isArray(cust.modifiedIngredients) ? [...cust.modifiedIngredients] : [],
+    modifiedInstructions: Array.isArray(cust.modifiedInstructions) ? [...cust.modifiedInstructions] : [],
+    personalTags: Array.isArray(cust.personalTags) ? [...cust.personalTags] : []
+  }))
+}
+
+function isSameRecipeId(a, b) {
+  if (a === undefined || a === null || b === undefined || b === null) return false
+  const strA = String(a).trim()
+  const strB = String(b).trim()
+  if (!strA || !strB) return false
+  const numA = Number(strA)
+  const numB = Number(strB)
+  if (!Number.isNaN(numA) && !Number.isNaN(numB)) {
+    return numA === numB
+  }
+  return strA === strB
+}
+
+function validateCollectionName(list, userId, rawName, excludeCollectionId = null) {
+  if (!userId) {
+    throw new Error('User ID is required.')
+  }
+  const trimmedName = typeof rawName === 'string' ? rawName.trim() : ''
+  if (!trimmedName) {
+    throw new Error('Cookbook name cannot be empty.')
+  }
+  if (trimmedName.length > 40) {
+    throw new Error('Cookbook name must be between 1 and 40 characters.')
+  }
+
+  const normalizedTarget = trimmedName.toLowerCase()
+  const duplicateExists = list.some(
+    (col) =>
+      String(col.userId) === String(userId) &&
+      (excludeCollectionId === null || String(col.id) !== String(excludeCollectionId)) &&
+      String(col.name ?? '').trim().toLowerCase() === normalizedTarget
+  )
+
+  if (duplicateExists) {
+    throw new Error(
+      'A cookbook collection with this name already exists. Please choose a unique name.'
+    )
+  }
+
+  return trimmedName
+}
+
 function getSavedMap() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.SAVED_RECIPES)
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.SAVED_RECIPES, JSON.stringify(DEFAULT_SAVED_MAP))
-      return DEFAULT_SAVED_MAP
+      const defaults = cloneSavedMap(DEFAULT_SAVED_MAP)
+      localStorage.setItem(STORAGE_KEYS.SAVED_RECIPES, JSON.stringify(defaults))
+      return defaults
     }
     const parsed = JSON.parse(raw)
-    return parsed && typeof parsed === 'object' ? parsed : DEFAULT_SAVED_MAP
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? cloneSavedMap(parsed)
+      : cloneSavedMap(DEFAULT_SAVED_MAP)
   } catch (err) {
     console.error('Failed to read saved recipes from localStorage:', err)
-    return DEFAULT_SAVED_MAP
+    return cloneSavedMap(DEFAULT_SAVED_MAP)
   }
 }
 
 function persistSavedMap(map) {
   try {
     localStorage.setItem(STORAGE_KEYS.SAVED_RECIPES, JSON.stringify(map))
+    dispatchCookbookUpdated()
   } catch (err) {
     console.error('Failed to save bookmarks to localStorage:', err)
   }
@@ -84,20 +187,22 @@ function getCollectionsList() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.COLLECTIONS)
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.COLLECTIONS, JSON.stringify(DEFAULT_COLLECTIONS))
-      return DEFAULT_COLLECTIONS
+      const defaults = cloneCollections(DEFAULT_COLLECTIONS)
+      localStorage.setItem(STORAGE_KEYS.COLLECTIONS, JSON.stringify(defaults))
+      return defaults
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : DEFAULT_COLLECTIONS
+    return Array.isArray(parsed) ? cloneCollections(parsed) : cloneCollections(DEFAULT_COLLECTIONS)
   } catch (err) {
     console.error('Failed to read collections from localStorage:', err)
-    return DEFAULT_COLLECTIONS
+    return cloneCollections(DEFAULT_COLLECTIONS)
   }
 }
 
 function persistCollectionsList(list) {
   try {
     localStorage.setItem(STORAGE_KEYS.COLLECTIONS, JSON.stringify(list))
+    dispatchCookbookUpdated()
   } catch (err) {
     console.error('Failed to persist collections to localStorage:', err)
   }
@@ -107,20 +212,22 @@ function getCustomizationsList() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.CUSTOMIZATIONS)
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.CUSTOMIZATIONS, JSON.stringify(DEFAULT_CUSTOMIZATIONS))
-      return DEFAULT_CUSTOMIZATIONS
+      const defaults = cloneCustomizations(DEFAULT_CUSTOMIZATIONS)
+      localStorage.setItem(STORAGE_KEYS.CUSTOMIZATIONS, JSON.stringify(defaults))
+      return defaults
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : DEFAULT_CUSTOMIZATIONS
+    return Array.isArray(parsed) ? cloneCustomizations(parsed) : cloneCustomizations(DEFAULT_CUSTOMIZATIONS)
   } catch (err) {
     console.error('Failed to read customizations from localStorage:', err)
-    return DEFAULT_CUSTOMIZATIONS
+    return cloneCustomizations(DEFAULT_CUSTOMIZATIONS)
   }
 }
 
 function persistCustomizationsList(list) {
   try {
     localStorage.setItem(STORAGE_KEYS.CUSTOMIZATIONS, JSON.stringify(list))
+    dispatchCookbookUpdated()
   } catch (err) {
     console.error('Failed to persist customizations to localStorage:', err)
   }
@@ -229,19 +336,20 @@ export const cookbookStorage = {
 
   createCollection(userId, { name, description = '', icon = '📁' }) {
     if (!userId) throw new Error('User ID is required to create a collection.')
-    const trimmedName = name?.trim()
-    if (!trimmedName) throw new Error('Collection name cannot be empty.')
 
     const list = getCollectionsList()
+    const trimmedName = validateCollectionName(list, userId, name)
+    const now = new Date().toISOString()
+
     const newCollection = {
-      id: `col-${Date.now()}`,
+      id: `col-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       userId: String(userId),
       name: trimmedName,
-      description: description.trim(),
+      description: typeof description === 'string' ? description.trim() : '',
       icon: icon || '📁',
       recipeIds: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     }
 
     list.push(newCollection)
@@ -250,6 +358,8 @@ export const cookbookStorage = {
   },
 
   renameCollection(userId, collectionId, newName, newDescription, newIcon) {
+    if (!userId) throw new Error('User ID is required to rename a collection.')
+
     const list = getCollectionsList()
     const index = list.findIndex(
       (col) => String(col.id) === String(collectionId) && String(col.userId) === String(userId)
@@ -258,15 +368,13 @@ export const cookbookStorage = {
       throw new Error('Collection not found or access denied.')
     }
 
-    const trimmedName = newName?.trim()
-    if (!trimmedName) {
-      throw new Error('Collection name cannot be empty.')
-    }
+    const trimmedName = validateCollectionName(list, userId, newName, collectionId)
 
     list[index] = {
       ...list[index],
       name: trimmedName,
-      description: newDescription !== undefined ? newDescription.trim() : list[index].description,
+      description:
+        newDescription !== undefined ? String(newDescription ?? '').trim() : list[index].description,
       icon: newIcon || list[index].icon,
       updatedAt: new Date().toISOString()
     }
@@ -389,7 +497,10 @@ export const cookbookStorage = {
   getUserCustomizations(userId) {
     if (!userId) return []
     const list = getCustomizationsList()
-    return list.filter((cust) => String(cust.userId) === String(userId))
+    return list.filter(
+      (cust) =>
+        String(cust.userId) === String(userId) && recipeStorage.getById(cust.recipeId) !== null
+    )
   },
 
   getCustomization(userId, recipeId) {
@@ -408,26 +519,58 @@ export const cookbookStorage = {
       (c) => String(c.userId) === String(userId) && Number(c.recipeId) === Number(recipeId)
     )
 
+    const cleanSubstitutions = Array.isArray(customizationData.substitutions)
+      ? customizationData.substitutions
+          .filter((s) => s && (s.original?.trim() || s.replacement?.trim()))
+          .map((s) => ({
+            original: s.original?.trim() || '',
+            replacement: s.replacement?.trim() || ''
+          }))
+      : []
+
+    if (
+      cleanSubstitutions.length === 0 &&
+      (customizationData.ingredientReplaced?.trim() || customizationData.replacementIngredient?.trim())
+    ) {
+      cleanSubstitutions.push({
+        original: customizationData.ingredientReplaced?.trim() || '',
+        replacement: customizationData.replacementIngredient?.trim() || ''
+      })
+    }
+
+    const cleanIngredients = Array.isArray(customizationData.modifiedIngredients)
+      ? customizationData.modifiedIngredients.map((item) => String(item).trim()).filter(Boolean)
+      : []
+
+    const cleanInstructions = Array.isArray(customizationData.modifiedInstructions)
+      ? customizationData.modifiedInstructions.map((step) => String(step).trim()).filter(Boolean)
+      : []
+
+    const cleanTags = Array.isArray(customizationData.personalTags)
+      ? Array.from(new Set(customizationData.personalTags.map((t) => String(t).trim()).filter(Boolean)))
+      : []
+
+    const primarySwap = cleanSubstitutions[0]
+    const parsedServings = Number(customizationData.customServings)
+
     const updatedEntry = {
       id: `cust_${userId}_${recipeId}`,
       userId: String(userId),
       recipeId: Number(recipeId),
       originalTitle: customizationData.originalTitle || 'Recipe',
-      customTitle: customizationData.customTitle?.trim() || customizationData.originalTitle,
-      ingredientReplaced: customizationData.ingredientReplaced || '',
-      replacementIngredient: customizationData.replacementIngredient || '',
+      customTitle: customizationData.customTitle?.trim() || `${customizationData.originalTitle || 'Recipe'} · My version`,
+      ingredientReplaced: primarySwap ? primarySwap.original : (customizationData.ingredientReplaced || ''),
+      replacementIngredient: primarySwap ? primarySwap.replacement : (customizationData.replacementIngredient || ''),
+      substitutions: cleanSubstitutions,
       personalNotes: customizationData.personalNotes?.trim() || '',
-      modifiedIngredients: Array.isArray(customizationData.modifiedIngredients)
-        ? customizationData.modifiedIngredients
-        : [],
-      modifiedInstructions: Array.isArray(customizationData.modifiedInstructions)
-        ? customizationData.modifiedInstructions
-        : [],
+      modifiedIngredients: cleanIngredients,
+      modifiedInstructions: cleanInstructions,
+      personalTags: cleanTags,
       collectionId: customizationData.collectionId || null,
       collectionName: customizationData.collectionName || '',
       allergenNotes: customizationData.allergenNotes || '',
       customCookTime: customizationData.customCookTime ? Number(customizationData.customCookTime) : undefined,
-      customServings: customizationData.customServings ? Number(customizationData.customServings) : undefined,
+      customServings: !isNaN(parsedServings) && parsedServings > 0 ? parsedServings : undefined,
       personalRating: Number(customizationData.personalRating) || 5,
       updatedAt: new Date().toISOString()
     }
@@ -456,18 +599,103 @@ export const cookbookStorage = {
   },
 
   deleteCustomization(userId, recipeId) {
+    if (!userId || recipeId === undefined || recipeId === null) {
+      throw new Error('User ID and Recipe ID are required.')
+    }
     const list = getCustomizationsList()
     const filtered = list.filter(
-      (c) => !(String(c.userId) === String(userId) && Number(c.recipeId) === Number(recipeId))
+      (c) => !(String(c.userId) === String(userId) && isSameRecipeId(c.recipeId, recipeId))
     )
-    persistCustomizationsList(filtered)
+    if (filtered.length !== list.length) {
+      persistCustomizationsList(filtered)
+    }
     return true
   },
 
+  /**
+   * Reset a user's saved customization back to the unmodified original recipe
+   * without touching bookmarks, cookbook collections, or other users' data.
+   */
+  resetCustomization(userId, recipeId) {
+    if (!userId || recipeId === undefined || recipeId === null) {
+      throw new Error('User ID and Recipe ID are required.')
+    }
+    this.deleteCustomization(userId, recipeId)
+    return recipeStorage.getById(recipeId)
+  },
+
+  /**
+   * Remove all saved entries, collection references, and customization records
+   * referencing a deleted recipe across all users without deleting collections or other recipes.
+   */
+  removeRecipeReferences(recipeId) {
+    if (recipeId === undefined || recipeId === null) {
+      return {
+        removedFromSavedCount: 0,
+        removedFromCollectionsCount: 0,
+        removedCustomizationsCount: 0
+      }
+    }
+
+    // 1. Clean SAVED_RECIPES map
+    const savedMap = getSavedMap()
+    let removedFromSavedCount = 0
+    let savedChanged = false
+    Object.keys(savedMap).forEach((uKey) => {
+      const current = Array.isArray(savedMap[uKey]) ? savedMap[uKey] : []
+      const filtered = current.filter((id) => !isSameRecipeId(id, recipeId))
+      if (filtered.length !== current.length) {
+        removedFromSavedCount += current.length - filtered.length
+        savedMap[uKey] = filtered
+        savedChanged = true
+      }
+    })
+    if (savedChanged) {
+      persistSavedMap(savedMap)
+    }
+
+    // 2. Clean collection.recipeIds references (preserve all collection objects)
+    const collections = getCollectionsList()
+    const now = new Date().toISOString()
+    let removedFromCollectionsCount = 0
+    let colsChanged = false
+    const updatedCollections = collections.map((col) => {
+      const currentIds = Array.isArray(col.recipeIds) ? col.recipeIds : []
+      const filteredIds = currentIds.filter((id) => !isSameRecipeId(id, recipeId))
+      if (filteredIds.length !== currentIds.length) {
+        removedFromCollectionsCount += currentIds.length - filteredIds.length
+        colsChanged = true
+        return {
+          ...col,
+          recipeIds: filteredIds,
+          updatedAt: now
+        }
+      }
+      return col
+    })
+    if (colsChanged) {
+      persistCollectionsList(updatedCollections)
+    }
+
+    // 3. Clean customization records for the deleted recipe
+    const customizations = getCustomizationsList()
+    const filteredCusts = customizations.filter((c) => !isSameRecipeId(c.recipeId, recipeId))
+    const removedCustomizationsCount = customizations.length - filteredCusts.length
+    if (removedCustomizationsCount > 0) {
+      persistCustomizationsList(filteredCusts)
+    }
+
+    return {
+      removedFromSavedCount,
+      removedFromCollectionsCount,
+      removedCustomizationsCount
+    }
+  },
+
   resetDefaults() {
-    persistSavedMap(DEFAULT_SAVED_MAP)
-    persistCollectionsList(DEFAULT_COLLECTIONS)
-    persistCustomizationsList(DEFAULT_CUSTOMIZATIONS)
+    persistSavedMap(cloneSavedMap(DEFAULT_SAVED_MAP))
+    persistCollectionsList(cloneCollections(DEFAULT_COLLECTIONS))
+    persistCustomizationsList(cloneCustomizations(DEFAULT_CUSTOMIZATIONS))
     bookmarkStorage.resetDefaults()
   }
 }

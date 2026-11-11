@@ -219,6 +219,87 @@
   color: #374151;
 }
 
+.pref-chip-custom {
+  background: #ffffff;
+  border: 1px dashed #9ca3af;
+  color: #111827;
+}
+
+/* Custom Dietary Restrictions Input & Pills */
+.custom-restriction-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+
+.custom-restriction-input-row .form-input {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.btn-add-restriction {
+  background: #ffffff;
+  border: 1px solid #111827;
+  color: #111827;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.btn-add-restriction:hover {
+  background: #f9fafb;
+}
+
+.custom-restriction-error {
+  margin: -4px 0 12px;
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.custom-restrictions-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.custom-restriction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.custom-restriction-pill .chip-remove-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.custom-restriction-pill .chip-remove-btn:hover {
+  color: #dc2626;
+}
+
 .pref-empty-note {
   font-size: 13.5px;
   color: #6b7280;

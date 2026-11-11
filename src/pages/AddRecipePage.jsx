@@ -11,14 +11,15 @@ import './AddRecipePage.css'
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Beverage']
 const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 const AVAILABLE_TAGS = [
+  'Halal',
   'Vegetarian',
   'Vegan',
+  'Keto',
+  'Low-Carb',
   'Gluten-free',
   'Dairy-free',
-  'Low-carb',
+  'Pescatarian',
   'Nut-free',
-  'Halal',
-  'Keto',
   'High-Protein'
 ]
 

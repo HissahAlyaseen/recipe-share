@@ -29,15 +29,23 @@ export default function CreateCookbookModal({ isOpen, onClose, onCreate, existin
     }
 
     const isDuplicate = existingCollections.some(
-      (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+      (c) => String(c.name ?? '').trim().toLowerCase() === trimmed.toLowerCase()
     )
     if (isDuplicate) {
       setError('A cookbook with this name already exists. Please choose a unique name.')
       return
     }
 
-    onCreate({ name: trimmed, description: description.trim() })
-    handleClose()
+    try {
+      const result = onCreate({ name: trimmed, description: description.trim() })
+      if (result === null || result === false) {
+        setError('A cookbook with this name already exists. Please choose a unique name.')
+        return
+      }
+      handleClose()
+    } catch (err) {
+      setError(err.message || 'Unable to create cookbook. Please choose a unique name.')
+    }
   }
 
   return (
@@ -57,6 +65,7 @@ export default function CreateCookbookModal({ isOpen, onClose, onCreate, existin
             placeholder="Weekend favorites"
             value={name}
             maxLength={40}
+            aria-invalid={Boolean(error)}
             onChange={(e) => {
               setName(e.target.value)
               if (error) setError('')
@@ -64,7 +73,7 @@ export default function CreateCookbookModal({ isOpen, onClose, onCreate, existin
             autoFocus
           />
           <p className="cookbook-field-hint">Required · 1–40 characters · Use a unique name.</p>
-          {error && <p className="cookbook-field-error">{error}</p>}
+          {error && <p className="cookbook-field-error" role="alert">{error}</p>}
         </div>
 
         <div className="cookbook-form-group">

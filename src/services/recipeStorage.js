@@ -1,11 +1,27 @@
 import { STORAGE_KEYS } from './storageKeys.js'
 import { recipes as dataRecipes } from '../data/recipes.js'
+import { bookmarkStorage } from './bookmarkStorage.js'
+import { cookbookStorage } from './cookbookStorage.js'
+
+export const RECIPES_UPDATED_EVENT = 'recipe-share:recipes-updated'
 
 /**
  * Default recipes dataset sourced directly from src/data/recipes.js.
  * Matches Figma wireframes and includes expanded breakfast, lunch, and dinner recipes.
  */
 export const DEFAULT_RECIPES = dataRecipes
+
+function cloneRecipes(list) {
+  return (list || []).map((r) => ({
+    ...r,
+    ingredients: Array.isArray(r.ingredients) ? [...r.ingredients] : [],
+    ...(Array.isArray(r.ingredientItems)
+      ? { ingredientItems: r.ingredientItems.map((item) => ({ ...item })) }
+      : {}),
+    instructions: Array.isArray(r.instructions) ? [...r.instructions] : [],
+    dietaryTags: Array.isArray(r.dietaryTags) ? [...r.dietaryTags] : []
+  }))
+}
 
 /**
  * Initialize storage with default recipes if not already present.
@@ -14,27 +30,36 @@ function initRecipesStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.RECIPES)
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(DEFAULT_RECIPES))
-      return DEFAULT_RECIPES
+      const defaults = cloneRecipes(DEFAULT_RECIPES)
+      localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(defaults))
+      return defaults
     }
     const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(DEFAULT_RECIPES))
-      return DEFAULT_RECIPES
+    if (!Array.isArray(parsed)) {
+      const defaults = cloneRecipes(DEFAULT_RECIPES)
+      localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(defaults))
+      return defaults
     }
-    return parsed
+    return cloneRecipes(parsed)
   } catch (err) {
     console.error('Failed to read recipes from localStorage, falling back to defaults:', err)
-    return DEFAULT_RECIPES
+    return cloneRecipes(DEFAULT_RECIPES)
   }
 }
 
 /**
- * Persist recipes array to localStorage.
+ * Persist recipes array to localStorage and notify listeners.
  */
 function saveRecipesToStorage(recipes) {
   try {
     localStorage.setItem(STORAGE_KEYS.RECIPES, JSON.stringify(recipes))
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.dispatchEvent === 'function' &&
+      typeof CustomEvent !== 'undefined'
+    ) {
+      window.dispatchEvent(new CustomEvent(RECIPES_UPDATED_EVENT))
+    }
     return true
   } catch (err) {
     console.error('Failed to save recipes to localStorage:', err)
@@ -118,6 +143,10 @@ export const recipeStorage = {
   },
 
   delete(id, authorId) {
+    if (!authorId) {
+      throw new Error('Unauthorized: User ID is required to delete a recipe.')
+    }
+
     const recipes = initRecipesStorage()
     const index = recipes.findIndex((r) => String(r.id) === String(id))
     if (index === -1) {
@@ -125,17 +154,24 @@ export const recipeStorage = {
     }
 
     const existing = recipes[index]
-    if (authorId && String(existing.authorId) !== String(authorId)) {
+    if (String(existing.authorId) !== String(authorId)) {
       throw new Error('Unauthorized: You can only delete your own recipes.')
     }
 
-    const filtered = recipes.filter((r) => String(r.id) !== String(id))
+    const deletedId = existing.id
+    const filtered = recipes.filter((r) => String(r.id) !== String(deletedId))
     saveRecipesToStorage(filtered)
+
+    // Cascade cleanup: clean up all related bookmarks, collection references, and customizations
+    bookmarkStorage.removeAllForRecipe(deletedId)
+    cookbookStorage.removeRecipeReferences(deletedId)
+
     return true
   },
 
   resetDefaults() {
-    saveRecipesToStorage(DEFAULT_RECIPES)
-    return DEFAULT_RECIPES
+    const defaults = cloneRecipes(DEFAULT_RECIPES)
+    saveRecipesToStorage(defaults)
+    return defaults
   }
 }

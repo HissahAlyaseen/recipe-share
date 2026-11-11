@@ -1,7 +1,8 @@
 import { useState, useId } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { recipeStorage } from '../services/recipeStorage'
+import { useStorageSync } from '../hooks/useStorageSync'
+import { recipeStorage, RECIPES_UPDATED_EVENT } from '../services/recipeStorage'
 import RecipePreviewModal from '../components/recipes/RecipePreviewModal'
 import Toast from '../components/common/Toast'
 import Header from '../components/common/Header'
@@ -11,14 +12,15 @@ import './EditRecipePage.css'
 const CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snacks', 'Beverage']
 const DIFFICULTIES = ['Easy', 'Medium', 'Hard']
 const AVAILABLE_TAGS = [
+  'Halal',
   'Vegetarian',
   'Vegan',
+  'Keto',
+  'Low-Carb',
   'Gluten-free',
   'Dairy-free',
-  'Low-carb',
+  'Pescatarian',
   'Nut-free',
-  'Halal',
-  'Keto',
   'High-Protein'
 ]
 
@@ -60,8 +62,12 @@ export default function EditRecipePage() {
   const { user } = useAuth()
   const componentInstanceId = useId()
 
-  // Fetch initial recipe synchronously
-  const [existingRecipe] = useState(() => recipeStorage.getById(id))
+  // Fetch initial recipe synchronously and keep synced if deleted elsewhere
+  const [existingRecipe, setExistingRecipe] = useState(() => recipeStorage.getById(id))
+
+  useStorageSync([RECIPES_UPDATED_EVENT], () => {
+    setExistingRecipe(recipeStorage.getById(id))
+  })
 
   // Form State initialized from existing recipe
   const [title, setTitle] = useState(() => existingRecipe?.title || '')

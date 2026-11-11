@@ -32,19 +32,27 @@ function RenameModalContent({
       return
     }
 
-    // Check duplicate name with other collections
+    // Check duplicate name with other collections (case-insensitive, trimmed)
     const isDuplicate = existingCollections.some(
       (c) =>
         String(c.id) !== String(collection?.id) &&
-        c.name.toLowerCase() === trimmed.toLowerCase()
+        String(c.name ?? '').trim().toLowerCase() === trimmed.toLowerCase()
     )
     if (isDuplicate) {
       setError('A cookbook with this name already exists. Please choose a unique name.')
       return
     }
 
-    onRename(collection.id, trimmed, description.trim())
-    handleClose()
+    try {
+      const result = onRename(collection.id, trimmed, description.trim())
+      if (result === null || result === false) {
+        setError('A cookbook with this name already exists. Please choose a unique name.')
+        return
+      }
+      handleClose()
+    } catch (err) {
+      setError(err.message || 'Unable to rename cookbook. Please choose a unique name.')
+    }
   }
 
   const recipeCount = collection.recipeIds?.length || 0
@@ -69,6 +77,7 @@ function RenameModalContent({
             placeholder="Weekend favorites"
             value={name}
             maxLength={40}
+            aria-invalid={Boolean(error)}
             onChange={(e) => {
               setName(e.target.value)
               if (error) setError('')
@@ -76,7 +85,7 @@ function RenameModalContent({
             autoFocus
           />
           <p className="cookbook-field-hint">Required · 1–40 characters · Use a unique name.</p>
-          {error && <p className="cookbook-field-error">{error}</p>}
+          {error && <p className="cookbook-field-error" role="alert">{error}</p>}
         </div>
 
         <div className="cookbook-form-group">

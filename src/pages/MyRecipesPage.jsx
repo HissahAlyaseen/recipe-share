@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { recipeStorage } from '../services/recipeStorage'
+import { useStorageSync } from '../hooks/useStorageSync'
+import { recipeStorage, RECIPES_UPDATED_EVENT } from '../services/recipeStorage'
 import Modal from '../components/common/Modal'
 import Toast from '../components/common/Toast'
 import Header from '../components/common/Header'
@@ -11,12 +12,18 @@ import './MyRecipesPage.css'
 export default function MyRecipesPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuth()
+  const { user, isAuthenticated } = useAuth()
+  const activeUserId = isAuthenticated === false ? null : user?.id || null
 
   // Initialize recipes directly from storage
   const [recipes, setRecipes] = useState(() => {
-    return user?.id ? recipeStorage.getByAuthor(user.id) : []
+    return activeUserId ? recipeStorage.getByAuthor(activeUserId) : []
   })
+  const [prevUserId, setPrevUserId] = useState(activeUserId)
+  if (prevUserId !== activeUserId) {
+    setPrevUserId(activeUserId)
+    setRecipes(activeUserId ? recipeStorage.getByAuthor(activeUserId) : [])
+  }
 
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'title' | 'time'
@@ -37,10 +44,10 @@ export default function MyRecipesPage() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const refreshRecipes = () => {
-    if (user?.id) {
-      setRecipes(recipeStorage.getByAuthor(user.id))
-    }
+    setRecipes(activeUserId ? recipeStorage.getByAuthor(activeUserId) : [])
   }
+
+  useStorageSync([RECIPES_UPDATED_EVENT], refreshRecipes)
 
   // Filter and sort recipes
   const filteredRecipes = recipes
@@ -62,10 +69,17 @@ export default function MyRecipesPage() {
   // Delete handler
   const handleConfirmDelete = () => {
     if (!recipeToDelete) return
+    if (!activeUserId) {
+      setToast({
+        type: 'error',
+        message: 'Please sign in to delete recipes.'
+      })
+      return
+    }
     setIsDeleting(true)
 
     try {
-      recipeStorage.delete(recipeToDelete.id, user.id)
+      recipeStorage.delete(recipeToDelete.id, activeUserId)
       setToast({
         type: 'success',
         message: `"${recipeToDelete.title}" has been deleted.`
@@ -288,8 +302,8 @@ export default function MyRecipesPage() {
           <div className="delete-warning-box">
             <h4 className="warning-box-title">This cannot be undone</h4>
             <p className="warning-box-text">
-              The recipe will be removed from your authored recipes and community listings.
-              Choose Cancel to keep it.
+              The recipe and its related bookmarks, collection references, and customizations will
+              be removed. Choose Cancel to keep it.
             </p>
           </div>
 
