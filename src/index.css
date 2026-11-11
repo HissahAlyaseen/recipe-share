@@ -30,6 +30,12 @@
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 input,
 select,
 textarea,
@@ -40,22 +46,19 @@ button {
 
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-
-  @media (max-width: 768px) {
-    border-inline: none;
-  }
+  overflow-x: clip;
 }
 
 h1,

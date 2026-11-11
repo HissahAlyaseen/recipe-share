@@ -527,6 +527,14 @@
 }
 
 @media (max-width: 600px) {
+  .add-recipe-main {
+    padding: 20px 14px 96px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
   .form-grid-2 {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -551,6 +559,18 @@
 
   .ingredient-row .btn-row-remove {
     order: 4;
+  }
+}
+
+@media (min-width: 601px) {
+  .add-recipe-container {
+    max-width: 660px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .add-recipe-container {
+    max-width: 740px;
   }
 }
 

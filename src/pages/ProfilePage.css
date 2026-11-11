@@ -179,7 +179,9 @@
 }
 
 .btn-secondary-action {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #111827;
   color: #111827;
@@ -190,6 +192,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
+  text-decoration: none;
 }
 
 .btn-secondary-action:hover {
@@ -391,10 +394,42 @@
   margin-top: 24px;
 }
 
+@media (max-width: 600px) {
+  .profile-main {
+    padding: 20px 14px 96px;
+  }
+
+  .profile-top-title {
+    font-size: 24px;
+  }
+
+  .profile-greeting {
+    font-size: 20px;
+  }
+
+  .section-header-row,
+  .profile-footer-links {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
 @media (max-width: 480px) {
   .two-column-checkbox-grid {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+}
+
+@media (min-width: 601px) {
+  .profile-container {
+    max-width: 620px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-container {
+    max-width: 680px;
   }
 }
 

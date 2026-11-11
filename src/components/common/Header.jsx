@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from '../../services/storageKeys'
 import { recipeStorage } from '../../services/recipeStorage'
 import { cookbookStorage } from '../../services/cookbookStorage'
 import { profileStorage } from '../../services/profileStorage'
+import { bookmarkStorage } from '../../services/bookmarkStorage'
 import './Header.css'
 
 export default function Header() {
@@ -37,7 +39,8 @@ export default function Header() {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', 'v9_user1_alex_sync')
+      bookmarkStorage.resetDefaults()
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
       window.location.reload()
     } catch (err) {
       console.error('Failed to reset storage:', err)
@@ -89,7 +92,7 @@ export default function Header() {
             <span className="profile-avatar">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
             </span>
-            <span className="profile-name">{user?.name || 'Alex'}</span>
+            <span className="profile-name">{user?.name || 'User'}</span>
             <span className="profile-caret">▾</span>
           </button>
 
@@ -105,8 +108,8 @@ export default function Header() {
                 {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
               </div>
               <div className="dropdown-user-text">
-                <span className="dropdown-user-name">{user?.name || 'Alex'}</span>
-                <span className="dropdown-user-email">{user?.email || 'alex@university.edu'}</span>
+                <span className="dropdown-user-name">{user?.name || 'User'}</span>
+                <span className="dropdown-user-email">{user?.email || 'user@university.edu'}</span>
               </div>
             </Link>
 

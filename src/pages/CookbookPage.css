@@ -74,6 +74,7 @@
 
 .collection-header-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
@@ -174,6 +175,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .col-card-name {
@@ -181,6 +183,8 @@
   font-size: 15px;
   font-weight: 700;
   color: #111827;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .btn-open-col {
@@ -193,6 +197,7 @@
   padding: 0;
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   transition: color 0.15s ease;
 }
 
@@ -202,8 +207,10 @@
 
 .col-card-bottom-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-size: 13px;
 }
 
@@ -248,8 +255,10 @@
 
 .recently-saved-header-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -271,8 +280,10 @@
 /* Results header & sort */
 .results-header-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   margin-bottom: 16px;
 }
 
@@ -377,6 +388,7 @@
 }
 
 .recipe-card-thumb {
+  position: relative;
   width: 88px;
   height: 88px;
   border-radius: 6px;
@@ -386,6 +398,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.card-thumb-bookmark-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 3;
 }
 
 .thumb-img {
@@ -435,6 +454,7 @@
   font-weight: 700;
   color: #111827;
   line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .recipe-card-meta {
@@ -481,8 +501,9 @@
 
 .recipe-card-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px 6px;
   margin-top: 4px;
   font-size: 13px;
 }
@@ -536,7 +557,9 @@
 
 /* Find More Recipes Button (White with dark border) */
 .btn-find-more-white {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #111827;
   color: #111827;
@@ -547,6 +570,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
+  text-decoration: none;
 }
 
 .btn-find-more-white:hover {
@@ -582,6 +606,8 @@
 }
 
 .btn-empty-action {
+  display: inline-block;
+  box-sizing: border-box;
   background: #111827;
   color: #ffffff;
   border: none;
@@ -591,6 +617,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease;
+  text-decoration: none;
 }
 
 .btn-empty-action:hover {
@@ -620,4 +647,63 @@
 .btn-add-to-col-action:hover {
   background: #f9fafb;
   border-color: #111827;
+}
+
+/* Responsive Layout: Mobile, Tablet, Laptop, Large Screens */
+@media (max-width: 600px) {
+  .cookbook-main {
+    padding: 20px 14px 96px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+
+  .recipe-list-card {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .recipe-card-thumb {
+    width: 74px;
+    height: 74px;
+  }
+
+  .recipe-card-actions {
+    font-size: 12.5px;
+  }
+}
+
+@media (min-width: 601px) {
+  .cookbook-container {
+    max-width: 680px;
+  }
+}
+
+@media (min-width: 960px) {
+  .cookbook-container {
+    max-width: 920px;
+  }
+
+  .collections-list,
+  .recipes-list-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .empty-cookbook-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1280px) {
+  .cookbook-container {
+    max-width: 1080px;
+  }
+
+  .collections-list,
+  .recipes-list-grid {
+    gap: 16px;
+  }
 }

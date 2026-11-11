@@ -1,5 +1,6 @@
 import { STORAGE_KEYS } from './storageKeys.js'
 import { recipeStorage } from './recipeStorage.js'
+import { bookmarkStorage } from './bookmarkStorage.js'
 
 export const DEFAULT_SAVED_MAP = {
   'user-1': [1, 2, 4, 5]
@@ -32,7 +33,7 @@ export const DEFAULT_COLLECTIONS = [
     name: 'Recipes to try',
     description: 'Exciting new recipes bookmarked to cook this month.',
     icon: '✨',
-    recipeIds: [1, 2, 3],
+    recipeIds: [1, 2],
     createdAt: '2026-10-22T08:00:00.000Z',
     updatedAt: '2026-10-22T08:00:00.000Z'
   }
@@ -87,7 +88,7 @@ function getCollectionsList() {
       return DEFAULT_COLLECTIONS
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_COLLECTIONS
+    return Array.isArray(parsed) ? parsed : DEFAULT_COLLECTIONS
   } catch (err) {
     console.error('Failed to read collections from localStorage:', err)
     return DEFAULT_COLLECTIONS
@@ -125,6 +126,14 @@ function persistCustomizationsList(list) {
   }
 }
 
+function syncBookmarkCollections(userId, recipeId, collectionsList) {
+  if (!bookmarkStorage.isBookmarked(userId, recipeId)) return
+  const colIds = collectionsList
+    .filter((c) => String(c.userId) === String(userId) && c.recipeIds?.includes(Number(recipeId)))
+    .map((c) => c.id)
+  bookmarkStorage.updateBookmarkCollections(userId, recipeId, colIds)
+}
+
 // --- Cookbook Storage API ---
 
 export const cookbookStorage = {
@@ -132,22 +141,21 @@ export const cookbookStorage = {
 
   getSavedRecipeIds(userId) {
     if (!userId) return []
-    const map = getSavedMap()
-    const ids = (map[String(userId)] || []).map((id) => Number(id)).filter((id) => !isNaN(id))
-    // Clean up IDs that don't exist in recipes
-    return ids.filter((id) => recipeStorage.getById(id) !== null)
+    return bookmarkStorage.getUserBookmarkedRecipeIds(userId)
   },
 
   isRecipeSaved(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
-    const list = this.getSavedRecipeIds(userId)
-    return list.includes(Number(recipeId))
+    return bookmarkStorage.isBookmarked(userId, recipeId)
   },
 
   saveRecipe(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
     const numId = Number(recipeId)
     if (isNaN(numId)) return false
+
+    // Synchronize bookmark data model
+    bookmarkStorage.addBookmark(userId, numId)
 
     const map = getSavedMap()
     const uKey = String(userId)
@@ -161,6 +169,10 @@ export const cookbookStorage = {
   unsaveRecipe(userId, recipeId) {
     if (!userId || recipeId === undefined || recipeId === null) return false
     const numId = Number(recipeId)
+
+    // Synchronize bookmark removal
+    bookmarkStorage.removeBookmark(userId, numId)
+
     const map = getSavedMap()
     const uKey = String(userId)
     const list = (map[uKey] || []).filter((id) => Number(id) !== numId)
@@ -269,6 +281,17 @@ export const cookbookStorage = {
       (col) => !(String(col.id) === String(collectionId) && String(col.userId) === String(userId))
     )
     persistCollectionsList(filtered)
+
+    // Detach deleted collectionId from user's bookmarks without deleting the bookmarks
+    bookmarkStorage.getUserBookmarks(userId).forEach((bm) => {
+      if (bm.collectionIds?.includes(collectionId)) {
+        bookmarkStorage.updateBookmarkCollections(
+          userId,
+          bm.recipeId,
+          bm.collectionIds.filter((id) => id !== collectionId)
+        )
+      }
+    })
     return true
   },
 
@@ -292,8 +315,9 @@ export const cookbookStorage = {
       persistCollectionsList(list)
     }
 
-    // Ensure it's marked as saved as well
+    // Ensure it's marked as saved and keep bookmark.collectionIds in sync
     this.saveRecipe(userId, recipeId)
+    syncBookmarkCollections(userId, numId, list)
     return col
   },
 
@@ -308,7 +332,50 @@ export const cookbookStorage = {
     col.recipeIds = (col.recipeIds || []).filter((id) => Number(id) !== numId)
     col.updatedAt = new Date().toISOString()
     persistCollectionsList(list)
+    syncBookmarkCollections(userId, numId, list)
     return col
+  },
+
+  setRecipeCollections(userId, recipeId, targetCollectionIds = []) {
+    if (!userId) throw new Error('User ID is required.')
+    const numId = Number(recipeId)
+    if (isNaN(numId)) throw new Error('Invalid recipe ID.')
+
+    const targetSet = new Set(
+      (Array.isArray(targetCollectionIds) ? targetCollectionIds : [targetCollectionIds])
+        .filter(Boolean)
+        .map(String)
+    )
+
+    const list = getCollectionsList()
+    const now = new Date().toISOString()
+    let modified = false
+
+    list.forEach((col) => {
+      if (String(col.userId) !== String(userId)) return
+      const currentIds = Array.isArray(col.recipeIds) ? col.recipeIds.map(Number) : []
+      const hasRecipe = currentIds.includes(numId)
+      const shouldHave = targetSet.has(String(col.id))
+
+      if (shouldHave && !hasRecipe) {
+        col.recipeIds = [...currentIds, numId]
+        col.updatedAt = now
+        modified = true
+      } else if (!shouldHave && hasRecipe) {
+        col.recipeIds = currentIds.filter((id) => id !== numId)
+        col.updatedAt = now
+        modified = true
+      }
+    })
+
+    if (modified) {
+      persistCollectionsList(list)
+    }
+
+    // Ensure the recipe stays saved in bookmarks & Personal Cookbook
+    this.saveRecipe(userId, numId)
+    syncBookmarkCollections(userId, numId, list)
+    return this.getUserCollections(userId)
   },
 
   isRecipeInCollection(userId, collectionId, recipeId) {
@@ -401,5 +468,6 @@ export const cookbookStorage = {
     persistSavedMap(DEFAULT_SAVED_MAP)
     persistCollectionsList(DEFAULT_COLLECTIONS)
     persistCustomizationsList(DEFAULT_CUSTOMIZATIONS)
+    bookmarkStorage.resetDefaults()
   }
 }

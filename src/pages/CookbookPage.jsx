@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { cookbookStorage } from '../services/cookbookStorage'
+import { bookmarkStorage } from '../services/bookmarkStorage'
 import { recipeStorage } from '../services/recipeStorage'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
@@ -11,10 +12,10 @@ import RenameCookbookModal from '../components/cookbook/RenameCookbookModal'
 import DeleteCookbookModal from '../components/cookbook/DeleteCookbookModal'
 import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
 import AddRecipesToCollectionModal from '../components/cookbook/AddRecipesToCollectionModal'
+import BookmarkButton from '../components/common/BookmarkButton'
 import './CookbookPage.css'
 
 export default function CookbookPage() {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { user } = useAuth()
   const userId = user?.id || 'user-1'
@@ -23,23 +24,10 @@ export default function CookbookPage() {
   const activeColId = searchParams.get('collection')
   const viewMode = searchParams.get('view') // 'all' or null
 
-  // Local state initialized with auto-sync check to prevent stale data
-  const [collections, setCollections] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const currentVer = localStorage.getItem('recipe_share_storage_version')
-        if (currentVer !== 'v9_user1_alex_sync') {
-          cookbookStorage.resetDefaults()
-          recipeStorage.resetDefaults()
-          localStorage.setItem('recipe_share_storage_version', 'v9_user1_alex_sync')
-        }
-      } catch (err) {
-        console.error('Storage sync error:', err)
-      }
-    }
-    return cookbookStorage.getUserCollections(userId)
-  })
+  // Local state initialized from storage
+  const [collections, setCollections] = useState(() => cookbookStorage.getUserCollections(userId))
   const [savedRecipeIds, setSavedRecipeIds] = useState(() => cookbookStorage.getSavedRecipeIds(userId))
+  const [bookmarks, setBookmarks] = useState(() => bookmarkStorage.getUserBookmarks(userId))
   const [sortBy, setSortBy] = useState('recent') // 'recent' | 'title' | 'time'
   const [searchTerm, setSearchTerm] = useState('')
   const [toast, setToast] = useState(null)
@@ -55,6 +43,18 @@ export default function CookbookPage() {
   const refreshCookbook = () => {
     setCollections(cookbookStorage.getUserCollections(userId))
     setSavedRecipeIds(cookbookStorage.getSavedRecipeIds(userId))
+    setBookmarks(bookmarkStorage.getUserBookmarks(userId))
+  }
+
+  // Keep toast visible even when unbookmarking removes the card from view
+  const handleBookmarkToggle = (isSaved, _bookmark, message) => {
+    refreshCookbook()
+    if (message) {
+      setToast({
+        type: isSaved ? 'success' : 'info',
+        message
+      })
+    }
   }
 
   // Active collection object if in collection view
@@ -72,17 +72,19 @@ export default function CookbookPage() {
 
   // Recipes currently shown (Overview, Collection, or All Saved)
   const displayedRecipes = useMemo(() => {
+    const savedAtById = new Map()
+    bookmarks.forEach((bm) => {
+      savedAtById.set(Number(bm.recipeId), Date.parse(bm.createdAt || '') || 0)
+    })
+
     let list
     if (currentCollection) {
       // Show recipes in current collection
       list = (currentCollection.recipeIds || [])
         .map((id) => recipeStorage.getById(id))
         .filter(Boolean)
-    } else if (viewMode === 'all') {
-      list = allSavedRecipes
     } else {
-      // Overview: recently saved recipes (up to 4)
-      list = allSavedRecipes.slice(0, 4)
+      list = [...allSavedRecipes]
     }
 
     // Apply search filter if present
@@ -96,17 +98,24 @@ export default function CookbookPage() {
       )
     }
 
-    // Apply sorting
-    return list.sort((a, b) => {
+    // Apply sorting before overview slice so newly saved recipes appear first
+    const sorted = [...list].sort((a, b) => {
       if (sortBy === 'title') {
         return a.title.localeCompare(b.title)
       }
       if (sortBy === 'time') {
         return (Number(a.cookingTime) || 0) - (Number(b.cookingTime) || 0)
       }
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      const aTime = savedAtById.get(Number(a.id)) ?? (Date.parse(a.createdAt || '') || 0)
+      const bTime = savedAtById.get(Number(b.id)) ?? (Date.parse(b.createdAt || '') || 0)
+      return bTime - aTime
     })
-  }, [currentCollection, viewMode, allSavedRecipes, searchTerm, sortBy])
+
+    if (!currentCollection && viewMode !== 'all') {
+      return sorted.slice(0, 4)
+    }
+    return sorted
+  }, [currentCollection, viewMode, allSavedRecipes, bookmarks, searchTerm, sortBy])
 
   // Map helper to find which collection(s) a recipe belongs to
   const getRecipeCollectionNames = (recipeId) => {
@@ -191,21 +200,23 @@ export default function CookbookPage() {
     }
   }
 
-  const handleAssignToCollection = (recipeId, targetColId) => {
+  const handleAssignToCollection = (recipeId, targetColIds) => {
     const recipe = recipeStorage.getById(recipeId)
-    const targetCol = collections.find((c) => String(c.id) === String(targetColId))
+    const idList = Array.isArray(targetColIds)
+      ? targetColIds
+      : targetColIds
+        ? [targetColIds]
+        : []
     try {
-      if (targetColId) {
-        cookbookStorage.addRecipeToCollection(userId, targetColId, recipeId)
-      } else {
-        cookbookStorage.saveRecipe(userId, recipeId)
-      }
+      const updatedCols = cookbookStorage.setRecipeCollections(userId, recipeId, idList)
+      const selectedCols = updatedCols.filter((c) => idList.includes(String(c.id)))
       refreshCookbook()
       setToast({
         type: 'success',
-        message: targetCol
-          ? `Added "${recipe?.title}" to ${targetCol.name}.`
-          : `Saved "${recipe?.title}" to your Cookbook.`
+        message:
+          selectedCols.length > 0
+            ? `Saved "${recipe?.title}" to ${selectedCols.map((c) => c.name).join(', ')}.`
+            : `Updated collections for "${recipe?.title}" (saved in All saved recipes).`
       })
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to save recipe.' })
@@ -347,6 +358,16 @@ export default function CookbookPage() {
                   displayedRecipes.map((recipe) => (
                     <article key={recipe.id} className="recipe-list-card">
                       <div className="recipe-card-thumb">
+                        <div className="card-thumb-bookmark-btn">
+                          <BookmarkButton
+                            recipeId={recipe.id}
+                            recipe={recipe}
+                            variant="icon"
+                            size="sm"
+                            onToggle={handleBookmarkToggle}
+                            showToast={false}
+                          />
+                        </div>
                         {recipe.image ? (
                           <img
                             src={recipe.image}
@@ -427,14 +448,10 @@ export default function CookbookPage() {
                 )}
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
 
@@ -504,6 +521,16 @@ export default function CookbookPage() {
                     return (
                       <article key={recipe.id} className="recipe-list-card">
                         <div className="recipe-card-thumb">
+                          <div className="card-thumb-bookmark-btn">
+                            <BookmarkButton
+                              recipeId={recipe.id}
+                              recipe={recipe}
+                              variant="icon"
+                              size="sm"
+                              onToggle={handleBookmarkToggle}
+                              showToast={false}
+                            />
+                          </div>
                           {recipe.image ? (
                             <img
                               src={recipe.image}
@@ -583,25 +610,17 @@ export default function CookbookPage() {
                         ? `No saved recipes match "${searchTerm}".`
                         : "You haven't saved any recipes to your cookbook yet."}
                     </p>
-                    <button
-                      type="button"
-                      className="btn-empty-action"
-                      onClick={() => navigate('/')}
-                    >
+                    <Link to="/recipes" className="btn-empty-action">
                       Browse community recipes
-                    </button>
+                    </Link>
                   </div>
                 )}
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
 
@@ -689,10 +708,20 @@ export default function CookbookPage() {
                   {displayedRecipes.length > 0 ? (
                     displayedRecipes.map((recipe) => {
                       const colNames = getRecipeCollectionNames(recipe.id)
-                      const colLabel = colNames.length > 0 ? colNames[0] : 'Saved'
+                      const colLabel = colNames.length > 0 ? colNames.join(', ') : 'Saved'
                       return (
                         <article key={recipe.id} className="recipe-list-card">
                           <div className="recipe-card-thumb">
+                            <div className="card-thumb-bookmark-btn">
+                              <BookmarkButton
+                                recipeId={recipe.id}
+                                recipe={recipe}
+                                variant="icon"
+                                size="sm"
+                                onToggle={handleBookmarkToggle}
+                                showToast={false}
+                              />
+                            </div>
                             {recipe.image ? (
                               <img
                                 src={recipe.image}
@@ -765,14 +794,10 @@ export default function CookbookPage() {
                 </p>
               </div>
 
-              {/* Bottom Action button */}
-              <button
-                type="button"
-                className="btn-find-more-white"
-                onClick={() => navigate('/')}
-              >
+              {/* Bottom Action link */}
+              <Link to="/recipes" className="btn-find-more-white">
                 Find more recipes
-              </button>
+              </Link>
             </div>
           )}
         </div>

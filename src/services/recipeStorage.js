@@ -81,7 +81,7 @@ export const recipeStorage = {
       image: recipeData.image?.trim() || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&auto=format&fit=crop&q=80',
       status: recipeData.status || 'Published',
       authorId: String(authorId),
-      authorName: authorName || 'Alex',
+      authorName: authorName || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }

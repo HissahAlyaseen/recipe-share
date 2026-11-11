@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import AddRecipePage from './pages/AddRecipePage'
+import BrowseRecipesPage from './pages/BrowseRecipesPage'
 import EditRecipePage from './pages/EditRecipePage'
 import MyRecipesPage from './pages/MyRecipesPage'
 import RecipeDetailsPage from './pages/RecipeDetailsPage'
@@ -9,21 +10,21 @@ import CustomizeRecipePage from './pages/CustomizeRecipePage'
 import ProfilePage from './pages/ProfilePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
+import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from './services/storageKeys'
 import { recipeStorage } from './services/recipeStorage'
 import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
-
-// Versioned sync to auto-reset stale or orphaned localStorage keys from previous runs
-const STORAGE_SYNC_VERSION = 'v9_user1_alex_sync'
+import { bookmarkStorage } from './services/bookmarkStorage'
 
 if (typeof window !== 'undefined') {
   try {
-    const currentVer = localStorage.getItem('recipe_share_storage_version')
+    const currentVer = localStorage.getItem(STORAGE_KEYS.STORAGE_VERSION)
     if (currentVer !== STORAGE_SYNC_VERSION) {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+      bookmarkStorage.resetDefaults()
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
     }
   } catch (err) {
     console.error('Storage version sync failed:', err)
@@ -36,7 +37,8 @@ if (typeof window !== 'undefined') {
       recipeStorage.resetDefaults()
       cookbookStorage.resetDefaults()
       profileStorage.resetDefaults()
-      localStorage.setItem('recipe_share_storage_version', STORAGE_SYNC_VERSION)
+      bookmarkStorage.resetDefaults()
+      localStorage.setItem(STORAGE_KEYS.STORAGE_VERSION, STORAGE_SYNC_VERSION)
       window.location.reload()
     } catch (err) {
       console.error('Manual reset failed:', err)
@@ -70,6 +72,7 @@ function App() {
           <Route path="/" element={<Placeholder title="Home" />} />
 
           {/* Member 2 Routes (Recipe & Personal Management) */}
+          <Route path="/recipes" element={<BrowseRecipesPage />} />
           <Route path="/my-recipes" element={<MyRecipesPage />} />
           <Route path="/recipes/new" element={<AddRecipePage />} />
           <Route path="/add-recipe" element={<AddRecipePage />} />
