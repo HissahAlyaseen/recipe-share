@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { recipeStorage } from '../services/recipeStorage'
+import { compressImageFile } from '../utils/imageUtils'
 import RecipePreviewModal from '../components/recipes/RecipePreviewModal'
 import Toast from '../components/common/Toast'
 import Header from '../components/common/Header'
@@ -134,12 +135,18 @@ export default function AddRecipePage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (uploadEvent) => {
-      setImage(uploadEvent.target?.result || '')
-      setErrors((prev) => ({ ...prev, image: null }))
-    }
-    reader.readAsDataURL(file)
+    // Downscale before storing: photos are kept in localStorage, which is only a few MB
+    compressImageFile(file)
+      .then((dataUrl) => {
+        setImage(dataUrl)
+        setErrors((prev) => ({ ...prev, image: null }))
+      })
+      .catch((err) => {
+        setErrors((prev) => ({
+          ...prev,
+          image: err.message || 'This image could not be read. Please choose a different file.'
+        }))
+      })
   }
 
   // --- Validation ---

@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useStorageSync } from '../hooks/useStorageSync'
 import { recipeStorage, RECIPES_UPDATED_EVENT } from '../services/recipeStorage'
+import { compressImageFile } from '../utils/imageUtils'
+import { normalizeDietaryTags } from '../utils/dietaryUtils'
 import RecipePreviewModal from '../components/recipes/RecipePreviewModal'
 import Toast from '../components/common/Toast'
 import Header from '../components/common/Header'
@@ -95,7 +97,8 @@ export default function EditRecipePage() {
 
   // Dietary Tags
   const [selectedTags, setSelectedTags] = useState(() => {
-    return Array.isArray(existingRecipe?.dietaryTags) ? [...existingRecipe.dietaryTags] : []
+    // Canonical spelling so existing tags match the picker options (e.g. "Gluten-Free" -> "Gluten-free")
+    return normalizeDietaryTags(existingRecipe?.dietaryTags)
   })
   const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false)
 
@@ -222,12 +225,19 @@ export default function EditRecipePage() {
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = (uploadEvent) => {
-      setImage(uploadEvent.target?.result || '')
-      setErrors((prev) => ({ ...prev, image: null }))
-    }
-    reader.readAsDataURL(file)
+    // Downscale before storing: photos are kept in localStorage, which is only a few MB
+    compressImageFile(file)
+      .then((dataUrl) => {
+        setImage(dataUrl)
+        setErrors((prev) => ({ ...prev, image: null }))
+        setSaveSuccess(false)
+      })
+      .catch((err) => {
+        setErrors((prev) => ({
+          ...prev,
+          image: err.message || 'This image could not be read. Please choose a different file.'
+        }))
+      })
   }
 
   // --- Validation ---
@@ -284,7 +294,8 @@ export default function EditRecipePage() {
       cookingTime: Number(cookingTime) || 1,
       servings: Number(servings) || 2,
       difficulty,
-      image: image || existingRecipe.image,
+      // An empty value means the author removed the photo; cards fall back to a placeholder
+      image: image.trim(),
       ingredients: formattedIngredients,
       ingredientItems,
       instructions: cleanedSteps,
@@ -327,6 +338,17 @@ export default function EditRecipePage() {
       })
       setIsSaving(false)
     }
+  }
+
+  const handleOpenPreview = () => {
+    if (!validateForm()) {
+      setToast({
+        type: 'error',
+        message: 'Please fix the validation errors before previewing.'
+      })
+      return
+    }
+    setIsPreviewOpen(true)
   }
 
   return (
@@ -584,7 +606,10 @@ export default function EditRecipePage() {
                   <button
                     type="button"
                     className="thumb-remove-btn"
-                    onClick={() => setImage('')}
+                    onClick={() => {
+                      setImage('')
+                      setSaveSuccess(false)
+                    }}
                     title="Remove image"
                   >
                     ✕
@@ -769,7 +794,7 @@ export default function EditRecipePage() {
               <button
                 type="button"
                 className="btn-preview-recipe"
-                onClick={() => setIsPreviewOpen(true)}
+                onClick={handleOpenPreview}
               >
                 Preview recipe
               </button>

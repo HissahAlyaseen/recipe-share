@@ -227,6 +227,14 @@
   line-height: 1.25;
 }
 
+.recipe-description {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #374151;
+  overflow-wrap: anywhere;
+}
+
 .recipe-author-subtitle {
   margin: 0;
   font-size: 14px;

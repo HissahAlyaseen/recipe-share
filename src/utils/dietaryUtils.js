@@ -1,4 +1,25 @@
-import { extractPreferences } from '../services/profileStorage.js'
+import { extractPreferences, DIET_OPTIONS } from '../services/profileStorage.js'
+
+const CANONICAL_DIET_TAGS = new Map(DIET_OPTIONS.map((opt) => [opt.toLowerCase(), opt]))
+
+/**
+ * Normalize recipe dietary tags to the canonical spelling used by the tag picker
+ * (e.g. "Gluten-Free" -> "Gluten-free") and drop case-insensitive duplicates.
+ */
+export function normalizeDietaryTags(tags) {
+  if (!Array.isArray(tags)) return []
+  const seen = new Set()
+  const result = []
+  for (const tag of tags) {
+    const cleaned = String(tag ?? '').trim()
+    if (!cleaned) continue
+    const lower = cleaned.toLowerCase()
+    if (seen.has(lower)) continue
+    seen.add(lower)
+    result.push(CANONICAL_DIET_TAGS.get(lower) || cleaned)
+  }
+  return result
+}
 
 const ALLERGEN_KEYWORDS = {
   peanuts: ['peanut', 'peanuts'],
