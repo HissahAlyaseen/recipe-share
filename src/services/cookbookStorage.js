@@ -299,6 +299,9 @@ export const cookbookStorage = {
       persistCollectionsList(collections)
     }
 
+    // A customization is a private copy of a saved recipe: it goes when the recipe is un-saved
+    this.deleteCustomization(userId, numId)
+
     return true
   },
 

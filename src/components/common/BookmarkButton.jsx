@@ -87,6 +87,7 @@ export default function BookmarkButton({
     }
 
     try {
+      const hadCustomization = Boolean(cookbookStorage.getCustomization(activeUserId, numericId))
       const result = bookmarkStorage.toggleBookmark(activeUserId, numericId)
 
       // Keep Personal Cookbook collections and saved list aligned with bookmark state
@@ -94,6 +95,9 @@ export default function BookmarkButton({
         cookbookStorage.saveRecipe(activeUserId, numericId)
       } else {
         cookbookStorage.unsaveRecipe(activeUserId, numericId)
+        if (hadCustomization) {
+          result.message = `${result.message} Your customized version was removed too.`
+        }
       }
 
       setIsSaved(result.isBookmarked)

@@ -126,6 +126,8 @@ export default function ProfilePage() {
       if (updateUser) {
         updateUser({ name: updated.name, email: updated.email })
       }
+      // Keep "Created by" on this user's recipes in sync with the new name
+      recipeStorage.updateAuthorName(activeUserId, updated.name)
       setSearchParams({ view: 'profile_saved' })
     } catch {
       setToast({ type: 'error', message: 'Failed to save profile changes.' })

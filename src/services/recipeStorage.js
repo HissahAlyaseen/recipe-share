@@ -2,8 +2,12 @@ import { STORAGE_KEYS } from './storageKeys.js'
 import { recipes as dataRecipes } from '../data/recipes.js'
 import { bookmarkStorage } from './bookmarkStorage.js'
 import { cookbookStorage } from './cookbookStorage.js'
+import { normalizeDietaryTags } from '../utils/dietaryUtils.js'
 
 export const RECIPES_UPDATED_EVENT = 'recipe-share:recipes-updated'
+
+const STORAGE_FULL_MESSAGE =
+  'Could not save the recipe because browser storage is full. Remove the photo or use a smaller one, then try again.'
 
 /**
  * Default recipes dataset sourced directly from src/data/recipes.js.
@@ -19,7 +23,7 @@ function cloneRecipes(list) {
       ? { ingredientItems: r.ingredientItems.map((item) => ({ ...item })) }
       : {}),
     instructions: Array.isArray(r.instructions) ? [...r.instructions] : [],
-    dietaryTags: Array.isArray(r.dietaryTags) ? [...r.dietaryTags] : []
+    dietaryTags: normalizeDietaryTags(r.dietaryTags)
   }))
 }
 
@@ -98,7 +102,7 @@ export const recipeStorage = {
       ingredients: Array.isArray(recipeData.ingredients) ? recipeData.ingredients : [],
       ingredientItems: Array.isArray(recipeData.ingredientItems) ? recipeData.ingredientItems : [],
       instructions: Array.isArray(recipeData.instructions) ? recipeData.instructions : [],
-      dietaryTags: Array.isArray(recipeData.dietaryTags) ? recipeData.dietaryTags : [],
+      dietaryTags: normalizeDietaryTags(recipeData.dietaryTags),
       cookingTime: Math.max(1, Number(recipeData.cookingTime) || 15),
       prepTime: Math.max(0, Number(recipeData.prepTime) || 5),
       servings: Math.max(1, Number(recipeData.servings) || 2),
@@ -112,7 +116,9 @@ export const recipeStorage = {
     }
 
     const updatedList = [newRecipe, ...recipes]
-    saveRecipesToStorage(updatedList)
+    if (!saveRecipesToStorage(updatedList)) {
+      throw new Error(STORAGE_FULL_MESSAGE)
+    }
     return newRecipe
   },
 
@@ -131,6 +137,9 @@ export const recipeStorage = {
     const updated = {
       ...existing,
       ...updates,
+      ...('dietaryTags' in updates
+        ? { dietaryTags: normalizeDietaryTags(updates.dietaryTags) }
+        : {}),
       id: existing.id,
       authorId: existing.authorId,
       authorName: existing.authorName,
@@ -138,7 +147,9 @@ export const recipeStorage = {
     }
 
     recipes[index] = updated
-    saveRecipesToStorage(recipes)
+    if (!saveRecipesToStorage(recipes)) {
+      throw new Error(STORAGE_FULL_MESSAGE)
+    }
     return updated
   },
 
@@ -160,13 +171,34 @@ export const recipeStorage = {
 
     const deletedId = existing.id
     const filtered = recipes.filter((r) => String(r.id) !== String(deletedId))
-    saveRecipesToStorage(filtered)
+    if (!saveRecipesToStorage(filtered)) {
+      throw new Error('Could not delete the recipe. Please try again.')
+    }
 
     // Cascade cleanup: clean up all related bookmarks, collection references, and customizations
     bookmarkStorage.removeAllForRecipe(deletedId)
     cookbookStorage.removeRecipeReferences(deletedId)
 
     return true
+  },
+
+  /**
+   * Keep the "Created by" name on a user's recipes in sync after they rename themselves.
+   * Returns the number of recipes updated.
+   */
+  updateAuthorName(authorId, authorName) {
+    const cleanName = typeof authorName === 'string' ? authorName.trim() : ''
+    if (!authorId || !cleanName) return 0
+
+    const recipes = initRecipesStorage()
+    let changed = 0
+    const updatedList = recipes.map((r) => {
+      if (String(r.authorId) !== String(authorId) || r.authorName === cleanName) return r
+      changed += 1
+      return { ...r, authorName: cleanName }
+    })
+    if (changed > 0 && !saveRecipesToStorage(updatedList)) return 0
+    return changed
   },
 
   resetDefaults() {

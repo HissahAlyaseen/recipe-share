@@ -5,6 +5,7 @@ import { cookbookStorage, COOKBOOK_UPDATED_EVENT } from '../services/cookbookSto
 import { BOOKMARKS_UPDATED_EVENT } from '../services/bookmarkStorage'
 import { profileStorage, hasExplicitPreferences } from '../services/profileStorage'
 import { getRecipeDietaryConflicts } from '../utils/dietaryUtils'
+import { applySubstitutions } from '../utils/customizationUtils'
 import { useAuth } from '../hooks/useAuth'
 import { useStorageSync } from '../hooks/useStorageSync'
 import Header from '../components/common/Header'
@@ -134,10 +135,6 @@ export default function RecipeDetailsPage() {
 
   const displayedServings =
     isViewingCustom && customization.customServings ? customization.customServings : recipe.servings || 2
-  const displayedIngredients =
-    isViewingCustom && customization.modifiedIngredients?.length > 0
-      ? customization.modifiedIngredients
-      : recipe.ingredients || []
   const displayedInstructions =
     isViewingCustom && customization.modifiedInstructions?.length > 0
       ? customization.modifiedInstructions
@@ -150,8 +147,18 @@ export default function RecipeDetailsPage() {
           ? [{ original: customization.ingredientReplaced, replacement: customization.replacementIngredient }]
           : []
       : []
+  // In "My version" a swapped ingredient is listed as its replacement, not the original line
+  const displayedIngredients = isViewingCustom
+    ? applySubstitutions(
+        customization.modifiedIngredients?.length > 0
+          ? customization.modifiedIngredients
+          : recipe.ingredients || [],
+        displayedSubstitutions
+      )
+    : recipe.ingredients || []
   const displayedPersonalTags =
     isViewingCustom && Array.isArray(customization.personalTags) ? customization.personalTags : []
+  const prepMinutes = Number(recipe.prepTime) || 0
   const dietaryConflicts = userProfile
     ? getRecipeDietaryConflicts(recipe, userProfile, isViewingCustom ? displayedIngredients : null)
     : []
@@ -249,14 +256,23 @@ export default function RecipeDetailsPage() {
               {isAuthor && <span className="author-badge">You</span>}
             </p>
 
+            {recipe.description && <p className="recipe-description">{recipe.description}</p>}
+
             <div className="meta-info-row">
-              <span className="meta-pill">⏱️ {recipe.cookingTime || 15} min</span>
+              {prepMinutes > 0 && <span className="meta-pill">🔪 Prep {prepMinutes} min</span>}
+              <span className="meta-pill">
+                ⏱️ {prepMinutes > 0 ? 'Cook ' : ''}
+                {recipe.cookingTime || 15} min
+              </span>
               <span className="meta-pill">👥 {displayedServings} servings</span>
               {recipe.difficulty && (
                 <span className="meta-pill">📊 {recipe.difficulty}</span>
               )}
               {recipe.category && (
                 <span className="meta-pill">🏷️ {recipe.category}</span>
+              )}
+              {recipe.cuisine && (
+                <span className="meta-pill">🌍 {recipe.cuisine}</span>
               )}
             </div>
 

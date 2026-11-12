@@ -24,8 +24,8 @@
 
 .recipe-sub-title {
   margin: 0 0 4px;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--fs-section);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
@@ -40,14 +40,14 @@
 
 .private-callout-title {
   margin: 0 0 4px;
-  font-size: 14.5px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .private-callout-desc {
   margin: 0;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #4b5563;
   line-height: 1.45;
 }
@@ -67,7 +67,7 @@
 }
 
 .ing-item {
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: #374151;
   line-height: 1.4;
 }
@@ -91,15 +91,15 @@
 }
 
 .form-label {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #1f2937;
 }
 
 .form-select {
   width: 100%;
   padding: 10px 14px;
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   color: #111827;
@@ -117,7 +117,7 @@
 .form-input {
   width: 100%;
   padding: 10px 14px;
-  font-size: 14.5px;
+  font-size: var(--fs-base);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   color: #111827;
@@ -138,15 +138,15 @@
 
 .field-hint {
   margin: 2px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 
 .field-error {
   margin: 2px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-sm);
   color: #dc2626;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .swap-actions-row {
@@ -161,8 +161,8 @@
   background: transparent;
   border: none;
   color: #4b5563;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   padding: 0;
   text-decoration: underline;
@@ -186,7 +186,7 @@
 }
 
 .field-hint-inline {
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 
@@ -205,7 +205,7 @@
   background: #f9fafb;
   color: #111827;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -221,7 +221,7 @@
 
 .servings-number-input {
   text-align: center;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
 }
 
 .btn-inline-add {
@@ -229,8 +229,8 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   color: #111827;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   padding: 4px 10px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -255,11 +255,11 @@
 }
 
 .step-idx-badge {
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   color: #111827;
   min-width: 22px;
   padding-top: 10px;
-  font-size: 14px;
+  font-size: var(--fs-base);
 }
 
 .step-textarea {
@@ -307,8 +307,8 @@
   color: #111827;
   padding: 0 14px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
@@ -334,7 +334,7 @@
   border: 1px solid #d1d5db;
   border-radius: 8px;
   padding: 6px 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #111827;
 }
 
@@ -349,8 +349,8 @@
   background: #ffffff;
   border: 1px solid #d1d5db;
   color: #374151;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   padding: 5px 11px;
   border-radius: 16px;
   cursor: pointer;
@@ -383,8 +383,8 @@
   background: #f3f4f6;
   border: 1px solid #d1d5db;
   color: #111827;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   padding: 4px 10px;
   border-radius: 14px;
 }
@@ -407,7 +407,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #4b5563;
 }
 
@@ -419,7 +419,7 @@
 
 .saved-notes-preview {
   margin: 0;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #374151;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -438,14 +438,14 @@
 
 .allergen-warning-title {
   margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .allergen-warning-desc {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #4b5563;
   line-height: 1.45;
 }
@@ -458,8 +458,8 @@
   color: #ffffff;
   padding: 13px 20px;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
@@ -486,28 +486,28 @@
 
 .alert-banner-title {
   margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .alert-banner-desc {
   margin: 0;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #4b5563;
   line-height: 1.4;
 }
 
 .customized-headline {
   margin: 6px 0 0;
-  font-size: 20px;
-  font-weight: 800;
+  font-size: var(--fs-section);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .replacement-summary-line {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-base);
   color: #374151;
 }
 
@@ -520,14 +520,14 @@
 
 .allergen-callout-heading {
   margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .allergen-callout-body {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #4b5563;
   line-height: 1.45;
 }
@@ -545,7 +545,7 @@
   }
 
   .recipe-sub-title {
-    font-size: 18px;
+    font-size: var(--fs-section);
   }
 
   .swap-input-action-row,

@@ -62,8 +62,10 @@ export default function MyRecipesPage() {
       if (sortBy === 'time') {
         return (Number(a.cookingTime) || 0) - (Number(b.cookingTime) || 0)
       }
-      // 'recent' by default
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+      // 'recent' by default: most recently edited first (falls back to creation date)
+      return (
+        new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+      )
     })
 
   // Delete handler
@@ -157,7 +159,7 @@ export default function MyRecipesPage() {
                 <button
                   type="button"
                   className="btn-search"
-                  onClick={() => {}}
+                  onClick={() => document.getElementById('search-input')?.focus()}
                 >
                   Search
                 </button>

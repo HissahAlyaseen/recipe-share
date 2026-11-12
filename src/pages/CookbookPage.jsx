@@ -221,12 +221,15 @@ export default function CookbookPage() {
 
   const handleUnsaveEntirely = (recipeId) => {
     const recipe = recipeStorage.getById(recipeId)
+    const hadCustomization = Boolean(getRecipeCustomization(recipeId))
     try {
       cookbookStorage.unsaveRecipe(userId, recipeId)
       refreshCookbook()
       setToast({
         type: 'success',
-        message: `Removed "${recipe?.title || 'Recipe'}" from your saved cookbook.`
+        message: `Removed "${recipe?.title || 'Recipe'}" from your saved cookbook.${
+          hadCustomization ? ' Your customized version was removed too.' : ''
+        }`
       })
     } catch (err) {
       setToast({ type: 'error', message: err.message || 'Failed to remove recipe.' })

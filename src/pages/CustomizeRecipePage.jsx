@@ -8,6 +8,7 @@ import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
 import Toast from '../components/common/Toast'
 import ResetCustomizationModal from '../components/cookbook/ResetCustomizationModal'
+import { applySubstitutions, replaceIngredientLine } from '../utils/customizationUtils'
 import './CustomizeRecipePage.css'
 
 const SUGGESTED_PERSONAL_TAGS = [
@@ -55,7 +56,9 @@ function getInitialFormState(recipe, existingCust, collections) {
         : [...(recipe?.instructions || [])],
     personalNotes: existingCust?.personalNotes || '',
     personalTags: Array.isArray(existingCust?.personalTags) ? [...existingCust.personalTags] : [],
-    selectedCollectionId: existingCust?.collectionId || (collections[0]?.id ?? '')
+    selectedCollectionId: existingCust
+      ? existingCust.collectionId || ''
+      : collections.find((c) => c.recipeIds?.some((rid) => Number(rid) === Number(recipe?.id)))?.id ?? ''
   }
 }
 
@@ -188,6 +191,7 @@ export default function CustomizeRecipePage() {
       return
     }
     const orig = selectedIngredient || recipe.ingredients?.[0] || ''
+    const previousSwap = substitutions.find((s) => s.original === orig)
     setSubstitutions((prev) => {
       const existingIdx = prev.findIndex((s) => s.original === orig)
       if (existingIdx >= 0) {
@@ -195,13 +199,26 @@ export default function CustomizeRecipePage() {
       }
       return [...prev, { original: orig, replacement: trimmed }]
     })
+    // Show the swap in the ingredient list itself, not only as a note
+    setModifiedIngredients((prev) => {
+      const swapped = replaceIngredientLine(prev, orig, trimmed)
+      if (swapped !== prev || !previousSwap) return swapped
+      return replaceIngredientLine(prev, previousSwap.replacement, trimmed)
+    })
     setReplacement('')
     setError('')
     setToast({ type: 'success', message: `Added swap: ${orig} → ${trimmed}` })
   }
 
   const handleRemoveSubstitution = (index) => {
+    const removed = substitutions[index]
     setSubstitutions((prev) => prev.filter((_, idx) => idx !== index))
+    // Put the original ingredient back in the list
+    if (removed) {
+      setModifiedIngredients((prev) =>
+        replaceIngredientLine(prev, removed.replacement, removed.original)
+      )
+    }
   }
 
   // Instruction handlers
@@ -279,7 +296,11 @@ export default function CustomizeRecipePage() {
       }
     }
 
-    const cleanIngredients = modifiedIngredients.map((item) => item.trim()).filter(Boolean)
+    // Apply every swap (including a typed-but-not-added one) to the ingredient list
+    const cleanIngredients = applySubstitutions(
+      modifiedIngredients.map((item) => item.trim()).filter(Boolean),
+      finalSwaps
+    )
     const cleanInstructions = modifiedInstructions.map((step) => step.trim()).filter(Boolean)
     const servingsNum = Math.max(1, Number(customServings) || recipe.servings || 2)
     const cleanNotes = personalNotes.trim()
@@ -316,8 +337,8 @@ export default function CustomizeRecipePage() {
       modifiedInstructions: cleanInstructions,
       personalNotes: cleanNotes,
       personalTags: cleanTags,
-      collectionId: selectedCollectionId || null,
-      collectionName: chosenCol ? chosenCol.name : 'Cookbook',
+      collectionId: chosenCol ? chosenCol.id : null,
+      collectionName: chosenCol ? chosenCol.name : '',
       allergenNotes:
         finalSwaps.length > 0
           ? `Original contains ingredients that were substituted. Replacements: ${finalSwaps
@@ -336,7 +357,7 @@ export default function CustomizeRecipePage() {
         instructionsCount: cleanInstructions.length,
         personalNotes: cleanNotes,
         personalTags: cleanTags,
-        collectionName: chosenCol ? chosenCol.name : 'your cookbook',
+        collectionName: chosenCol ? chosenCol.name : 'All saved recipes',
         authorName: recipe.authorName || 'Home Cook'
       })
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -786,6 +807,7 @@ export default function CustomizeRecipePage() {
                   value={selectedCollectionId}
                   onChange={(e) => setSelectedCollectionId(e.target.value)}
                 >
+                  <option value="">No collection · All saved recipes only</option>
                   {collections.map((col) => (
                     <option key={col.id} value={col.id}>
                       {col.name} ({col.recipeIds?.length || 0} recipes)
