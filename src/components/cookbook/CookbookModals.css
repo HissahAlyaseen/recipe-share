@@ -15,8 +15,8 @@
   background: transparent;
   border: none;
   color: #4b5563;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   padding: 0;
   transition: color 0.15s ease;
@@ -28,22 +28,22 @@
 
 .cookbook-modal-heading {
   margin: 0 0 8px;
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.4px;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
   color: #111827;
 }
 
 .delete-target-title {
   margin: 0 0 6px;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: var(--fs-section);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .cookbook-modal-sub {
   margin: 0 0 20px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
   color: #6b7280;
   line-height: 1.45;
 }
@@ -56,15 +56,15 @@
 }
 
 .cookbook-form-label {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #1f2937;
 }
 
 .cookbook-input {
   width: 100%;
   padding: 10px 14px;
-  font-size: 15px;
+  font-size: var(--fs-base);
   border: 1px solid #d1d5db;
   border-radius: 8px;
   color: #111827;
@@ -87,7 +87,7 @@
 .cookbook-textarea {
   width: 100%;
   padding: 10px 14px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   font-family: inherit;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -106,20 +106,20 @@
 
 .cookbook-field-hint {
   margin: 4px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 
 .cookbook-field-error {
   margin: 4px 0 0;
-  font-size: 12.5px;
+  font-size: var(--fs-sm);
   color: #dc2626;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .cookbook-visibility-note {
   margin: 4px 0 24px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: #4b5563;
 }
 
@@ -133,14 +133,14 @@
 
 .callout-heading {
   margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .callout-body {
   margin: 0;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #4b5563;
   line-height: 1.45;
 }
@@ -158,8 +158,8 @@
   color: #ffffff;
   padding: 12px 18px;
   border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
@@ -176,8 +176,8 @@
   color: #374151;
   padding: 12px 18px;
   border-radius: 8px;
-  font-size: 14.5px;
-  font-weight: 500;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: center;
@@ -236,7 +236,7 @@
 
 .thumb-mini-text {
   font-size: 9px;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   color: #6b7280;
 }
 
@@ -247,8 +247,8 @@
 
 .save-modal-title {
   margin: 0 0 4px;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   color: #111827;
   white-space: nowrap;
   overflow: hidden;
@@ -257,7 +257,7 @@
 
 .save-modal-meta {
   margin: 0;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 
@@ -267,14 +267,14 @@
 
 .choose-cookbook-heading {
   margin: 0 0 4px;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .choose-cookbook-sub {
   margin: 0 0 14px;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: #6b7280;
 }
 
@@ -322,13 +322,13 @@
 }
 
 .col-opt-name {
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .col-opt-meta {
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 
@@ -337,8 +337,8 @@
   border: 1px dashed #9ca3af;
   border-radius: 8px;
   color: #111827;
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   padding: 10px 14px;
   width: 100%;
   cursor: pointer;
@@ -364,18 +364,18 @@
 
 .inline-create-title {
   margin: 0;
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .inline-input {
-  font-size: 13.5px;
+  font-size: var(--fs-base);
   padding: 8px 10px;
 }
 
 .inline-textarea {
-  font-size: 13px;
+  font-size: var(--fs-base);
   padding: 8px 10px;
 }
 
@@ -386,7 +386,7 @@
 
 .inline-btn {
   padding: 8px 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .selected-col-callout {
@@ -399,14 +399,14 @@
 
 .callout-strong {
   margin: 0 0 4px;
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   color: #111827;
 }
 
 .callout-muted {
   margin: 0;
-  font-size: 12.5px;
+  font-size: var(--fs-sm);
   color: #6b7280;
   line-height: 1.4;
 }
@@ -472,8 +472,8 @@
 }
 
 .add-recipe-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--fs-md);
+  font-weight: var(--fw-semibold);
   color: #111827;
   white-space: nowrap;
   overflow: hidden;
@@ -481,7 +481,7 @@
 }
 
 .add-recipe-meta {
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: #6b7280;
 }
 

@@ -54,10 +54,10 @@
 
 .modal-title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
+  font-size: var(--fs-section);
+  font-weight: var(--fw-semibold);
   color: #111827;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
 }
 
 .modal-close-btn {

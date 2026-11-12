@@ -30,8 +30,8 @@
   color: #4b5563;
   padding: 6px 14px;
   border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
   min-width: 72px;
   transition: all 0.15s ease;
   background: transparent;
@@ -48,7 +48,7 @@
 
 .tab-label {
   line-height: 1.1;
-  letter-spacing: -0.1px;
+  letter-spacing: 0;
 }
 
 .figma-nav-tab:hover {
@@ -59,7 +59,7 @@
 .figma-nav-tab.active {
   background: #e5e7eb;
   color: #111827;
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   padding: 6px 14px;
 }
 
@@ -78,7 +78,7 @@
     min-width: 0;
     max-width: 116px;
     padding: 6px 8px;
-    font-size: 12.5px;
+    font-size: var(--fs-xs);
   }
 
   .figma-nav-tab.active {

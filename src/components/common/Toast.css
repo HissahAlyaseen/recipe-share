@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
+  font-size: var(--fs-base);
   line-height: 1.4;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   z-index: 1000;
@@ -46,13 +46,13 @@
 }
 
 .toast-icon {
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
   font-size: 16px;
 }
 
 .toast-message {
   flex: 1;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 
 .toast-close {

@@ -51,10 +51,10 @@ function Placeholder({ title }) {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', textAlign: 'center' }}>
       <Header />
       <main style={{ flex: 1, padding: '60px 20px' }}>
-        <h1 style={{ fontSize: '28px', color: '#111827', margin: '0 0 12px' }}>
+        <h1 style={{ fontSize: 'var(--fs-title)', color: '#111827', margin: '0 0 12px' }}>
           {title} Page - Coming Soon 🍽️
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '15px' }}>
+        <p style={{ color: '#6b7280', fontSize: 'var(--fs-sm)' }}>
           This section is currently being integrated by other team members.
         </p>
       </main>

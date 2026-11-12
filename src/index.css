@@ -11,12 +11,29 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Typography system (from the Figma screens): one family, one size scale, three weights.
+     Every stylesheet uses these tokens so all screens stay consistent. */
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --heading: var(--sans);
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
+  --fs-title: 22px; /* page and modal titles */
+  --fs-section: 18px; /* section headings */
+  --fs-lead: 16px; /* result counts, sub-headings */
+  --fs-md: 14px; /* buttons, card titles, checkbox labels */
+  --fs-base: 13px; /* inputs and reading text */
+  --fs-sm: 12px; /* labels, helper text, links */
+  --fs-xs: 11px; /* meta lines, chips, tab labels */
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  --lh-title: 1.25;
+  --lh-body: 1.45;
+
+  font: var(--fw-regular) var(--fs-md) / var(--lh-body) var(--sans);
+  letter-spacing: 0;
   color-scheme: light;
   color: var(--text);
   background: #ffffff;
@@ -24,10 +41,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
 }
 
 *,
@@ -42,6 +55,12 @@ textarea,
 button {
   color-scheme: light;
   font-family: inherit;
+  font-size: inherit;
+}
+
+strong,
+b {
+  font-weight: var(--fw-semibold);
 }
 
 body {
@@ -62,29 +81,28 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3,
+h4 {
   font-family: var(--heading);
-  font-weight: 500;
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0;
+}
+
+h1,
+h2 {
   color: var(--text-h);
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+  font-size: var(--fs-title);
+  line-height: var(--lh-title);
+  margin: 20px 0;
 }
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
+  font-size: var(--fs-section);
+  line-height: var(--lh-title);
   margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
 }
 p {
   margin: 0;
@@ -99,7 +117,7 @@ code,
 }
 
 code {
-  font-size: 15px;
+  font-size: var(--fs-base);
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
