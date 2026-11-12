@@ -90,7 +90,7 @@ export default function Header() {
             aria-haspopup="true"
           >
             <span className="profile-avatar">
-              {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </span>
             <span className="profile-name">{user?.name || 'User'}</span>
             <span className="profile-caret">▾</span>
@@ -105,7 +105,7 @@ export default function Header() {
               title="View profile and dietary preferences"
             >
               <div className="dropdown-user-avatar">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+                {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="dropdown-user-text">
                 <span className="dropdown-user-name">{user?.name || 'User'}</span>

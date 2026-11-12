@@ -1,75 +1,128 @@
 import { useState, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { profileStorage } from '../services/profileStorage'
-import { recipeStorage } from '../services/recipeStorage'
+import { useStorageSync } from '../hooks/useStorageSync'
+import {
+  profileStorage,
+  extractPreferences,
+  DIET_OPTIONS,
+  ALLERGEN_OPTIONS
+} from '../services/profileStorage'
+import { recipeStorage, RECIPES_UPDATED_EVENT } from '../services/recipeStorage'
 import Header from '../components/common/Header'
 import BottomNav from '../components/common/BottomNav'
 import Toast from '../components/common/Toast'
 import './ProfilePage.css'
 
-const DIET_OPTIONS = [
-  'Vegetarian',
-  'Vegan',
-  'Gluten-free',
-  'Dairy-free',
-  'Low-carb',
-  'Pescatarian'
-]
-
-const ALLERGEN_OPTIONS = [
-  'Peanuts',
-  'Tree nuts',
-  'Milk',
-  'Eggs',
-  'Soy',
-  'Shellfish'
-]
-
 export default function ProfilePage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { user, updateUser } = useAuth()
-  const userId = user?.id || 'user-1'
+  const { user, isAuthenticated, updateUser } = useAuth()
+  const activeUserId = isAuthenticated === false ? null : user?.id || null
 
   // View state: 'profile' (default), 'preferences' (edit mode), 'profile_saved', 'preferences_saved'
   const viewMode = searchParams.get('view') || 'profile'
 
-  // Profile data from storage
-  const [profile, setProfile] = useState(() => profileStorage.getProfile(userId))
-  const [name, setName] = useState(profile?.name || user?.name || '')
-  const [email, setEmail] = useState(profile?.email || user?.email || '')
+  // Initial profile loaded for the authenticated user
+  const [profile, setProfile] = useState(() =>
+    activeUserId ? profileStorage.getProfile(activeUserId, user) : null
+  )
+  const [name, setName] = useState(() => profile?.name ?? user?.name ?? '')
+  const [email, setEmail] = useState(() => profile?.email ?? user?.email ?? '')
 
-  // Preferences form state
-  const [selectedDiets, setSelectedDiets] = useState(profile?.dietPreferences || ['Vegetarian', 'Gluten-free'])
-  const [selectedAllergens, setSelectedAllergens] = useState(profile?.allergensToAvoid || ['Peanuts'])
+  // Preferences form state (no hardcoded diet/allergen fallbacks)
+  const [selectedDiets, setSelectedDiets] = useState(() => profile?.dietPreferences || [])
+  const [selectedAllergens, setSelectedAllergens] = useState(() => profile?.allergensToAvoid || [])
+  const [customRestrictions, setCustomRestrictions] = useState(
+    () => profile?.customDietaryRestrictions || []
+  )
+  const [customRestrictionInput, setCustomRestrictionInput] = useState('')
+  const [customInputError, setCustomInputError] = useState('')
 
   // Feedback toast
   const [toast, setToast] = useState(null)
 
+  // Synchronize state whenever the authenticated user switches or auth context updates externally
+  const authPrefs = extractPreferences(user || {})
+  const userSyncSignature = activeUserId
+    ? `${activeUserId}::${user?.name || ''}::${user?.email || ''}::${JSON.stringify(
+        authPrefs.dietaryPreferences
+      )}`
+    : 'guest'
+  const [prevUserSyncSig, setPrevUserSyncSig] = useState(userSyncSignature)
+
+  if (prevUserSyncSig !== userSyncSignature) {
+    setPrevUserSyncSig(userSyncSignature)
+    const reloaded = activeUserId ? profileStorage.getProfile(activeUserId, user) : null
+    setProfile(reloaded)
+    setName(reloaded?.name ?? user?.name ?? '')
+    setEmail(reloaded?.email ?? user?.email ?? '')
+    setSelectedDiets(reloaded?.dietPreferences || [])
+    setSelectedAllergens(reloaded?.allergensToAvoid || [])
+    setCustomRestrictions(reloaded?.customDietaryRestrictions || [])
+    setCustomRestrictionInput('')
+    setCustomInputError('')
+  }
+
+  const recipeRevision = useStorageSync([RECIPES_UPDATED_EVENT])
+
   // Dynamic user recipes count
   const myRecipesCount = useMemo(() => {
-    return recipeStorage.getByAuthor(userId).length
-  }, [userId])
+    void recipeRevision
+    return activeUserId ? recipeStorage.getByAuthor(activeUserId).length : 0
+  }, [activeUserId, recipeRevision])
+
+  if (!activeUserId) {
+    return (
+      <div className="profile-page-wrapper">
+        <Header />
+        <main className="profile-main">
+          <div className="profile-container">
+            <div className="profile-view-card">
+              <header className="profile-header-block">
+                <h1 className="profile-top-title">Sign in required</h1>
+                <p className="profile-subtitle">
+                  Please sign in to view and manage your profile and dietary preferences.
+                </p>
+              </header>
+              <Link to="/recipes" className="btn-secondary-action">
+                Discover recipes
+              </Link>
+            </div>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    )
+  }
 
   // --- Handlers ---
 
   const handleSaveProfile = (e) => {
     e?.preventDefault()
-    if (!name.trim()) {
+    const trimmedName = name.trim()
+    const trimmedEmail = email.trim()
+
+    if (!trimmedName) {
       setToast({ type: 'error', message: 'Name cannot be empty.' })
       return
     }
-    if (!email.trim() || !email.includes('@')) {
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
       setToast({ type: 'error', message: 'Please enter a valid email address.' })
       return
     }
 
     try {
-      const updated = profileStorage.updateProfile(userId, {
-        name: name.trim(),
-        email: email.trim()
-      })
+      const updated = profileStorage.updateProfile(
+        activeUserId,
+        {
+          name: trimmedName,
+          email: trimmedEmail
+        },
+        user
+      )
       setProfile(updated)
+      setName(updated.name)
+      setEmail(updated.email)
       if (updateUser) {
         updateUser({ name: updated.name, email: updated.email })
       }
@@ -81,28 +134,88 @@ export default function ProfilePage() {
 
   const handleToggleDiet = (diet) => {
     setSelectedDiets((prev) =>
-      prev.includes(diet) ? prev.filter((d) => d !== diet) : [...prev, diet]
+      prev.some((d) => d.toLowerCase() === diet.toLowerCase())
+        ? prev.filter((d) => d.toLowerCase() !== diet.toLowerCase())
+        : [...prev, diet]
     )
   }
 
   const handleToggleAllergen = (allergen) => {
     setSelectedAllergens((prev) =>
-      prev.includes(allergen) ? prev.filter((a) => a !== allergen) : [...prev, allergen]
+      prev.some((a) => a.toLowerCase() === allergen.toLowerCase())
+        ? prev.filter((a) => a.toLowerCase() !== allergen.toLowerCase())
+        : [...prev, allergen]
     )
+  }
+
+  const handleAddCustomRestriction = () => {
+    const cleaned = customRestrictionInput.trim().replace(/\s+/g, ' ')
+    if (!cleaned) {
+      setCustomInputError('Please enter a dietary restriction before adding.')
+      return
+    }
+    const exists = customRestrictions.some(
+      (item) => item.toLowerCase() === cleaned.toLowerCase()
+    )
+    if (exists) {
+      setCustomInputError(`"${cleaned}" is already added.`)
+      return
+    }
+    setCustomRestrictions((prev) => [...prev, cleaned])
+    setCustomRestrictionInput('')
+    setCustomInputError('')
+  }
+
+  const handleRemoveCustomRestriction = (itemToRemove) => {
+    setCustomRestrictions((prev) =>
+      prev.filter((item) => item.toLowerCase() !== itemToRemove.toLowerCase())
+    )
+    setCustomInputError('')
   }
 
   const handleClearAllPreferences = () => {
     setSelectedDiets([])
     setSelectedAllergens([])
+    setCustomRestrictions([])
+    setCustomRestrictionInput('')
+    setCustomInputError('')
   }
 
   const handleSavePreferences = () => {
+    // Auto-include a pending typed restriction if user forgot to click + Add
+    let finalCustom = [...customRestrictions]
+    const pendingCustom = customRestrictionInput.trim().replace(/\s+/g, ' ')
+    if (
+      pendingCustom &&
+      !finalCustom.some((item) => item.toLowerCase() === pendingCustom.toLowerCase())
+    ) {
+      finalCustom.push(pendingCustom)
+    }
+
     try {
-      const updated = profileStorage.updateProfile(userId, {
-        dietPreferences: selectedDiets,
-        allergensToAvoid: selectedAllergens
-      })
+      const updated = profileStorage.updateProfile(
+        activeUserId,
+        {
+          dietPreferences: selectedDiets,
+          allergensToAvoid: selectedAllergens,
+          customDietaryRestrictions: finalCustom
+        },
+        user
+      )
       setProfile(updated)
+      setSelectedDiets(updated.dietPreferences)
+      setSelectedAllergens(updated.allergensToAvoid)
+      setCustomRestrictions(updated.customDietaryRestrictions)
+      setCustomRestrictionInput('')
+      setCustomInputError('')
+      if (updateUser) {
+        updateUser({
+          dietPreferences: updated.dietPreferences,
+          allergensToAvoid: updated.allergensToAvoid,
+          customDietaryRestrictions: updated.customDietaryRestrictions,
+          dietaryPreferences: updated.dietaryPreferences
+        })
+      }
       setSearchParams({ view: 'preferences_saved' })
     } catch {
       setToast({ type: 'error', message: 'Failed to save dietary preferences.' })
@@ -111,16 +224,31 @@ export default function ProfilePage() {
 
   // Summary label generator for preferences saved banner
   const getPreferencesSavedSummary = () => {
-    const dietParts = selectedDiets.length > 0 ? selectedDiets.join(' and ') + ' selected.' : ''
+    const savedDiets = profile?.dietPreferences || selectedDiets
+    const savedAllergens = profile?.allergensToAvoid || selectedAllergens
+    const savedCustom = profile?.customDietaryRestrictions || customRestrictions
+
+    const dietParts = savedDiets.length > 0 ? savedDiets.join(' and ') + ' selected.' : ''
     const allergenParts =
-      selectedAllergens.length > 0
-        ? `${selectedAllergens.join(', ')} excluded from recipe discovery.`
+      savedAllergens.length > 0
+        ? `${savedAllergens.join(', ')} excluded from recipe discovery.`
         : ''
-    if (!dietParts && !allergenParts) {
-      return 'All dietary preferences and allergen exclusions have been cleared.'
+    const customParts =
+      savedCustom.length > 0
+        ? `Custom restrictions: ${savedCustom.join(', ')}.`
+        : ''
+
+    if (!dietParts && !allergenParts && !customParts) {
+      return 'All dietary preferences, allergen exclusions, and custom restrictions have been cleared.'
     }
-    return [dietParts, allergenParts].filter(Boolean).join(' ')
+    return [dietParts, allergenParts, customParts].filter(Boolean).join(' ')
   }
+
+  const savedDietsList = profile?.dietPreferences || []
+  const savedAllergensList = profile?.allergensToAvoid || []
+  const savedCustomList = profile?.customDietaryRestrictions || []
+  const hasAnySavedPrefs =
+    savedDietsList.length > 0 || savedAllergensList.length > 0 || savedCustomList.length > 0
 
   return (
     <div className="profile-page-wrapper">
@@ -134,7 +262,9 @@ export default function ProfilePage() {
             <div className="profile-view-card">
               <header className="profile-header-block">
                 <h1 className="profile-top-title">My profile</h1>
-                <h2 className="profile-greeting">Hi, {profile.name || ''}</h2>
+                <h2 className="profile-greeting">
+                  {profile?.name ? `Hi, ${profile.name}` : 'Hi there'}
+                </h2>
                 <p className="profile-subtitle">Manage your account and recipe preferences.</p>
               </header>
 
@@ -186,8 +316,11 @@ export default function ProfilePage() {
                     type="button"
                     className="btn-edit-link"
                     onClick={() => {
-                      setSelectedDiets(profile.dietPreferences || [])
-                      setSelectedAllergens(profile.allergensToAvoid || [])
+                      setSelectedDiets(savedDietsList)
+                      setSelectedAllergens(savedAllergensList)
+                      setCustomRestrictions(savedCustomList)
+                      setCustomRestrictionInput('')
+                      setCustomInputError('')
                       setSearchParams({ view: 'preferences' })
                     }}
                   >
@@ -197,20 +330,24 @@ export default function ProfilePage() {
 
                 {/* Selected Preference Chips */}
                 <div className="preference-chips-list">
-                  {profile.dietPreferences?.map((diet) => (
+                  {savedDietsList.map((diet) => (
                     <span key={diet} className="pref-chip">
                       {diet}
                     </span>
                   ))}
-                  {profile.allergensToAvoid?.map((allergen) => (
+                  {savedAllergensList.map((allergen) => (
                     <span key={allergen} className="pref-chip">
                       Avoid {allergen.toLowerCase()}
                     </span>
                   ))}
-                  {(!profile.dietPreferences || profile.dietPreferences.length === 0) &&
-                    (!profile.allergensToAvoid || profile.allergensToAvoid.length === 0) && (
-                      <span className="pref-empty-note">No dietary preferences set yet.</span>
-                    )}
+                  {savedCustomList.map((restriction) => (
+                    <span key={`custom-${restriction}`} className="pref-chip pref-chip-custom">
+                      {restriction}
+                    </span>
+                  ))}
+                  {!hasAnySavedPrefs && (
+                    <span className="pref-empty-note">No dietary preferences set yet.</span>
+                  )}
                 </div>
 
                 {/* Allergy guidance box matching Figma */}
@@ -278,7 +415,7 @@ export default function ProfilePage() {
                     <label key={diet} className="pref-checkbox-item">
                       <input
                         type="checkbox"
-                        checked={selectedDiets.includes(diet)}
+                        checked={selectedDiets.some((d) => d.toLowerCase() === diet.toLowerCase())}
                         onChange={() => handleToggleDiet(diet)}
                         className="pref-checkbox-input"
                       />
@@ -298,7 +435,7 @@ export default function ProfilePage() {
                     <label key={allergen} className="pref-checkbox-item">
                       <input
                         type="checkbox"
-                        checked={selectedAllergens.includes(allergen)}
+                        checked={selectedAllergens.some((a) => a.toLowerCase() === allergen.toLowerCase())}
                         onChange={() => handleToggleAllergen(allergen)}
                         className="pref-checkbox-input"
                       />
@@ -306,6 +443,72 @@ export default function ProfilePage() {
                     </label>
                   ))}
                 </div>
+              </section>
+
+              {/* Custom dietary restrictions section */}
+              <section className="profile-section">
+                <h3 className="section-heading">Custom dietary restrictions</h3>
+                <p className="section-subtext">
+                  Add any other dietary restrictions or ingredients to avoid (e.g. Low sodium, No sesame oil).
+                </p>
+
+                <div className="custom-restriction-input-row">
+                  <input
+                    id="custom-restriction-input"
+                    type="text"
+                    className="form-input"
+                    value={customRestrictionInput}
+                    onChange={(e) => {
+                      setCustomRestrictionInput(e.target.value)
+                      if (customInputError) setCustomInputError('')
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        handleAddCustomRestriction()
+                      }
+                    }}
+                    placeholder="e.g. Low sodium, Sugar-free, No sesame"
+                    maxLength={50}
+                    aria-label="Custom dietary restriction"
+                  />
+                  <button
+                    type="button"
+                    className="btn-add-restriction"
+                    onClick={handleAddCustomRestriction}
+                  >
+                    + Add
+                  </button>
+                </div>
+
+                {customInputError && (
+                  <p className="custom-restriction-error" role="alert">
+                    {customInputError}
+                  </p>
+                )}
+
+                {customRestrictions.length > 0 ? (
+                  <div className="custom-restrictions-pills" aria-label="Added custom dietary restrictions">
+                    {customRestrictions.map((item) => (
+                      <span key={item} className="custom-restriction-pill">
+                        <span>{item}</span>
+                        <button
+                          type="button"
+                          className="chip-remove-btn"
+                          onClick={() => handleRemoveCustomRestriction(item)}
+                          aria-label={`Remove ${item}`}
+                          title={`Remove ${item}`}
+                        >
+                          ✕
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="pref-empty-note" style={{ display: 'block', marginBottom: '20px' }}>
+                    No custom dietary restrictions added yet.
+                  </p>
+                )}
 
                 {/* Not an allergy safety check box */}
                 <div className="guidance-box warning">
@@ -320,7 +523,8 @@ export default function ProfilePage() {
                 <div className="selection-summary-row">
                   <span className="selection-count-text">
                     {selectedDiets.length} diet {selectedDiets.length === 1 ? 'preference' : 'preferences'} ·{' '}
-                    {selectedAllergens.length} allergen {selectedAllergens.length === 1 ? 'exclusion' : 'exclusions'} selected
+                    {selectedAllergens.length} allergen {selectedAllergens.length === 1 ? 'exclusion' : 'exclusions'} ·{' '}
+                    {customRestrictions.length} custom {customRestrictions.length === 1 ? 'restriction' : 'restrictions'}
                   </span>
                   <button
                     type="button"
@@ -396,12 +600,12 @@ export default function ProfilePage() {
 
               <div className="form-group readonly">
                 <label className="form-label">Name</label>
-                <input type="text" className="form-input" value={profile.name || name} readOnly />
+                <input type="text" className="form-input" value={profile?.name ?? name} readOnly />
               </div>
 
               <div className="form-group readonly">
                 <label className="form-label">Email address</label>
-                <input type="email" className="form-input" value={profile.email || email} readOnly />
+                <input type="email" className="form-input" value={profile?.email ?? email} readOnly />
               </div>
 
               <button
@@ -430,4 +634,3 @@ export default function ProfilePage() {
     </div>
   )
 }
-

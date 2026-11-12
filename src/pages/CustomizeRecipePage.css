@@ -152,7 +152,9 @@
 .swap-actions-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: -6px;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: -4px;
 }
 
 .btn-reset-swap {
@@ -168,6 +170,262 @@
 
 .btn-reset-swap:hover {
   color: #111827;
+}
+
+.btn-reset-swap.danger:hover {
+  color: #dc2626;
+}
+
+/* Enhanced customization inputs preserving existing clean style */
+.customize-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.field-hint-inline {
+  font-size: 12.5px;
+  color: #6b7280;
+}
+
+.servings-stepper-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 220px;
+}
+
+.btn-stepper {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #111827;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-stepper:hover {
+  background: #f3f4f6;
+  border-color: #111827;
+}
+
+.servings-number-input {
+  text-align: center;
+  font-weight: 600;
+}
+
+.btn-inline-add {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  color: #111827;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-inline-add:hover {
+  border-color: #111827;
+  background: #f9fafb;
+}
+
+.editable-list-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editable-line-row,
+.editable-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.step-idx-badge {
+  font-weight: 700;
+  color: #111827;
+  min-width: 22px;
+  padding-top: 10px;
+  font-size: 14px;
+}
+
+.step-textarea {
+  resize: vertical;
+  min-height: 58px;
+}
+
+.btn-remove-line {
+  width: 36px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #6b7280;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-remove-line:hover {
+  color: #dc2626;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.swap-input-action-row,
+.custom-tag-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.swap-input-action-row .form-input,
+.custom-tag-add-row .form-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-add-swap-secondary {
+  background: #ffffff;
+  border: 1px solid #111827;
+  color: #111827;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.btn-add-swap-secondary:hover {
+  background: #f3f4f6;
+}
+
+.active-swaps-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.active-swap-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #111827;
+}
+
+.personal-tags-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.personal-tag-btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.personal-tag-btn:hover {
+  border-color: #111827;
+  color: #111827;
+}
+
+.personal-tag-btn.active {
+  background: #111827;
+  border-color: #111827;
+  color: #ffffff;
+}
+
+.selected-tags-row,
+.saved-personal-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.personal-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 14px;
+}
+
+.chip-remove-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.chip-remove-btn:hover {
+  color: #dc2626;
+}
+
+.saved-summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #4b5563;
+}
+
+.saved-swaps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.saved-notes-preview {
+  margin: 0;
+  font-size: 13.5px;
+  color: #374151;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  line-height: 1.45;
 }
 
 /* Allergen Warning Box */
@@ -288,6 +546,21 @@
 
   .recipe-sub-title {
     font-size: 18px;
+  }
+
+  .swap-input-action-row,
+  .custom-tag-add-row {
+    flex-wrap: wrap;
+  }
+
+  .swap-input-action-row .form-input,
+  .custom-tag-add-row .form-input {
+    flex: 1 1 180px;
+    min-width: 0;
+  }
+
+  .btn-add-swap-secondary {
+    min-height: 40px;
   }
 }
 

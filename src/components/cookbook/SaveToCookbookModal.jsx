@@ -11,14 +11,10 @@ export default function SaveToCookbookModal({
   onCreateCollection
 }) {
   const getInitialColIds = () => {
-    if (!collections.length) return []
-    if (recipe) {
-      const matchingIds = collections
-        .filter((c) => c.recipeIds?.some((id) => Number(id) === Number(recipe.id)))
-        .map((c) => String(c.id))
-      if (matchingIds.length > 0) return matchingIds
-    }
-    return [String(collections[0].id)]
+    if (!collections.length || !recipe) return []
+    return collections
+      .filter((c) => c.recipeIds?.some((id) => Number(id) === Number(recipe.id)))
+      .map((c) => String(c.id))
   }
 
   const [selectedColIds, setSelectedColIds] = useState(getInitialColIds)
@@ -69,14 +65,20 @@ export default function SaveToCookbookModal({
       setCreateError('Cookbook name must be 1-40 characters.')
       return
     }
-    const isDup = collections.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())
+    const isDup = collections.some(
+      (c) => String(c.name ?? '').trim().toLowerCase() === trimmed.toLowerCase()
+    )
     if (isDup) {
-      setCreateError('A cookbook with this name already exists.')
+      setCreateError('A cookbook with this name already exists. Please choose a unique name.')
       return
     }
 
-    const created = onCreateCollection({ name: trimmed, description: newColDesc.trim() })
-    if (created) {
+    try {
+      const created = onCreateCollection({ name: trimmed, description: newColDesc.trim() })
+      if (!created || !created.id) {
+        setCreateError('A cookbook with this name already exists. Please choose a unique name.')
+        return
+      }
       setSelectedColIds((prev) =>
         prev.includes(String(created.id)) ? prev : [...prev, String(created.id)]
       )
@@ -84,6 +86,8 @@ export default function SaveToCookbookModal({
       setNewColName('')
       setNewColDesc('')
       setCreateError('')
+    } catch (err) {
+      setCreateError(err.message || 'Unable to create cookbook. Please choose a unique name.')
     }
   }
 
@@ -173,16 +177,17 @@ export default function SaveToCookbookModal({
               <input
                 type="text"
                 placeholder="Cookbook name (e.g. Quick Lunches)"
-                className="cookbook-input inline-input"
+                className={`cookbook-input inline-input ${createError ? 'input-error' : ''}`}
                 value={newColName}
                 maxLength={40}
+                aria-invalid={Boolean(createError)}
                 onChange={(e) => {
                   setNewColName(e.target.value)
                   if (createError) setCreateError('')
                 }}
                 autoFocus
               />
-              {createError && <p className="cookbook-field-error">{createError}</p>}
+              {createError && <p className="cookbook-field-error" role="alert">{createError}</p>}
               <textarea
                 placeholder="Description (optional)"
                 className="cookbook-textarea inline-textarea"
@@ -197,7 +202,12 @@ export default function SaveToCookbookModal({
                 <button
                   type="button"
                   className="btn-modal-secondary inline-btn"
-                  onClick={() => setIsCreatingNew(false)}
+                  onClick={() => {
+                    setIsCreatingNew(false)
+                    setNewColName('')
+                    setNewColDesc('')
+                    setCreateError('')
+                  }}
                 >
                   Cancel
                 </button>

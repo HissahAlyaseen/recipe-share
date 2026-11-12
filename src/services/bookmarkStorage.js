@@ -43,18 +43,26 @@ export const DEFAULT_BOOKMARKS = [
 
 // --- Helper Functions ---
 
+function cloneBookmarks(list) {
+  return list.map((b) => ({
+    ...b,
+    collectionIds: Array.isArray(b.collectionIds) ? [...b.collectionIds] : []
+  }))
+}
+
 function getStoredBookmarks() {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.BOOKMARKS)
     if (!raw) {
-      localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(DEFAULT_BOOKMARKS))
-      return DEFAULT_BOOKMARKS
+      const defaults = cloneBookmarks(DEFAULT_BOOKMARKS)
+      localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(defaults))
+      return defaults
     }
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed : DEFAULT_BOOKMARKS
+    return Array.isArray(parsed) ? cloneBookmarks(parsed) : cloneBookmarks(DEFAULT_BOOKMARKS)
   } catch (err) {
     console.error('Failed to read bookmarks from localStorage:', err)
-    return DEFAULT_BOOKMARKS
+    return cloneBookmarks(DEFAULT_BOOKMARKS)
   }
 }
 
@@ -63,7 +71,11 @@ export const BOOKMARKS_UPDATED_EVENT = 'recipe-share:bookmarks-updated'
 function persistBookmarks(list) {
   try {
     localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(list))
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.dispatchEvent === 'function' &&
+      typeof CustomEvent !== 'undefined'
+    ) {
       window.dispatchEvent(new CustomEvent(BOOKMARKS_UPDATED_EVENT))
     }
   } catch (err) {
@@ -236,11 +248,39 @@ export const bookmarkStorage = {
   },
 
   /**
+   * Remove all bookmark records referencing a deleted recipe across all users.
+   */
+  removeAllForRecipe(recipeId) {
+    if (recipeId === undefined || recipeId === null) return 0
+    const strId = String(recipeId).trim()
+    if (!strId) return 0
+    const numId = Number(strId)
+
+    const all = getStoredBookmarks()
+    const filtered = all.filter((b) => {
+      const bStr = String(b.recipeId ?? '').trim()
+      if (!bStr) return true
+      const bNum = Number(bStr)
+      if (!Number.isNaN(numId) && !Number.isNaN(bNum)) {
+        return bNum !== numId
+      }
+      return bStr !== strId
+    })
+
+    const removedCount = all.length - filtered.length
+    if (removedCount > 0) {
+      persistBookmarks(filtered)
+    }
+    return removedCount
+  },
+
+  /**
    * Reset to default bookmarks dataset.
    */
   resetDefaults() {
-    persistBookmarks(DEFAULT_BOOKMARKS)
-    return DEFAULT_BOOKMARKS
+    const defaults = cloneBookmarks(DEFAULT_BOOKMARKS)
+    persistBookmarks(defaults)
+    return defaults
   }
 }
 
