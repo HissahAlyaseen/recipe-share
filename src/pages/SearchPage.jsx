@@ -157,6 +157,7 @@ const clearAllFilters = () => {
     <button
         type="button"
         onClick={clearAllFilters}
+        className="clear-filters-btn"
         disabled={
         selectedDiets.length === 0 &&
         selectedAllergens.length === 0
@@ -164,6 +165,7 @@ const clearAllFilters = () => {
     >
         Clear All Filters
     </button>
+    
     </div>
         {/* Search Results */}
         <div className="search-results">

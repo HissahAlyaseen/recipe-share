@@ -19,6 +19,7 @@ import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
 import HomePage from './pages/HomePage'
 import SearchPage from './pages/SearchPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 
 if (typeof window !== 'undefined') {
@@ -90,6 +91,10 @@ function App() {
           {/* Existing Team Routes preserved */}
 
           <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPasswordPage />}
+          />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/meal-planner" element={<Placeholder title="Meal Planner" />} />
