@@ -15,6 +15,11 @@ import { recipeStorage } from './services/recipeStorage'
 import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
 import { bookmarkStorage } from './services/bookmarkStorage'
+import LoginPage from './pages/LoginPage'
+import SignUpPage from './pages/SignUpPage'
+import HomePage from './pages/HomePage'
+import SearchPage from './pages/SearchPage'
+
 
 if (typeof window !== 'undefined') {
   try {
@@ -69,7 +74,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Home Route */}
-          <Route path="/" element={<Placeholder title="Home" />} />
+          <Route path="/" element={<HomePage />} />
 
           {/* Member 2 Routes (Recipe & Personal Management) */}
           <Route path="/recipes" element={<BrowseRecipesPage />} />
@@ -83,9 +88,10 @@ function App() {
           <Route path="/profile" element={<ProfilePage />} />
 
           {/* Existing Team Routes preserved */}
-          <Route path="/login" element={<Placeholder title="Login" />} />
-          <Route path="/signup" element={<Placeholder title="Sign Up" />} />
-          <Route path="/search" element={<Placeholder title="Search" />} />
+
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/meal-planner" element={<Placeholder title="Meal Planner" />} />
           <Route path="/admin" element={<Placeholder title="Admin Dashboard" />} />
 

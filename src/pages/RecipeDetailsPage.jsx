@@ -14,6 +14,8 @@ import BookmarkButton from '../components/common/BookmarkButton'
 import SaveToCookbookModal from '../components/cookbook/SaveToCookbookModal'
 import ResetCustomizationModal from '../components/cookbook/ResetCustomizationModal'
 import './RecipeDetailsPage.css'
+import IngredientSubstitutions from '../components/recipes/IngredientSubstitutions'
+import RatingsReviews from '../components/recipes/RatingsReviews'
 
 export default function RecipeDetailsPage() {
   const { id } = useParams()
@@ -332,7 +334,7 @@ export default function RecipeDetailsPage() {
               )}
             </ul>
           </section>
-
+          <IngredientSubstitutions ingredients={displayedIngredients} />
           <hr className="details-hr" />
 
           {/* Instructions */}
@@ -351,7 +353,8 @@ export default function RecipeDetailsPage() {
               )}
             </ol>
           </section>
-
+          {/* Ratings & Reviews */}
+          <RatingsReviews recipeId={recipe.id} />
           {/* Bottom Action buttons */}
           <div className="details-action-bar">
             {isAuthor && (
