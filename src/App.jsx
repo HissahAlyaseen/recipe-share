@@ -18,6 +18,11 @@ import { recipeStorage } from './services/recipeStorage'
 import { cookbookStorage } from './services/cookbookStorage'
 import { profileStorage } from './services/profileStorage'
 import { bookmarkStorage } from './services/bookmarkStorage'
+import LoginPage from './pages/LoginPage'
+import SignUpPage from './pages/SignUpPage'
+import HomePage from './pages/HomePage'
+import SearchPage from './pages/SearchPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 if (typeof window !== 'undefined') {
   try {
@@ -74,8 +79,8 @@ function App() {
         <MealPlanProvider>
           <BrowserRouter>
             <Routes>
-              {/* Home Route */}
-              <Route path="/" element={<Placeholder title="Home" />} />
+              {/* Home Route (Member 1) */}
+              <Route path="/" element={<HomePage />} />
 
               {/* Member 2 Routes (Recipe & Personal Management) */}
               <Route path="/recipes" element={<BrowseRecipesPage />} />
@@ -88,14 +93,15 @@ function App() {
               <Route path="/cookbook" element={<CookbookPage />} />
               <Route path="/profile" element={<ProfilePage />} />
 
+              {/* Member 1 Routes (Authentication & Recipe Discovery) */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/signup" element={<SignUpPage />} />
+              <Route path="/search" element={<SearchPage />} />
+
               {/* Member 3 Routes (Meal Planner & Admin):
                   /meal-planner, /admin/login, /admin, /admin/users, /admin/recipes, /admin/reviews */}
               {member3Routes}
-
-              {/* Member 1 placeholders (until their pages are merged) */}
-              <Route path="/login" element={<Placeholder title="Login" />} />
-              <Route path="/signup" element={<Placeholder title="Sign Up" />} />
-              <Route path="/search" element={<Placeholder title="Search" />} />
 
               {/* Fallback */}
               <Route path="*" element={<Placeholder title="Page Not Found" />} />
