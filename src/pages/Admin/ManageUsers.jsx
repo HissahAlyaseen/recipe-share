@@ -67,8 +67,8 @@ export default function ManageUsers() {
               ? `${pendingUser.name} will not be able to log in or post until reactivated.`
               : `${pendingUser.name} will regain full access to their account.`
           }
-          confirmLabel={suspending ? 'Suspend' : 'Reactivate'}
-          danger={suspending}
+          confirmLabel={suspending ? 'Suspend account' : 'Reactivate account'}
+          cancelLabel="Cancel"
           onConfirm={() => { toggleUserStatus(pendingUser.id); setPendingUser(null); }}
           onCancel={() => setPendingUser(null)}
         />

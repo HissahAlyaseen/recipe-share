@@ -56,8 +56,8 @@ export default function ManageReviews() {
         <ConfirmDialog
           title="Remove review?"
           message={`The review by ${toRemove.userName} will be removed as inappropriate content.`}
-          confirmLabel="Remove"
-          danger
+          confirmLabel="Remove review"
+          cancelLabel="Cancel · Keep review"
           onConfirm={() => { deleteReview(toRemove.id); setToRemove(null); }}
           onCancel={() => setToRemove(null)}
         />

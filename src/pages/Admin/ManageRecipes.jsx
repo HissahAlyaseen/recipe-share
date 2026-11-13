@@ -54,9 +54,10 @@ export default function ManageRecipes() {
       {toDelete && (
         <ConfirmDialog
           title="Delete recipe?"
-          message={`"${toDelete.title}" and all its reviews will be permanently removed.`}
-          confirmLabel="Delete"
-          danger
+          message={`You are deleting "${toDelete.title}".`}
+          note={{ title: 'This cannot be undone', text: 'The recipe and all its reviews will be removed from the community. Choose Cancel to keep it.' }}
+          confirmLabel="Delete recipe"
+          cancelLabel="Cancel · Keep recipe"
           onConfirm={() => { deleteRecipe(toDelete.id); setToDelete(null); }}
           onCancel={() => setToDelete(null)}
         />

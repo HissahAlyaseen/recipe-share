@@ -1,120 +1,158 @@
 import { useState } from 'react';
-import { useMealPlan, DAYS, MEALS } from '../../context/MealPlanContext';
+import { Link } from 'react-router-dom';
+import { useMealPlan, MEALS } from '../../context/MealPlanContext';
 import { useAdmin } from '../../context/AdminContext';
 import { RECIPE_STATUS } from '../../data/mockData';
 import RecipePickerModal from './RecipePickerModal';
-import ConfirmDialog from '../../components/ConfirmDialog';
+import { startOfWeek, addDays, weekDays, toKey, shortWeekday, longDate, weekRange, weekRangeShort } from './weekUtils';
 import '../../styles/shared.css';
 import './MealPlanner.css';
 
-// 28 → "28 min", 150 → "2 h 30 min"
-function formatMinutes(total) {
-  const h = Math.floor(total / 60);
-  const m = total % 60;
-  if (h === 0) return `${m} min`;
-  return m === 0 ? `${h} h` : `${h} h ${m} min`;
+const capitalize = (s) => s[0].toUpperCase() + s.slice(1);
+
+// One meal slot card (Breakfast / Lunch / Dinner), as in the Figma "Weekly meal planner".
+function MealSlot({ meal, recipe, onAdd, onReplace, onRemove }) {
+  return (
+    <div className="slot-card">
+      <span className="slot-label">{capitalize(meal)}</span>
+      {recipe ? (
+        <>
+          <p className="slot-recipe">{recipe.title}</p>
+          <div className="slot-links">
+            <Link to={`/recipes/${recipe.id}`} className="text-link">View recipe</Link>
+            <span className="slot-actions">
+              <button type="button" className="text-link" onClick={onReplace}>Replace</button>
+              <span aria-hidden="true"> · </span>
+              <button type="button" className="text-link" onClick={onRemove}>Remove</button>
+            </span>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="slot-recipe slot-empty">No recipe planned</p>
+          <div className="slot-links">
+            <button type="button" className="text-link" onClick={onAdd}>+ Add saved recipe</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
+const DISCLAIMER =
+  'Filters and substitutions do not guarantee allergy safety. Check every ingredient, product label and cross-contact risk before cooking.';
+
 export default function MealPlanner() {
-  const { plan, setMeal, removeMeal, clearWeek } = useMealPlan();
+  const { getMeal, setMeal, removeMeal } = useMealPlan();
   const { recipes } = useAdmin();
 
-  // Which slot the picker is open for, e.g. { day: 'Monday', meal: 'lunch' }. null = closed.
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+  // Index 0–6 of the selected day tab (starts on today).
+  const [selectedIndex, setSelectedIndex] = useState(() => (new Date().getDay() + 6) % 7);
+  const [view, setView] = useState('day'); // 'day' | 'week'
+  // Which slot the picker is open for, e.g. { date, meal }. null = closed.
   const [pickerSlot, setPickerSlot] = useState(null);
-  const [confirmClear, setConfirmClear] = useState(false);
 
+  const days = weekDays(weekStart);
+  const selectedDay = days[selectedIndex];
   const findRecipe = (id) => recipes.find((r) => r.id === id);
 
-  // Summary numbers shown above the grid.
-  // (recipes.js has no calories, so we show total cooking time instead.)
-  // filter(findRecipe) skips ids of recipes that were deleted by the admin.
-  const plannedIds = DAYS.flatMap((d) => MEALS.map((m) => plan[d][m])).filter(findRecipe);
-  const totalMinutes = plannedIds.reduce((sum, id) => {
-    const r = findRecipe(id);
-    return sum + r.prepTime + r.cookingTime;
-  }, 0);
+  const changeWeek = (step) => setWeekStart((w) => addDays(w, 7 * step));
 
   const handleSelect = (recipeId) => {
-    setMeal(pickerSlot.day, pickerSlot.meal, recipeId); // add or replace
+    setMeal(toKey(pickerSlot.date), pickerSlot.meal, recipeId); // add or replace
     setPickerSlot(null);
   };
 
+  // The three slot cards for one date (used in both views).
+  const renderSlots = (date) =>
+    MEALS.map((meal) => (
+      <MealSlot
+        key={meal}
+        meal={meal}
+        recipe={findRecipe(getMeal(toKey(date), meal))}
+        onAdd={() => setPickerSlot({ date, meal })}
+        onReplace={() => setPickerSlot({ date, meal })}
+        onRemove={() => removeMeal(toKey(date), meal)}
+      />
+    ));
+
   return (
     <div className="planner-page">
-      <header className="planner-header">
-        <div>
-          <h1>Weekly Meal Planner</h1>
-          <p className="planner-sub">
-            {plannedIds.length} / {DAYS.length * MEALS.length} meals planned · {formatMinutes(totalMinutes)} of cooking this week
-          </p>
-        </div>
-        <button
-          className="btn btn-secondary"
-          disabled={plannedIds.length === 0}
-          onClick={() => setConfirmClear(true)}
-        >
-          Clear week
-        </button>
-      </header>
+      {view === 'day' ? (
+        <>
+          <header className="page-header">
+            <h1>Weekly meal planner</h1>
+          </header>
 
-      <div className="planner-grid">
-        {DAYS.map((day) => (
-          <section key={day} className="day-card">
-            <h3 className="day-name">{day}</h3>
+          <div className="week-nav">
+            <button type="button" className="text-link" onClick={() => changeWeek(-1)}>‹ Previous</button>
+            <strong>{weekRange(weekStart)}</strong>
+            <button type="button" className="text-link" onClick={() => changeWeek(1)}>Next ›</button>
+          </div>
 
-            {MEALS.map((meal) => {
-              const recipe = findRecipe(plan[day][meal]);
-              return (
-                <div key={meal} className={`meal-slot ${recipe ? 'filled' : ''}`}>
-                  <span className="meal-label">{meal}</span>
+          <div className="day-tabs" role="tablist">
+            {days.map((d, i) => (
+              <button
+                key={toKey(d)}
+                type="button"
+                role="tab"
+                aria-selected={i === selectedIndex}
+                className={`day-tab ${i === selectedIndex ? 'active' : ''}`}
+                onClick={() => setSelectedIndex(i)}
+              >
+                <span>{shortWeekday(d)}</span>
+                <span>{d.getDate()}</span>
+              </button>
+            ))}
+          </div>
 
-                  {recipe ? (
-                    <>
-                      <div className="meal-recipe">
-                        <img className="meal-thumb" src={recipe.image} alt={recipe.title} />
-                        <div>
-                          <strong>{recipe.title}</strong>
-                          <small>{recipe.prepTime + recipe.cookingTime} min · {recipe.difficulty}</small>
-                        </div>
-                      </div>
-                      <div className="meal-actions">
-                        <button className="btn btn-sm btn-secondary" onClick={() => setPickerSlot({ day, meal })}>
-                          Replace
-                        </button>
-                        <button className="btn btn-sm btn-danger" onClick={() => removeMeal(day, meal)}>
-                          Remove
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <button className="add-meal-btn" onClick={() => setPickerSlot({ day, meal })}>
-                      + Add {meal}
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </section>
-        ))}
-      </div>
+          <h2 className="section-title">{longDate(selectedDay)}</h2>
+          <p className="helper">Choose a day above to manage its three meal slots.</p>
+
+          <div className="slot-list">{renderSlots(selectedDay)}</div>
+
+          <div className="info-box planner-note">
+            <strong>Changes save automatically</strong>
+            <p>Add, replace or remove a recipe in any slot.</p>
+          </div>
+
+          <button type="button" className="btn btn-secondary btn-block" onClick={() => setView('week')}>
+            View full week
+          </button>
+          <p className="planner-disclaimer">{DISCLAIMER}</p>
+        </>
+      ) : (
+        <>
+          <header className="page-header">
+            <h1>Full week · {weekRangeShort(weekStart)}</h1>
+          </header>
+          <p className="helper">Scroll through the week. The same recipe picker opens for every Add or Replace action.</p>
+
+          <div className="week-list">
+            {days.map((d) => (
+              <section key={toKey(d)} className="week-day">
+                <h2 className="section-title">{longDate(d)}</h2>
+                <div className="slot-list">{renderSlots(d)}</div>
+              </section>
+            ))}
+          </div>
+
+          <p className="planner-disclaimer">{DISCLAIMER}</p>
+          <button type="button" className="btn btn-secondary btn-block" onClick={() => setView('day')}>
+            Back to day view
+          </button>
+        </>
+      )}
 
       {pickerSlot && (
         <RecipePickerModal
-          slot={pickerSlot}
+          title={`${longDate(pickerSlot.date)} · ${capitalize(pickerSlot.meal)}`}
+          meal={pickerSlot.meal}
+          currentId={getMeal(toKey(pickerSlot.date), pickerSlot.meal)}
           recipes={recipes.filter((r) => r.status === RECIPE_STATUS.PUBLISHED)}
           onSelect={handleSelect}
           onClose={() => setPickerSlot(null)}
-        />
-      )}
-
-      {confirmClear && (
-        <ConfirmDialog
-          title="Clear the whole week?"
-          message="All planned meals will be removed."
-          confirmLabel="Clear"
-          danger
-          onConfirm={() => { clearWeek(); setConfirmClear(false); }}
-          onCancel={() => setConfirmClear(false)}
         />
       )}
     </div>
