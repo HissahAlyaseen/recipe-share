@@ -1,0 +1,150 @@
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+
+.login-container label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222222;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.login-container form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #222222;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.login-container form button:hover {
+  background-color: #444444;
+}
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.login-brand {
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.login-logo {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #999;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.login-brand h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.login-brand p {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 65px;
+}
+
+.login-container .show-password-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  margin: 0;
+  padding: 8px;
+  background: transparent;
+  color: #222;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}
+
+.login-container .show-password-btn:hover {
+  background: transparent;
+  text-decoration: underline;
+}
+
+.forgot-password {
+  text-align: right;
+  font-size: 13px;
+  color: #444;
+  text-decoration: underline;
+}
+
+.signup-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.signup-section p {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.signup-button {
+  display: block;
+  padding: 12px;
+  border: 1px solid #222;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #222;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.signup-button:hover {
+  background-color: #f3f4f6;
+}
+.login-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin: 10px 0;
+}
