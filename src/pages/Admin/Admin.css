@@ -1,0 +1,184 @@
+/* ---------- Login ---------- */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rs-bg);
+  padding: 16px;
+}
+.admin-login-card {
+  background: #fff;
+  width: 100%;
+  max-width: 380px;
+  padding: 32px 28px;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.admin-login-card h1 { margin: 0; }
+.admin-login-card label { display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; }
+.admin-muted { margin: -8px 0 4px; color: var(--rs-muted); }
+.admin-hint { font-size: 0.75rem; color: var(--rs-muted); text-align: center; margin: 0; }
+.form-error {
+  background: #fde6e6;
+  color: var(--rs-danger);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* ---------- Layout ---------- */
+.admin-shell { display: flex; min-height: 100vh; color: var(--rs-text); }
+.admin-sidebar {
+  width: 220px;
+  background: #2b2b2b;
+  color: #fff;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.admin-brand { font-size: 1.2rem; font-weight: 700; }
+.admin-sidebar nav { display: flex; flex-direction: column; gap: 4px; }
+.admin-link {
+  color: #ddd;
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-link:hover { background: #3a3a3a; }
+.admin-link.active { background: var(--rs-primary); color: #fff; }
+.count-pill {
+  background: var(--rs-danger);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  padding: 1px 7px;
+}
+.admin-logout { margin-top: auto; }
+.admin-main { flex: 1; padding: 24px; background: var(--rs-bg); overflow-x: auto; }
+.admin-title { margin-top: 0; }
+
+/* Mobile: sidebar becomes a horizontal bar on top */
+@media (max-width: 760px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar {
+    width: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 12px;
+    gap: 10px;
+  }
+  .admin-sidebar nav { flex-direction: row; flex-wrap: wrap; flex: 1; }
+  .admin-logout { margin-top: 0; }
+  .admin-main { padding: 16px; }
+}
+
+/* ---------- Dashboard ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--rs-border);
+  border-radius: 12px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+.stat-card:hover { border-color: var(--rs-primary); }
+.stat-card.alert { border-color: var(--rs-danger); }
+.stat-value { font-size: 1.8rem; font-weight: 700; }
+.stat-label { color: var(--rs-muted); font-size: 0.85rem; }
+
+.admin-panel {
+  background: #fff;
+  border: 1px solid var(--rs-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.admin-panel h2 { margin-top: 0; font-size: 1.1rem; }
+.attention-list { list-style: none; padding: 0; margin: 0; }
+.attention-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0ebe6;
+}
+.attention-list li:last-child { border-bottom: none; }
+
+/* ---------- Toolbar + tables ---------- */
+.admin-toolbar { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.admin-toolbar .input { flex: 1; min-width: 200px; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rs-border);
+}
+.admin-table th, .admin-table td { padding: 12px 14px; text-align: left; }
+.admin-table th { background: #f3eee9; font-size: 0.8rem; text-transform: uppercase; color: var(--rs-muted); }
+.admin-table tr + tr td { border-top: 1px solid #f0ebe6; }
+.action-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Mobile: each table row turns into a card; data-label shows the column name */
+@media (max-width: 760px) {
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr { border-bottom: 1px solid var(--rs-border); padding: 8px 0; }
+  .admin-table tr + tr td { border-top: none; }
+  .admin-table td { display: flex; justify-content: space-between; gap: 12px; padding: 6px 14px; box-sizing: border-box; }
+  .admin-table td::before { content: attr(data-label); font-weight: 600; color: var(--rs-muted); }
+}
+
+/* ---------- Reviews ---------- */
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+.tab {
+  border: 1px solid var(--rs-border);
+  background: #fff;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.tab.active { background: var(--rs-primary); border-color: var(--rs-primary); color: #fff; }
+
+.review-list { display: flex; flex-direction: column; gap: 10px; }
+.review-card {
+  background: #fff;
+  border: 1px solid var(--rs-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.review-card.flagged { border-left: 4px solid var(--rs-danger); }
+.review-card header { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.review-card p { margin: 8px 0; }
+.review-card footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--rs-muted);
+}
+.stars { color: #f2a91d; letter-spacing: 1px; }
+
+/* Recipe thumbnail in the Manage Recipes table */
+.recipe-cell { display: inline-flex; align-items: center; gap: 10px; }
+.admin-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; background: #eee; }

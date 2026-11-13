@@ -1,0 +1,98 @@
+.planner-page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  color: var(--rs-text);
+}
+.planner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.planner-header h1 { margin: 0; }
+.planner-sub { margin: 4px 0 0; color: var(--rs-muted); }
+
+/* Desktop: 7 columns (one per day). Smaller screens: fewer columns. */
+.planner-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+@media (max-width: 1100px) { .planner-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 760px)  { .planner-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .planner-grid { grid-template-columns: 1fr; } }
+
+.day-card {
+  background: var(--rs-bg);
+  border: 1px solid var(--rs-border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.day-name { margin: 0; font-size: 1rem; color: var(--rs-primary); }
+
+.meal-slot {
+  background: #fff;
+  border: 1px dashed var(--rs-border);
+  border-radius: 10px;
+  padding: 8px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.meal-slot.filled { border-style: solid; }
+.meal-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--rs-muted);
+}
+.meal-recipe { display: flex; gap: 8px; align-items: center; }
+.meal-recipe strong { display: block; font-size: 0.85rem; }
+.meal-recipe small { color: var(--rs-muted); font-size: 0.72rem; }
+.meal-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #eee;
+}
+.meal-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.add-meal-btn {
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--rs-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-radius: 8px;
+}
+.add-meal-btn:hover { background: #fff3ec; }
+
+/* Recipe picker modal */
+.picker-controls { display: flex; gap: 8px; margin-bottom: 12px; }
+.picker-controls .input { flex: 1; }
+.picker-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.picker-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--rs-border);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+.picker-item:hover { border-color: var(--rs-primary); background: #fff8f3; }
+.picker-info { display: flex; flex-direction: column; }
+.picker-info small { color: var(--rs-muted); }
