@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { AdminProvider } from './context/AdminContext'          // Member 3
+import { MealPlanProvider } from './context/MealPlanContext'    // Member 3
 import AddRecipePage from './pages/AddRecipePage'
 import BrowseRecipesPage from './pages/BrowseRecipesPage'
 import EditRecipePage from './pages/EditRecipePage'
@@ -10,6 +12,7 @@ import CustomizeRecipePage from './pages/CustomizeRecipePage'
 import ProfilePage from './pages/ProfilePage'
 import Header from './components/common/Header'
 import BottomNav from './components/common/BottomNav'
+import { member3Routes } from './member3Routes'                  // Member 3
 import { STORAGE_KEYS, STORAGE_SYNC_VERSION } from './services/storageKeys'
 import { recipeStorage } from './services/recipeStorage'
 import { cookbookStorage } from './services/cookbookStorage'
@@ -66,33 +69,40 @@ function Placeholder({ title }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Home Route */}
-          <Route path="/" element={<Placeholder title="Home" />} />
+      {/* Member 3 providers: admin data/login + weekly meal plan */}
+      <AdminProvider>
+        <MealPlanProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Home Route */}
+              <Route path="/" element={<Placeholder title="Home" />} />
 
-          {/* Member 2 Routes (Recipe & Personal Management) */}
-          <Route path="/recipes" element={<BrowseRecipesPage />} />
-          <Route path="/my-recipes" element={<MyRecipesPage />} />
-          <Route path="/recipes/new" element={<AddRecipePage />} />
-          <Route path="/add-recipe" element={<AddRecipePage />} />
-          <Route path="/recipes/:id/edit" element={<EditRecipePage />} />
-          <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
-          <Route path="/recipes/:id/customize" element={<CustomizeRecipePage />} />
-          <Route path="/cookbook" element={<CookbookPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+              {/* Member 2 Routes (Recipe & Personal Management) */}
+              <Route path="/recipes" element={<BrowseRecipesPage />} />
+              <Route path="/my-recipes" element={<MyRecipesPage />} />
+              <Route path="/recipes/new" element={<AddRecipePage />} />
+              <Route path="/add-recipe" element={<AddRecipePage />} />
+              <Route path="/recipes/:id/edit" element={<EditRecipePage />} />
+              <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
+              <Route path="/recipes/:id/customize" element={<CustomizeRecipePage />} />
+              <Route path="/cookbook" element={<CookbookPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
 
-          {/* Existing Team Routes preserved */}
-          <Route path="/login" element={<Placeholder title="Login" />} />
-          <Route path="/signup" element={<Placeholder title="Sign Up" />} />
-          <Route path="/search" element={<Placeholder title="Search" />} />
-          <Route path="/meal-planner" element={<Placeholder title="Meal Planner" />} />
-          <Route path="/admin" element={<Placeholder title="Admin Dashboard" />} />
+              {/* Member 3 Routes (Meal Planner & Admin):
+                  /meal-planner, /admin/login, /admin, /admin/users, /admin/recipes, /admin/reviews */}
+              {member3Routes}
 
-          {/* Fallback */}
-          <Route path="*" element={<Placeholder title="Page Not Found" />} />
-        </Routes>
-      </BrowserRouter>
+              {/* Member 1 placeholders (until their pages are merged) */}
+              <Route path="/login" element={<Placeholder title="Login" />} />
+              <Route path="/signup" element={<Placeholder title="Sign Up" />} />
+              <Route path="/search" element={<Placeholder title="Search" />} />
+
+              {/* Fallback */}
+              <Route path="*" element={<Placeholder title="Page Not Found" />} />
+            </Routes>
+          </BrowserRouter>
+        </MealPlanProvider>
+      </AdminProvider>
     </AuthProvider>
   )
 }
