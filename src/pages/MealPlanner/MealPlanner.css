@@ -1,0 +1,104 @@
+/* Weekly meal planner, matched to the Figma "Weekly meal planner",
+   "Full week" and "Choose saved recipe" frames. Mobile first. */
+.planner-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 32px;
+  color: var(--rs-text);
+}
+
+/* ‹ Previous   12–18 October 2026   Next › */
+.week-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+/* Mon 12 | Tue 13 | ... */
+.day-tabs {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+.day-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0;
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  background: var(--rs-surface);
+  font: inherit;
+  font-size: 12px;
+  color: var(--rs-text);
+  cursor: pointer;
+}
+.day-tab:hover { background: var(--rs-surface-muted); }
+.day-tab.active {
+  background: var(--rs-surface-selected);
+  font-weight: 600;
+}
+
+/* Breakfast / Lunch / Dinner cards */
+.slot-list { display: flex; flex-direction: column; gap: 12px; }
+.slot-card {
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  padding: 12px 14px;
+  background: var(--rs-surface);
+}
+.slot-label { display: block; font-size: 13px; font-weight: 600; }
+.slot-recipe { margin: 8px 0 6px; font-size: 15px; }
+.slot-empty { color: var(--rs-muted); }
+.slot-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.slot-actions { font-size: 13px; }
+
+.planner-note { margin: 16px 0; }
+.planner-disclaimer { margin: 16px 0; font-size: 12px; color: var(--rs-muted); line-height: 1.5; }
+
+/* Full week view */
+.week-list { display: flex; flex-direction: column; gap: 24px; margin-bottom: 8px; }
+.week-day .section-title { margin-bottom: 10px; }
+
+/* Wider screens: show the three slots side by side, and the full week as a grid */
+@media (min-width: 768px) {
+  .planner-page { max-width: 1000px; }
+  .slot-list { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .planner-page > .btn-block { max-width: 360px; margin: 0 auto; display: flex; }
+}
+
+/* ---------- Recipe picker popup ---------- */
+.picker-subtitle { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+.picker-field { margin-bottom: 14px; }
+.picker-select { width: 100%; }
+.picker-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.picker-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius);
+  background: var(--rs-surface);
+  font: inherit;
+  color: var(--rs-text);
+  text-align: left;
+  cursor: pointer;
+}
+.picker-card:hover { border-color: var(--rs-border-strong); }
+.picker-card.selected { border: 2px solid var(--rs-border-strong); padding: 9px; }
+.picker-info { display: flex; flex-direction: column; gap: 3px; }
+.picker-info strong { font-size: 14px; }
+.picker-info small { font-size: 12px; color: var(--rs-muted); }
+.picker-status { font-size: 12px; text-decoration: underline; text-underline-offset: 2px; }

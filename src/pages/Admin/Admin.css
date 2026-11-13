@@ -1,0 +1,240 @@
+/* Admin pages. The Figma has no admin frames, so these pages reuse the
+   wireframe style of the rest of the app: monochrome, thin grey borders,
+   black primary buttons, grey "selected" state like the bottom navigation. */
+
+/* ---------- Login (same form style as the Figma "Create an account") ---------- */
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rs-surface-muted);
+  padding: 16px;
+  color: var(--rs-text);
+}
+.admin-login-card {
+  background: var(--rs-surface);
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 24px;
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.admin-login-card h1 {
+  margin: 0;
+  font-size: var(--fs-title, 26px);
+  font-weight: var(--fw-semibold, 600);
+}
+.admin-login-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.admin-login-card .input { font-weight: 400; }
+.admin-muted { margin: -8px 0 0; color: var(--rs-muted); font-size: 14px; }
+.admin-hint { font-size: 12px; color: var(--rs-muted); text-align: center; margin: 0; }
+/* Error box looks like the Figma "Check your registration details" box */
+.form-error {
+  background: var(--rs-surface-muted);
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ---------- Layout ---------- */
+.admin-shell { display: flex; min-height: 100vh; color: var(--rs-text); background: var(--rs-surface); }
+.admin-sidebar {
+  width: 220px;
+  border-right: 1px solid var(--rs-border);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.admin-brand { font-size: 18px; font-weight: 600; padding: 0 8px; }
+.admin-sidebar nav { display: flex; flex-direction: column; gap: 4px; }
+.admin-link {
+  color: var(--rs-text);
+  text-decoration: none;
+  padding: 9px 12px;
+  border-radius: var(--rs-radius-sm);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.admin-link:hover { background: var(--rs-surface-muted); }
+/* Active item = grey box + bold, like the active tab in the Figma bottom navigation */
+.admin-link.active { background: var(--rs-surface-selected); font-weight: 600; }
+.count-pill {
+  background: var(--rs-text);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  padding: 1px 7px;
+}
+.admin-logout { margin-top: auto; }
+.admin-main { flex: 1; padding: 0 28px 32px; overflow-x: auto; }
+/* Page title with the divider line, like every Figma screen header */
+.admin-title {
+  margin: 0 0 20px;
+  padding: 22px 0 14px;
+  border-bottom: 1px solid var(--rs-border);
+  font-size: var(--fs-title, 26px);
+  font-weight: var(--fw-semibold, 600);
+}
+
+/* Mobile: sidebar becomes a bar of tabs on top */
+@media (max-width: 760px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--rs-border);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .admin-sidebar nav { flex-direction: row; flex-wrap: wrap; flex: 1; }
+  .admin-link { padding: 7px 10px; font-size: 13px; }
+  .admin-logout { margin-top: 0; }
+  .admin-main { padding: 0 16px 24px; }
+}
+
+/* ---------- Dashboard ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.stat-card:hover { border-color: var(--rs-border-strong); }
+.stat-card.alert { border: 2px solid var(--rs-border-strong); background: var(--rs-surface-muted); }
+.stat-value { font-size: 28px; font-weight: 600; }
+.stat-label { color: var(--rs-muted); font-size: 13px; }
+
+.admin-panel {
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  padding: 16px 18px;
+}
+.admin-panel h2 { margin: 0 0 8px; font-size: var(--fs-section, 20px); font-weight: 600; }
+.attention-list { list-style: none; padding: 0; margin: 0; }
+.attention-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rs-border);
+  font-size: 14px;
+}
+.attention-list li:last-child { border-bottom: none; }
+
+/* ---------- Toolbar + tables ---------- */
+.admin-toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.admin-toolbar .input { flex: 1; min-width: 200px; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  font-size: 14px;
+}
+.admin-table th, .admin-table td { padding: 12px 14px; text-align: left; vertical-align: middle; }
+.admin-table th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--rs-muted);
+  border-bottom: 1px solid var(--rs-border);
+}
+.admin-table tr + tr td { border-top: 1px solid var(--rs-border); }
+.action-cell { display: flex; gap: 8px; flex-wrap: wrap; }
+.recipe-cell { display: inline-flex; align-items: center; gap: 10px; }
+.admin-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--rs-radius-sm);
+  border: 1px solid var(--rs-border);
+  background: var(--rs-surface-muted);
+  object-fit: cover;
+}
+
+/* Mobile: each table row turns into a card; data-label shows the column name */
+@media (max-width: 760px) {
+  .admin-table { border: none; }
+  .admin-table thead { display: none; }
+  .admin-table, .admin-table tbody, .admin-table tr, .admin-table td { display: block; width: 100%; }
+  .admin-table tr {
+    border: 1px solid var(--rs-border);
+    border-radius: var(--rs-radius-sm);
+    padding: 8px 0;
+    margin-bottom: 12px;
+  }
+  .admin-table tr + tr td { border-top: none; }
+  .admin-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 14px;
+    box-sizing: border-box;
+  }
+  .admin-table td::before { content: attr(data-label); font-weight: 600; font-size: 13px; }
+}
+
+/* ---------- Reviews (styled like the Figma "Ratings & reviews" cards) ---------- */
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.tab {
+  border: 1px solid var(--rs-border);
+  background: var(--rs-surface);
+  padding: 8px 14px;
+  border-radius: var(--rs-radius-sm);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab.active { background: var(--rs-surface-selected); font-weight: 600; }
+
+.review-list { display: flex; flex-direction: column; gap: 12px; }
+.review-card {
+  border: 1px solid var(--rs-border);
+  border-radius: var(--rs-radius-sm);
+  padding: 14px 16px;
+  font-size: 14px;
+}
+.review-card.flagged { border: 2px solid var(--rs-border-strong); }
+.review-card header { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.review-card p { margin: 8px 0; }
+.review-card footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--rs-muted);
+}
+.stars { color: var(--rs-text); letter-spacing: 1px; font-size: 13px; }
+
