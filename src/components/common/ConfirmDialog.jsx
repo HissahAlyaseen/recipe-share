@@ -1,5 +1,5 @@
-import Modal from './common/Modal' // the team's shared Modal
-import '../styles/shared.css'
+import Modal from "./Modal";
+import "../../styles/shared.css";
 
 // "Are you sure?" popup used before destructive actions, laid out like the
 // Figma "Delete recipe confirmation": message, optional grey note,
