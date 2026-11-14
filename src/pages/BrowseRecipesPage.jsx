@@ -18,16 +18,27 @@ export default function BrowseRecipesPage() {
   const { user, isAuthenticated } = useAuth()
   const activeUserId = isAuthenticated === false ? null : user?.id || null
 
-  const [recipes, setRecipes] = useState(() => {
-    const all = recipeStorage.getAll()
-    return all.filter((r) => !r.status || r.status.toLowerCase() !== 'draft')
-  })
+ const [recipes, setRecipes] = useState(() => {
+  const all = recipeStorage.getAll()
+
+  return all.filter(
+    (r) =>
+      !r.status ||
+      r.status.toLowerCase() === 'published'
+  )
+})
 
   useStorageSync([RECIPES_UPDATED_EVENT], () => {
-    const all = recipeStorage.getAll()
-    setRecipes(all.filter((r) => !r.status || r.status.toLowerCase() !== 'draft'))
-  })
+  const all = recipeStorage.getAll()
 
+  setRecipes(
+    all.filter(
+      (r) =>
+        !r.status ||
+        r.status.toLowerCase() === 'published'
+    )
+  )
+})
   const [filterByPreferences, setFilterByPreferences] = useState(false)
 
   const userProfile = useMemo(() => {
