@@ -28,6 +28,14 @@ export default function BottomNav() {
         <span className="tab-indicator" />
         <span className="tab-label">Cookbooks</span>
       </NavLink>
+
+      <NavLink
+        to="/meal-planner"
+        className={({ isActive }) => `figma-nav-tab ${isActive ? 'active' : ''}`}
+      >
+        <span className="tab-indicator" />
+        <span className="tab-label">Meal Planner</span>
+      </NavLink>
     </nav>
   )
 }
