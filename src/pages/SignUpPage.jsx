@@ -1,53 +1,58 @@
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './SignUpPage.css'
 
 function SignUpPage() {
+  const navigate = useNavigate()
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [errors, setErrors] = useState({})
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setError('')
 
-    // Validate full name
+    const newErrors = {}
+
     if (!name.trim()) {
-      setError('Please enter your full name')
-      return
+      newErrors.name = 'Please enter your full name'
     }
 
-    // Validate email
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Please enter a valid email address')
+      newErrors.email = 'Please enter a valid email address'
+    }
+
+    if (!password) {
+      newErrors.password = 'Please enter your password'
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters'
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password'
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match'
+    }
+
+    setErrors(newErrors)
+
+    if (Object.keys(newErrors).length > 0) {
       return
     }
 
-    // Validate password length
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters')
-      return
-    }
-
-    // Check matching passwords
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    // Backend integration is not available yet
-    alert(
-      'Form validated successfully! Account creation is not connected yet.'
-    )
+    // Frontend prototype only — no actual account is created
+    alert('Demo sign-up completed! Please log in to continue.')
+    navigate('/login')
   }
 
   return (
     <div className="signup-page">
       <div className="signup-container">
-
         <div className="signup-brand">
           <div className="signup-logo">RS</div>
           <h1>Recipe Share</h1>
@@ -58,83 +63,79 @@ function SignUpPage() {
         <p>Join Recipe Share today!</p>
 
         <form onSubmit={handleSubmit} noValidate>
-
-          {/* Full Name */}
           <label htmlFor="signup-name">Full name</label>
           <input
             id="signup-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
+            aria-invalid={Boolean(errors.name)}
           />
-
-          {error === 'Please enter your full name' && (
-            <p className="signup-error" role="alert">
-              {error}
-            </p>
+          {errors.name && (
+            <p className="signup-error" role="alert">{errors.name}</p>
           )}
 
-          {/* Email */}
           <label htmlFor="signup-email">Email address</label>
           <input
             id="signup-email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
+            aria-invalid={Boolean(errors.email)}
           />
-
-          {error === 'Please enter a valid email address' && (
-            <p className="signup-error" role="alert">
-              {error}
-            </p>
+          {errors.email && (
+            <p className="signup-error" role="alert">{errors.email}</p>
           )}
 
-          {/* Password */}
           <label htmlFor="signup-password">Password</label>
-          <input
-            id="signup-password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          {error === 'Password must be at least 8 characters' && (
-            <p className="signup-error" role="alert">
-              {error}
-            </p>
+          <div className="signup-password-wrapper">
+            <input
+              id="signup-password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={Boolean(errors.password)}
+            />
+            <button
+              type="button"
+              className="signup-show-password-btn"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {errors.password && (
+            <p className="signup-error" role="alert">{errors.password}</p>
           )}
 
-          {/* Confirm Password */}
-          <label htmlFor="signup-confirm">
-            Confirm password
-          </label>
-          <input
-            id="signup-confirm"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-
-          {error === 'Passwords do not match' && (
-            <p className="signup-error" role="alert">
-              {error}
-            </p>
+          <label htmlFor="signup-confirm">Confirm password</label>
+          <div className="signup-password-wrapper">
+            <input
+              id="signup-confirm"
+              type={showConfirmPassword ? 'text' : 'password'}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              aria-invalid={Boolean(errors.confirmPassword)}
+            />
+            <button
+              type="button"
+              className="signup-show-password-btn"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {errors.confirmPassword && (
+            <p className="signup-error" role="alert">{errors.confirmPassword}</p>
           )}
 
-          {/* Submit Button */}
           <button type="submit">Sign up</button>
-
         </form>
 
         <p>
           Already have an account?{' '}
           <Link to="/login">Log in</Link>
         </p>
-
       </div>
     </div>
   )
