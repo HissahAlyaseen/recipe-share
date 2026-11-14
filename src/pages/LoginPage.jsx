@@ -35,7 +35,7 @@ function LoginPage() {
     }
 
     // Frontend prototype only — no real authentication
-    navigate('/')
+    navigate('/home')
   }
 
   return (

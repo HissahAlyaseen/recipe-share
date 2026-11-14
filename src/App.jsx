@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { AdminProvider } from './context/AdminContext'          // Member 3
 import { MealPlanProvider } from './context/MealPlanContext'    // Member 3
@@ -80,8 +80,8 @@ function App() {
           <BrowserRouter>
             <Routes>
               {/* Home Route (Member 1) */}
-              <Route path="/" element={<HomePage />} />
-
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/home" element={<HomePage />} />
               {/* Member 2 Routes (Recipe & Personal Management) */}
               <Route path="/recipes" element={<BrowseRecipesPage />} />
               <Route path="/my-recipes" element={<MyRecipesPage />} />
