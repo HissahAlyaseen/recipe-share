@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useAdmin } from '../../context/AdminContext'
-import ConfirmDialog from '../../components/common/ConfirmDialog'
+import { useState } from 'react';
+import { useAdmin } from '../../context/AdminContext';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 export default function ManageReviews() {
   const { reviews, recipes, deleteReview, dismissFlag } = useAdmin();

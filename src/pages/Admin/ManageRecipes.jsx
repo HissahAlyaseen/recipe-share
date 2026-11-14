@@ -3,7 +3,6 @@ import { useAdmin } from '../../context/AdminContext';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 import { RECIPE_STATUS } from '../../data/mockData';
 
-
 export default function ManageRecipes() {
   const { recipes, toggleRecipeVisibility, deleteRecipe } = useAdmin();
   const [query, setQuery] = useState('');
