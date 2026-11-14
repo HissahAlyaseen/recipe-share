@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
-import ConfirmDialog from '../../components/common/ConfirmDialog'
+import { useState } from 'react';
+import { useAdmin } from '../../context/AdminContext';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 export default function ManageUsers() {
   const { users, toggleUserStatus } = useAdmin();
   const [query, setQuery] = useState('');
