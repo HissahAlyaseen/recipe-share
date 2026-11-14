@@ -75,6 +75,12 @@ export default function Header() {
           >
             Cookbooks
           </NavLink>
+          <NavLink
+            to="/meal-planner"
+            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+          >
+            Meal Planner
+          </NavLink>
         </nav>
 
         {/* Global User Profile with hover / click dropdown wrapper */}
@@ -111,6 +117,18 @@ export default function Header() {
                 <span className="dropdown-user-name">{user?.name || 'User'}</span>
                 <span className="dropdown-user-email">{user?.email || 'user@university.edu'}</span>
               </div>
+            </Link>
+
+            <div className="dropdown-divider" />
+
+            <Link
+              to="/admin/login"
+              className="dropdown-admin-link"
+              onClick={() => setIsOpen(false)}
+              role="menuitem"
+            >
+              <span className="dropdown-admin-icon">🛠️</span>
+              <span>Admin Dashboard</span>
             </Link>
 
             <div className="dropdown-divider" />
