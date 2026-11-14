@@ -8,7 +8,6 @@ Commits that contain AI-assisted code include a trailer such as:
 ```
 Assisted-by: Claude (Claude Opus 5.5)
 Assisted-by: ChatGPT (GPT-6)
-
 ```
 
 ## Phase 4 – Front-End
