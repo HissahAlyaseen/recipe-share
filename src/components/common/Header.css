@@ -1,4 +1,4 @@
-.app-header {
+ .app-header {
   width: 100%;
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
@@ -175,6 +175,7 @@
   align-items: center;
   gap: 10px;
   padding: 4px 6px 10px;
+  text-decoration: none;
 }
 
 .dropdown-user-avatar {
@@ -217,6 +218,29 @@
   height: 1px;
   background: #f3f4f6;
   margin: 6px 0;
+}
+
+.dropdown-admin-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: #111827;
+  background: #f9fafb;
+  text-decoration: none;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  transition: background 0.15s ease;
+}
+
+.dropdown-admin-link:hover {
+  background: #f3f4f6;
+}
+
+.dropdown-admin-icon {
+  font-size: 15px;
+  flex-shrink: 0;
 }
 
 /* Reset Action Button */
@@ -297,4 +321,3 @@
     white-space: nowrap;
   }
 }
-
