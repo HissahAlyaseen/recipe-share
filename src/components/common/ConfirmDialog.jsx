@@ -2,7 +2,6 @@ import Modal from "./Modal";
 import "./Modal.css";
 import "../../styles/shared.css";
 
-
 // "Are you sure?" popup used before destructive actions, laid out like the
 // Figma "Delete recipe confirmation": message, optional grey note,
 // then two full-width buttons stacked (confirm on top, cancel below).

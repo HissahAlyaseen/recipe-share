@@ -181,6 +181,64 @@ export const recipeStorage = {
 
     return true
   },
+  updateAsAdmin(id, updates) {
+  const recipes = initRecipesStorage();
+  const index = recipes.findIndex((r) => String(r.id) === String(id));
+
+  if (index === -1) {
+    throw new Error(`Recipe with id "${id}" not found.`);
+  }
+
+  const existing = recipes[index];
+
+  const updated = {
+    ...existing,
+    ...updates,
+    ...('dietaryTags' in updates
+      ? { dietaryTags: normalizeDietaryTags(updates.dietaryTags) }
+      : {}),
+    id: existing.id,
+    authorId: existing.authorId,
+    authorName: existing.authorName,
+    updatedAt: new Date().toISOString()
+  };
+
+  recipes[index] = updated;
+
+  if (!saveRecipesToStorage(recipes)) {
+    throw new Error(STORAGE_FULL_MESSAGE);
+  }
+
+  return updated;
+},
+
+deleteAsAdmin(id) {
+  const recipes = initRecipesStorage();
+  const existing = recipes.find(
+    (r) => String(r.id) === String(id)
+  );
+
+  if (!existing) {
+    throw new Error(`Recipe with id "${id}" not found.`);
+  }
+
+  const deletedId = existing.id;
+
+  const filtered = recipes.filter(
+    (r) => String(r.id) !== String(deletedId)
+  );
+
+  if (!saveRecipesToStorage(filtered)) {
+    throw new Error('Could not delete the recipe. Please try again.');
+  }
+
+  // Remove related bookmarks and cookbook references.
+  bookmarkStorage.removeAllForRecipe(deletedId);
+  cookbookStorage.removeRecipeReferences(deletedId);
+
+  return true;
+},
+
 
   /**
    * Keep the "Created by" name on a user's recipes in sync after they rename themselves.

@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMealPlan, MEALS } from '../../context/MealPlanContext';
-import { useAdmin } from '../../context/AdminContext';
-import { RECIPE_STATUS } from '../../data/mockData';
+import { useStorageSync } from '../../hooks/useStorageSync';
+
+import { 
+  recipeStorage,
+  RECIPES_UPDATED_EVENT
+} from '../../services/recipeStorage';
 import RecipePickerModal from './RecipePickerModal';
 import { startOfWeek, addDays, weekDays, toKey, shortWeekday, longDate, weekRange, weekRangeShort } from './weekUtils';
 import '../../styles/shared.css';
@@ -44,7 +48,16 @@ const DISCLAIMER =
 
 export default function MealPlanner() {
   const { getMeal, setMeal, removeMeal } = useMealPlan();
-  const { recipes } = useAdmin();
+
+  // Read recipes from the team's shared storage.
+  const [recipes, setRecipes] = useState(() =>
+    recipeStorage.getAll()
+  );
+
+  // Update the planner whenever recipes change.
+  useStorageSync([RECIPES_UPDATED_EVENT], () => {
+    setRecipes(recipeStorage.getAll());
+  });
 
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
   // Index 0–6 of the selected day tab (starts on today).
@@ -150,7 +163,11 @@ export default function MealPlanner() {
           title={`${longDate(pickerSlot.date)} · ${capitalize(pickerSlot.meal)}`}
           meal={pickerSlot.meal}
           currentId={getMeal(toKey(pickerSlot.date), pickerSlot.meal)}
-          recipes={recipes.filter((r) => r.status === RECIPE_STATUS.PUBLISHED)}
+         recipes={recipes.filter(
+  (r) =>
+    !r.status ||
+    r.status.toLowerCase() === 'published'
+)}
           onSelect={handleSelect}
           onClose={() => setPickerSlot(null)}
         />

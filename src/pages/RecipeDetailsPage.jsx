@@ -115,14 +115,32 @@ export default function RecipeDetailsPage() {
     }
   }
 
-  if (!recipe) {
+  
+  // Check whether the current user is the recipe's author
+  const isAuthor = Boolean(
+    recipe &&
+    activeUserId &&
+    String(recipe.authorId) === String(activeUserId)
+  )
+
+  // Hide Draft and Hidden recipes from everyone except their author
+  const isUnavailable =
+    recipe &&
+    recipe.status &&
+    recipe.status.toLowerCase() !== 'published' &&
+    !isAuthor
+
+  if (!recipe || isUnavailable) {
     return (
       <div className="recipe-details-wrapper">
         <Header />
         <div className="details-container">
           <div className="not-found-card">
             <h2>Recipe Not Found</h2>
-            <p>The recipe you are looking for does not exist or has been removed.</p>
+            <p>
+              The recipe you are looking for does not exist,
+              has been removed, or is not currently available.
+            </p>
             <Link to="/my-recipes" className="btn-back-home">
               Go to My Recipes
             </Link>
@@ -133,7 +151,6 @@ export default function RecipeDetailsPage() {
     )
   }
 
-  const isAuthor = activeUserId && String(recipe.authorId) === String(activeUserId)
 
   const displayedServings =
     isViewingCustom && customization.customServings ? customization.customServings : recipe.servings || 2

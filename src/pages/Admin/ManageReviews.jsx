@@ -1,7 +1,6 @@
-
+import { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
-
 
 export default function ManageReviews() {
   const { reviews, recipes, deleteReview, dismissFlag } = useAdmin();
@@ -10,7 +9,8 @@ export default function ManageReviews() {
 
   const flaggedCount = reviews.filter((r) => r.flagged).length;
   const visible = tab === 'flagged' ? reviews.filter((r) => r.flagged) : reviews;
-  const recipeTitle = (id) => recipes.find((r) => r.id === id)?.title ?? 'Deleted recipe';
+  const recipeTitle = (id) =>
+  recipes.find((r) => String(r.id) === String(id))?.title ?? 'Deleted recipe'
 
   return (
     <>

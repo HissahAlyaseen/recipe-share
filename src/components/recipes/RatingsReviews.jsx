@@ -1,21 +1,19 @@
 
 import { useEffect, useState } from 'react'
 import './RatingsReviews.css'
-
+import { useStorageSync } from '../../hooks/useStorageSync'
+import {
+  reviewStorage,
+  REVIEWS_UPDATED_EVENT
+} from '../../services/reviewStorage'
 function RatingsReviews({ recipeId }) {
     const [rating, setRating] = useState(0)
     const [reviewText, setReviewText] = useState('')
     const [reviewError, setReviewError] = useState('')
 
-    const [reviews, setReviews] = useState(() => {
-        try {
-            const saved = localStorage.getItem(`recipe-reviews-${recipeId}`)
-            const parsed = saved ? JSON.parse(saved) : []
-            return Array.isArray(parsed) ? parsed : []
-        } catch {
-            return []
-        }
-    })
+    const [reviews, setReviews] = useState(() =>
+    reviewStorage.getByRecipeId(recipeId)
+)
 
     const [editingReviewId, setEditingReviewId] = useState(null)
     const [editRating, setEditRating] = useState(0)
@@ -23,35 +21,31 @@ function RatingsReviews({ recipeId }) {
     const [editError, setEditError] = useState('')
 
     // Load the reviews belonging to the selected recipe.
-    useEffect(() => {
-        try {
-            const saved = localStorage.getItem(`recipe-reviews-${recipeId}`)
-            const parsed = saved ? JSON.parse(saved) : []
-            setReviews(Array.isArray(parsed) ? parsed : [])
-        } catch {
-            setReviews([])
-        }
+   // Load reviews whenever the selected recipe changes.
+useEffect(() => {
+  setReviews(reviewStorage.getByRecipeId(recipeId))
 
-        setEditingReviewId(null)
-        setEditError('')
-        setRating(0)
-        setReviewText('')
-        setReviewError('')
-    }, [recipeId])
+  setEditingReviewId(null)
+  setEditError('')
+  setRating(0)
+  setReviewText('')
+  setReviewError('')
+}, [recipeId])
+
+// Refresh reviews when the user or Admin changes shared review storage.
+useStorageSync([REVIEWS_UPDATED_EVENT], () => {
+  setReviews(reviewStorage.getByRecipeId(recipeId))
+})
 
     const saveReviews = (updatedReviews) => {
-        try {
-            localStorage.setItem(
-                `recipe-reviews-${recipeId}`,
-                JSON.stringify(updatedReviews)
-            )
-
-            setReviews(updatedReviews)
-            return true
-        } catch {
-            return false
-        }
-    }
+  try {
+    reviewStorage.replaceForRecipe(recipeId, updatedReviews)
+    setReviews(reviewStorage.getByRecipeId(recipeId))
+    return true
+  } catch {
+    return false
+  }
+}
 
     // Add a new review.
     const averageRating = reviews.length > 0
@@ -70,13 +64,15 @@ function RatingsReviews({ recipeId }) {
             return
         }
 
-        const newReview = {
-            id: crypto.randomUUID(),
-            recipeId,
-            rating,
-            text: reviewText.trim(),
-            createdAt: new Date().toISOString()
-        }
+       const newReview = {
+  id: crypto.randomUUID(),
+  recipeId,
+  userName: 'Community member',
+  rating,
+  comment: reviewText.trim(),
+  date: new Date().toISOString(),
+  flagged: false
+}
 
         const updatedReviews = [...reviews, newReview]
 
@@ -93,7 +89,7 @@ function RatingsReviews({ recipeId }) {
     const handleEditReview = (review) => {
         setEditingReviewId(review.id)
         setEditRating(review.rating)
-        setEditText(review.text)
+       setEditText(review.comment)
         setEditError('')
     }
 
@@ -293,11 +289,11 @@ function RatingsReviews({ recipeId }) {
                                         {'☆'.repeat(5 - review.rating)}
                                     </div>
 
-                                    <p className="review-text">{review.text}</p>
+                                    <p className="review-text">{review.comment}</p>
 
                                     <div className="review-footer">
                                         <small>
-                                            {new Date(review.createdAt).toLocaleDateString()}
+                                            {new Date(review.date).toLocaleDateString()}
                                         </small>
 
                                         <button
