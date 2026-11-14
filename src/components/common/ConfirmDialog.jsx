@@ -1,5 +1,4 @@
 import Modal from "./Modal";
-import Modal from "./Modal";
 import "./Modal.css";
 import "../../styles/shared.css";
 
